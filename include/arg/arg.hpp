@@ -46,6 +46,8 @@ public:
     bool hit(const char * arg_name);
 
     void used();
+
+    arg * pointer();
 };
 
 }

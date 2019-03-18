@@ -105,5 +105,10 @@ void arg::used()
     this->_used = true;
 }
 
+arg * arg::pointer()
+{
+    return this;
+}
+
 }
 }
