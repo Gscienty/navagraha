@@ -22,7 +22,7 @@ public:
 
     bool append(const char * param);
 
-    std::vector<std::string> & value();
+    std::vector<std::string> & values();
 };
 
 }

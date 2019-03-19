@@ -4,7 +4,6 @@
 #include "arg/param.hpp"
 #include <string>
 #include <vector>
-#include <boost/function.hpp>
 #include <map>
 #include <set>
 
@@ -17,9 +16,7 @@ private:
     const std::string _name;
     param _params;
     bool _used;
-    boost::function<bool (const arg &)> _satisfy;
     std::map<std::string, size_t> _indices;
-    std::set<std::string> _other_name;
 
 public:
     arg(const arg * prerequired, const std::string name,
@@ -31,21 +28,15 @@ public:
 
     size_t remain_param_count() const;
 
-    std::vector<std::string> & value();
+    std::vector<std::string> & values();
 
     std::string value(std::string key);
 
     bool set_index(std::string key, size_t index);
 
-    void set_satisfy(boost::function<bool (const arg &)> satisfy);
+    bool hit();
 
-    bool satisfy();
-
-    void add_other_name(std::string name);
-
-    bool hit(const char * arg_name);
-
-    void used();
+    bool & used();
 
     arg * pointer();
 };

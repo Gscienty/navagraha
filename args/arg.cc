@@ -1,5 +1,4 @@
 #include "arg/arg.hpp"
-#include <boost/foreach.hpp>
 
 namespace navagraha {
 namespace arg {
@@ -34,22 +33,9 @@ size_t arg::remain_param_count() const
         - this->_params.used_count();
 }
 
-std::vector<std::string> & arg::value()
+std::vector<std::string> & arg::values()
 {
-    return this->_params.value();
-}
-
-void arg::set_satisfy(boost::function<bool (const arg &)> satisfy)
-{
-    this->_satisfy = satisfy;
-}
-
-bool arg::satisfy()
-{
-    if (this->_satisfy.empty() || this->_satisfy(*this)) {
-        return true;
-    }
-    return false;
+    return this->_params.values();
 }
 
 std::string arg::value(std::string key)
@@ -57,7 +43,7 @@ std::string arg::value(std::string key)
     if (this->_indices.find(key) == this->_indices.end()) {
         return "";
     }
-    return this->_params.value()[this->_indices[key]];
+    return this->_params.values()[this->_indices[key]];
 }
 
 bool arg::set_index(std::string key, size_t index)
@@ -69,30 +55,8 @@ bool arg::set_index(std::string key, size_t index)
     return true;
 }
 
-void arg::add_other_name(std::string name)
+bool arg::hit()
 {
-    this->_other_name.insert(name);
-}
-
-bool arg::hit(const char * arg_name)
-{
-    bool hit_result = false;
-    if (this->_name.compare(arg_name) == 0) {
-        hit_result = true;
-    }
-    else {
-        for (auto itr = this->_other_name.begin();
-             itr != this->_other_name.end();
-             itr++) {
-            if (itr->compare(arg_name) == 0) {
-                hit_result = true;
-            }
-        }
-    }
-
-    if (!hit_result) {
-        return false;
-    }
     if (this->_prerequired == nullptr) {
         return true;
     }
@@ -100,9 +64,9 @@ bool arg::hit(const char * arg_name)
     return this->_prerequired->_used;
 }
 
-void arg::used()
+bool & arg::used()
 {
-    this->_used = true;
+    return this->_used;
 }
 
 arg * arg::pointer()

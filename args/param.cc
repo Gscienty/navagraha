@@ -30,7 +30,7 @@ bool param::append(const char * param)
     return true;
 }
 
-std::vector<std::string> & param::value()
+std::vector<std::string> & param::values()
 {
     return this->_params;
 }
