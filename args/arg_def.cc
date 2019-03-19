@@ -68,6 +68,11 @@ arg & arg_def::argument()
     return *this->_ptr;
 }
 
+void arg_def::pet(const char * arg_name)
+{
+    this->_put(arg_name);
+}
+
 bool transfer(int argc, char ** argv)
 {
     std::shared_ptr<arg> narg = nullptr;
