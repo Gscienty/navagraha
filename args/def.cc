@@ -1,4 +1,4 @@
-#include "arg/arg_def.hpp"
+#include "args/def.hpp"
 #include <functional>
 #include <map>
 
@@ -30,8 +30,8 @@ __foreach(const std::string name, std::function<bool (arg &)> eachor)
     return nullptr;
 }
 
-arg_def::arg_def(arg_def & prerequired, const char * arg_name,
-                 size_t params_count)
+def::def(def & prerequired, const char * arg_name,
+         size_t params_count)
 {
     this->_ptr = std::make_shared<arg>(prerequired.ptr()->pointer(),
                                        arg_name,
@@ -39,14 +39,14 @@ arg_def::arg_def(arg_def & prerequired, const char * arg_name,
     this->_put(arg_name);
 }
 
-arg_def::arg_def(const char * arg_name, size_t params_count)
+def::def(const char * arg_name, size_t params_count)
 {
     this->_ptr = std::make_shared<arg>(arg_name, params_count);
     this->_put(arg_name);
 }
 
 
-void arg_def::_put(const char * arg_name)
+void def::_put(const char * arg_name)
 {
     if (__arguments.find(arg_name)
         == __arguments.end()) {
@@ -58,19 +58,29 @@ void arg_def::_put(const char * arg_name)
 }
 
 
-std::shared_ptr<arg> & arg_def::ptr()
+std::shared_ptr<arg> & def::ptr()
 {
     return this->_ptr;
 }
 
-arg & arg_def::argument()
+arg & def::argument()
 {
     return *this->_ptr;
 }
 
-void arg_def::pet(const char * arg_name)
+void def::pet(const char * arg_name)
 {
     this->_put(arg_name);
+}
+
+bool & def::used()
+{
+    return this->argument().used();
+}
+
+std::vector<std::string> & def::params()
+{
+    return this->argument().values();
 }
 
 bool transfer(int argc, char ** argv)
