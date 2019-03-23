@@ -3,6 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
+#include "kubecli/initializer.hpp"
 #include <sstream>
 
 namespace navagraha {
@@ -12,7 +13,9 @@ extern char INITIALIZERS_PENDING[];
 
 class initializers {
 public:
-    extensions::field<extensions::list_wrapper, INITIALIZERS_PENDING> pending;
+    extensions::field<
+        extensions::special_list<initializer>,
+        INITIALIZERS_PENDING> pending;
 
     static void serialize(initializers & obj, std::ostringstream & str);
 };

@@ -35,6 +35,14 @@ template <> struct serializer<int> {
     }
 };
 
+template <> struct serializer<bool> {
+    static void serialize(bool & obj, std::ostringstream & str)
+    {
+        std::string boolean(obj ? "true" : "false");
+        str.write(boolean.data(), boolean.size());
+    }
+};
+
 template <typename T_Type,
          const char * T_Name,
          typename T_Serializer = serializer<T_Type>>
