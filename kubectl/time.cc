@@ -16,7 +16,7 @@ void time::serialize(time & obj, std::ostringstream & str)
     std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> serializers = {
         extensions::field_serializer(obj.effect),
         extensions::field_serializer(obj.key),
-        extensions::field_serializer(obj.tolerationSeconds),
+        extensions::field_serializer(obj.toleration_seconds),
         extensions::field_serializer(obj.value)
     };
 

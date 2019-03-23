@@ -15,7 +15,7 @@ class time {
 public:
     extensions::field<std::string, TIME_FIELD_EFFECT> effect; 
     extensions::field<std::string, TIME_FIELD_KEY> key;
-    extensions::field<int, TIME_FIELD_TOLERATION_SECONDS> tolerationSeconds; 
+    extensions::field<int, TIME_FIELD_TOLERATION_SECONDS> toleration_seconds;
     extensions::field<std::string, TIME_FIELD_VALUE> value;
 
     static void serialize(time & obj, std::ostringstream & str);
