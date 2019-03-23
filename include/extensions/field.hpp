@@ -1,5 +1,5 @@
-#ifndef _NAVAGRAHA_KUBECTL_FIELD_H
-#define _NAVAGRAHA_KUBECTL_FIELD_H
+#ifndef _NAVAGRAHA_EXTENSION_FIELD_H
+#define _NAVAGRAHA_EXTENSION_FIELD_H
 
 #include "extensions/omittable.hpp"
 #include "extensions/static_constructable.hpp"
@@ -12,7 +12,10 @@ namespace navagraha {
 namespace extensions {
 
 template <typename T_Type> struct serializer {
-    static void serialize(T_Type & obj, std::ostringstream & str);
+    static void serialize(T_Type & obj, std::ostringstream & str)
+    {
+        T_Type::serialize(obj, str);
+    }
 };
 
 template <> struct serializer<std::string> {
@@ -50,7 +53,7 @@ public:
         str.write(T_Name, strlen(T_Name));
         str.put('"');
         str.put(':');
-        T_Serializer::serialize(this->get(), str);
+        T_Serializer::serialize(this->omittable<T_Type>::get(), str);
     }
 };
 

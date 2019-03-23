@@ -16,6 +16,7 @@ public:
 
     operator T & ()
     {
+        this->_omit = true;
         return this->_obj;
     }
 
@@ -32,6 +33,7 @@ public:
 
     T & get()
     {
+        this->_omit = true;
         return this->_obj;
     }
 };
