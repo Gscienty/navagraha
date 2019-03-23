@@ -13,9 +13,7 @@ extern char INITIALIZERS_PENDING[];
 
 class initializers {
 public:
-    extensions::field<
-        extensions::special_list<initializer>,
-        INITIALIZERS_PENDING> pending;
+    extensions::field<extensions::special_list<initializer>, INITIALIZERS_PENDING> pending;
 
     static void serialize(initializers & obj, std::ostringstream & str);
 };
