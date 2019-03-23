@@ -1,10 +1,10 @@
-#include "kubecli/time.hpp"
+#include "kubecil/time.hpp"
 #include <list>
 #include <functional>
 #include <algorithm>
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char TIME_FIELD_EFFECT[] = "effect";
 char TIME_FIELD_KEY[] = "key";

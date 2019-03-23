@@ -4,10 +4,10 @@
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
 #include "extensions/object_wrapper.hpp"
-#include "kubecli/label_selector_requirement.hpp"
+#include "kubecil/label_selector_requirement.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char LABEL_SELECTOR_MATCH_EXPRESSIONS[];
 extern char LABEL_SELECTOR_MATCH_LABELS[];

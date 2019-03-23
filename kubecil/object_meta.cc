@@ -1,10 +1,10 @@
-#include "kubecli/object_meta.hpp"
+#include "kubecil/object_meta.hpp"
 #include <list>
 #include <functional>
 #include <algorithm>
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char OBJECT_META_ANNOTATIONS[] = "annotations";
 char OBJECT_META_CLUSTER_NAME[] = "clusterName";

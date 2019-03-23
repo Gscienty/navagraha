@@ -4,11 +4,11 @@
 #include "extensions/field.hpp"
 #include "extensions/object_wrapper.hpp"
 #include "extensions/list_wrapper.hpp"
-#include "kubecli/time.hpp"
-#include "kubecli/initializers.hpp"
+#include "kubecil/time.hpp"
+#include "kubecil/initializers.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char OBJECT_META_ANNOTATIONS[];
 extern char OBJECT_META_CLUSTER_NAME[];

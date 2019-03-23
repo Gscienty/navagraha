@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char TIME_FIELD_EFFECT[];
 extern char TIME_FIELD_KEY[];

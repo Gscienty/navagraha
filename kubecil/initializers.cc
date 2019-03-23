@@ -1,7 +1,7 @@
-#include "kubecli/initializers.hpp"
+#include "kubecil/initializers.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char INITIALIZERS_PENDING[] = "pending";
 

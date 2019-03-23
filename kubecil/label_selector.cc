@@ -1,7 +1,7 @@
-#include "kubecli/label_selector.hpp"
+#include "kubecil/label_selector.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char LABEL_SELECTOR_MATCH_EXPRESSIONS[] = "matchExpressions";
 char LABEL_SELECTOR_MATCH_LABELS[] = "matchLabels";

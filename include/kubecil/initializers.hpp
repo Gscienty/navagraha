@@ -3,11 +3,11 @@
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
-#include "kubecli/initializer.hpp"
+#include "kubecil/initializer.hpp"
 #include <sstream>
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char INITIALIZERS_PENDING[];
 

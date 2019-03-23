@@ -7,7 +7,7 @@
 #include <sstream>
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char LABEL_SELECTOR_REQUIREMENT_KEY[];
 extern char LABEL_SELECTOR_REQUIREMENT_OPERATOR[];

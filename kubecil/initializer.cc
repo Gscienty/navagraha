@@ -1,7 +1,7 @@
-#include "kubecli/initializer.hpp"
+#include "kubecil/initializer.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char INITIALIZERS_NAME[] = "name";
 

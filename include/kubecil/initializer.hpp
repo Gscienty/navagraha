@@ -6,7 +6,7 @@
 #include <sstream>
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 extern char INITIALIZERS_NAME[];
 

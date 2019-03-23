@@ -1,7 +1,7 @@
-#include "kubecli/label_selector_requirement.hpp"
+#include "kubecil/label_selector_requirement.hpp"
 
 namespace navagraha {
-namespace kubectl {
+namespace kubecil {
 
 char LABEL_SELECTOR_REQUIREMENT_KEY[] = "key";
 char LABEL_SELECTOR_REQUIREMENT_OPERATOR[] = "operator";
