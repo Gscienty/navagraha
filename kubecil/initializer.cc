@@ -1,4 +1,5 @@
 #include "kubecil/initializer.hpp"
+#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubecil {
@@ -7,13 +8,9 @@ char INITIALIZERS_NAME[] = "name";
 
 void initializer::serialize(initializer & obj, std::ostringstream & str)
 {
-    std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> serializers = {
-        extensions::field_serializer(obj.name)
-    };
-
-    str.put('{');
-    extensions::fields_serialize(serializers, str);
-    str.put('}');
+    extensions::link_serializer(extensions::link_serializer_type::link_serializer_type_object)
+        .add(obj.name)
+        .serialize(str);
 }
 
 }
