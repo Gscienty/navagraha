@@ -1,12 +1,12 @@
-#ifndef _NAVAGRAHA_KUBECTL_NODE_SELECTOR_REQUIREMENT_H
-#define _NAVAGRAHA_KUBECTL_NODE_SELECTOR_REQUIREMENT_H
+#ifndef _NAVAGRAHA_KUBEENT_NODE_SELECTOR_REQUIREMENT_H
+#define _NAVAGRAHA_KUBEENT_NODE_SELECTOR_REQUIREMENT_H
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
 #include <sstream>
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char NODE_SELECTOR_REQUIREMENT_KEY[];
 extern char NODE_SELECTOR_REQUIREMENT_OPERATOR[];

@@ -1,8 +1,8 @@
-#include "kubecil/initializer.hpp"
+#include "kubeent/initializer.hpp"
 #include "extensions/link_serializer.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 char INITIALIZERS_NAME[] = "name";
 

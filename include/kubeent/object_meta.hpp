@@ -1,14 +1,14 @@
-#ifndef _NAVAGRAHA_KUBECTL_OBJECT_META_H
-#define _NAVAGRAHA_KUBECTL_OBJECT_META_H
+#ifndef _NAVAGRAHA_KUBEENT_OBJECT_META_H
+#define _NAVAGRAHA_KUBEENT_OBJECT_META_H
 
 #include "extensions/field.hpp"
 #include "extensions/object_wrapper.hpp"
 #include "extensions/list_wrapper.hpp"
-#include "kubecil/time.hpp"
-#include "kubecil/initializers.hpp"
+#include "kubeent/time.hpp"
+#include "kubeent/initializers.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char OBJECT_META_ANNOTATIONS[];
 extern char OBJECT_META_CLUSTER_NAME[];

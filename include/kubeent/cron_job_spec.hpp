@@ -1,10 +1,10 @@
-#ifndef _NAVAGRAHA_KUBECTL_CRON_JOB_SPEC_H
-#define _NAVAGRAHA_KUBECTL_CRON_JOB_SPEC_H
+#ifndef _NAVAGRAHA_KUBEENT_CRON_JOB_SPEC_H
+#define _NAVAGRAHA_KUBEENT_CRON_JOB_SPEC_H
 
 #include "extensions/field.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char CRON_JOB_SPEC_CONCURRENCY_POLICY[];
 extern char CRON_JOB_SPEC_FAILED_JOBS_HISTORY_LIMIT[];

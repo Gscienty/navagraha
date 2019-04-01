@@ -1,13 +1,13 @@
-#ifndef _NAVAGRAHA_KUBECTL_LABEL_SELECTOR_H
-#define _NAVAGRAHA_KUBECTL_LABEL_SELECTOR_H
+#ifndef _NAVAGRAHA_KUBEENT_LABEL_SELECTOR_H
+#define _NAVAGRAHA_KUBEENT_LABEL_SELECTOR_H
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
 #include "extensions/object_wrapper.hpp"
-#include "kubecil/label_selector_requirement.hpp"
+#include "kubeent/label_selector_requirement.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char LABEL_SELECTOR_MATCH_EXPRESSIONS[];
 extern char LABEL_SELECTOR_MATCH_LABELS[];

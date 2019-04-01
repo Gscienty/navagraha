@@ -1,12 +1,12 @@
-#ifndef _NAVAGRAHA_KUBECLI_NODE_SELECTOR_TERM_H
-#define _NAVAGRAHA_KUBECLI_NODE_SELECTOR_TERM_H
+#ifndef _NAVAGRAHA_KUBEENT_NODE_SELECTOR_TERM_H
+#define _NAVAGRAHA_KUBEENT_NODE_SELECTOR_TERM_H
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
-#include "kubecil/node_selector_requirement.hpp"
+#include "kubeent/node_selector_requirement.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char NODE_SELECTOR_TERM_MATCH_EXPRESSIONS[];
 extern char NODE_SELECTOR_TERM_MATCH_FIELDS[];

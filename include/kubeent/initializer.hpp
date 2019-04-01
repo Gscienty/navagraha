@@ -1,12 +1,12 @@
-#ifndef _NAVAGRAHA_EXTENSION_INITIALIZER_H
-#define _NAVAGRAHA_EXTENSION_INITIALIZER_H
+#ifndef _NAVAGRAHA_KUBEENT_INITIALIZER_H
+#define _NAVAGRAHA_KUBEENT_INITIALIZER_H
 
 #include "extensions/field.hpp"
 #include <string>
 #include <sstream>
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char INITIALIZERS_NAME[];
 

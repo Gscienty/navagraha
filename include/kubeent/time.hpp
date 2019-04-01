@@ -1,10 +1,10 @@
-#ifndef _NAVAGRAHA_KUBECTL_TIME_H
-#define _NAVAGRAHA_KUBECTL_TIME_H
+#ifndef _NAVAGRAHA_KUBEENT_TIME_H
+#define _NAVAGRAHA_KUBEENT_TIME_H
 
 #include "extensions/field.hpp"
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char TIME_FIELD_EFFECT[];
 extern char TIME_FIELD_KEY[];

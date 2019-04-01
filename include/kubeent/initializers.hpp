@@ -1,13 +1,13 @@
-#ifndef _NAVAGRAHA_KUBECTL_INITIALIZERS_H
-#define _NAVAGRAHA_KUBECTL_INITIALIZERS_H
+#ifndef _NAVAGRAHA_KUBEENT_INITIALIZERS_H
+#define _NAVAGRAHA_KUBEENT_INITIALIZERS_H
 
 #include "extensions/field.hpp"
 #include "extensions/list_wrapper.hpp"
-#include "kubecil/initializer.hpp"
+#include "kubeent/initializer.hpp"
 #include <sstream>
 
 namespace navagraha {
-namespace kubecil {
+namespace kubeent {
 
 extern char INITIALIZERS_PENDING[];
 
