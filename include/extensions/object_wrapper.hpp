@@ -13,6 +13,8 @@ public:
 
     static void serialize(object_wrapper & obj, std::ostringstream & str);
 
+    void serialize(std::ostringstream & str);
+
     template <typename T_Field> object_wrapper & operator= (T_Field & field)
     {
         this->serializer = std::bind(&T_Field::serialize,

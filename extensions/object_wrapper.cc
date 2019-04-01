@@ -13,5 +13,10 @@ void object_wrapper::serialize(object_wrapper & obj, std::ostringstream & str)
     }
 }
 
+void object_wrapper::serialize(std::ostringstream & str)
+{
+    object_wrapper::serialize(*this, str);
+}
+
 }
 }
