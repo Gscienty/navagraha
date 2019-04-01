@@ -10,8 +10,8 @@ namespace navagraha {
 namespace extensions {
 
 enum link_serializer_type {
-    link_serializer_type_object,
-    link_serializer_type_list
+    object,
+    list
 };
 
 class link_serializer {
