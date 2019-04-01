@@ -11,7 +11,7 @@ char LABEL_SELECTOR_REQUIREMENT_VALUES[] = "values";
 void label_selector_requirement::serialize(label_selector_requirement & obj,
                                            std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.key)
         .add(obj.oper)
         .add(obj.values)

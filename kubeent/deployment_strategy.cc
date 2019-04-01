@@ -9,7 +9,7 @@ char DEPLOYMENT_STRATEGY_TYPE[] = "type";
 
 void deployment_strategy::serialize(deployment_strategy & obj, std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.rolling_update)
         .add(obj.type)
         .serialize(str);

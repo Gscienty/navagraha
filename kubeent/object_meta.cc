@@ -26,7 +26,7 @@ char OBJECT_META_UID[] = "uid";
 
 void object_meta::serialize(object_meta & obj, std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.annotations)
         .add(obj.cluster_name)
         .add(obj.creation_timestamp)

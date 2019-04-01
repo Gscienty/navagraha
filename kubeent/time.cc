@@ -14,7 +14,7 @@ char TIME_FIELD_VALUE[] = "value";
 
 void time::serialize(time & obj, std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.effect)
         .add(obj.key)
         .add(obj.toleration_seconds)

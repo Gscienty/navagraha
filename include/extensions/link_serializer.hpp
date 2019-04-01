@@ -19,7 +19,7 @@ private:
     link_serializer_type _type;
     std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> _serializers;
 public:
-    link_serializer(link_serializer_type type);
+    link_serializer(link_serializer_type type = link_serializer_type::object);
 
     template <typename T_Field> link_serializer & add(T_Field & field)
     {

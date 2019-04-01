@@ -10,7 +10,7 @@ char PREFERED_SCHEDULING_TERM_WEIGHT[] = "weight";
 void prefered_scheduling_term::serialize(prefered_scheduling_term & obj,
                                          std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.perference)
         .add(obj.weight)
         .serialize(str);

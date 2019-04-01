@@ -10,7 +10,7 @@ char ROLLING_UPDATE_DEPLOYMENT_MAX_UNAVAILABLE[] = "maxUnavailable";
 void rolling_update_deployment::serialize(rolling_update_deployment & obj,
                                           std::ostringstream & str)
 {
-    extensions::link_serializer(extensions::link_serializer_type::object)
+    extensions::link_serializer()
         .add(obj.max_surge)
         .add(obj.max_unavailable)
         .serialize(str);
