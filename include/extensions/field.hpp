@@ -16,6 +16,11 @@ template <typename T_Type> struct serializer {
     {
         T_Type::serialize(obj, str);
     }
+
+    static void deserialize(T_Type & obj, std::istringstream & str)
+    {
+        T_Type::deserialize(obj, str);
+    }
 };
 
 template <> struct serializer<std::string> {
@@ -25,6 +30,16 @@ template <> struct serializer<std::string> {
         str.write(obj.data(), obj.size());
         str.put('"');
     }
+
+    static void deserialize(std::string & obj, std::istringstream & str)
+    {
+        char c;
+        while (c = str.get(), c != '"');
+        for (c = str.get(); c != '"' || (*obj.rbegin() == '\\'); c = str.get()) {
+            obj.push_back(c);
+        }
+        str.get();
+    }
 };
 
 template <> struct serializer<int> {
@@ -32,6 +47,18 @@ template <> struct serializer<int> {
     {
         std::string number = std::to_string(obj);
         str.write(number.data(), number.size());
+    }
+
+    static void deserialize(int & obj, std::istringstream & str)
+    {
+        std::stringstream num_str;
+        while (str.peek() < '0' || '9' < str.peek()) {
+            str.get();
+        }
+        while ('0' <= str.peek() && str.peek() <= '9') {
+            num_str.put(str.get());
+        }
+        obj = std::stoi(num_str.str());
     }
 };
 
@@ -41,6 +68,25 @@ template <> struct serializer<bool> {
         std::string boolean(obj ? "true" : "false");
         str.write(boolean.data(), boolean.size());
     }
+
+    static void deserialize(bool & obj, std::istringstream & str)
+    {
+        std::stringstream bool_str;
+        while (str.peek() < 'a' || 'z' < str.peek()) {
+            str.get();
+        }
+        while ('a' <= str.peek() && str.peek() <= 'z') {
+            bool_str.put(str.get());
+        }
+        std::string bool_ = bool_str.str();
+
+        if (bool_.compare("true")) {
+            obj = true;
+        }
+        else if (bool_.compare("false")) {
+            obj = false;
+        }
+    }
 };
 
 template <typename T_Type,
@@ -48,6 +94,8 @@ template <typename T_Type,
          typename T_Serializer = serializer<T_Type>>
 class field : public omittable<T_Type> {
 public:
+    const char * const field_name = T_Name;
+
     field<T_Type, T_Name, T_Serializer> & operator=(T_Type && obj)
     {
         this->omittable<T_Type>::operator=(obj);
@@ -62,6 +110,14 @@ public:
         str.put('"');
         str.put(':');
         T_Serializer::serialize(this->omittable<T_Type>::get(), str);
+    }
+
+    void deserialize(std::istringstream & str)
+    {
+        while (str.peek() != ':') {
+            str.get();
+        }
+        T_Serializer::deserialize(this->omittable<T_Type>::get(), str);
     }
 };
 
