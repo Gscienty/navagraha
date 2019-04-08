@@ -175,9 +175,9 @@ template <> struct serializer<absobj_field_value> {
         case '0' ... '9':
             obj.type = absobj_field_type::num;
             serializer<int>::deserialize(obj.val.num, str);
+            break;
         case '{':
             obj.type = absobj_field_type::obj;
-
             while (str.peek() != '}') {
                 key_str.str("");
                 while (str.peek() != '"' && str.peek() != '}') {
@@ -193,10 +193,10 @@ template <> struct serializer<absobj_field_value> {
                 while (str.peek() != ':') {
                     str.get();
                 }
+                std::string key = key_str.str();
                 absobj_field_value val;
                 serializer<absobj_field_value>::deserialize(val, str);
-                obj.obj[key_str.str()] = val;
-                std::cout << val.type << std::endl;
+                obj.obj[key] = val;
             }
         }
     }
