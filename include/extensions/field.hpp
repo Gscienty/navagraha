@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string.h>
 #include <list>
+#include <string>
 
 namespace navagraha {
 namespace extensions {
@@ -38,7 +39,6 @@ template <> struct serializer<std::string> {
         for (c = str.get(); c != '"' || (*obj.rbegin() == '\\'); c = str.get()) {
             obj.push_back(c);
         }
-        str.get();
     }
 };
 
@@ -94,7 +94,7 @@ template <typename T_Type,
          typename T_Serializer = serializer<T_Type>>
 class field : public omittable<T_Type> {
 public:
-    const char * const field_name = T_Name;
+    const char * const key = T_Name;
 
     field<T_Type, T_Name, T_Serializer> & operator=(T_Type && obj)
     {
@@ -128,6 +128,17 @@ field_serializer(T_Field & field)
 {
     return std::make_pair(field.omit(),
                           std::bind(&T_Field::serialize,
+                                    &field,
+                                    std::placeholders::_1));
+}
+
+template <typename T_Field>
+inline
+std::pair<std::string, std::function<void (std::istringstream &)>>
+field_deserialize(T_Field & field)
+{
+    return std::make_pair(std::string(field.key),
+                          std::bind(&T_Field::deserialize,
                                     &field,
                                     std::placeholders::_1));
 }
