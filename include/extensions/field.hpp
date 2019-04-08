@@ -8,9 +8,39 @@
 #include <string.h>
 #include <list>
 #include <string>
+#include <map>
+
+#include <iostream>
 
 namespace navagraha {
 namespace extensions {
+
+enum absobj_field_type {
+    obj,
+    str,
+    num,
+    boolean
+};
+
+struct absobj_field_value {
+    absobj_field_type type;
+    union {
+        int num;
+        bool boolean;
+    } val;
+    std::string str;
+    std::map<std::string, absobj_field_value> obj;
+
+    absobj_field_value();
+    absobj_field_value(int val);
+    absobj_field_value(bool val);
+    absobj_field_value(const char * const val);
+    absobj_field_value(std::string val);
+
+    static void serialize(absobj_field_value & obj, std::ostringstream & str);
+
+    static void deserialize(absobj_field_value & obj, std::istringstream & str);
+};
 
 template <typename T_Type> struct serializer {
     static void serialize(T_Type & obj, std::ostringstream & str)
@@ -80,11 +110,94 @@ template <> struct serializer<bool> {
         }
         std::string bool_ = bool_str.str();
 
-        if (bool_.compare("true")) {
+        if (bool_.compare("true") == 0) {
             obj = true;
         }
-        else if (bool_.compare("false")) {
+        else if (bool_.compare("false") == 0) {
             obj = false;
+        }
+    }
+};
+
+template <> struct serializer<absobj_field_value> {
+    static void serialize(absobj_field_value & obj, std::ostringstream & str)
+    {
+        bool first_field = true;
+        switch (obj.type) {
+        case absobj_field_type::boolean:
+            serializer<bool>::serialize(obj.val.boolean, str);
+            break;
+        case absobj_field_type::str:
+            serializer<std::string>::serialize(obj.str, str);
+            break;
+        case absobj_field_type::num:
+            serializer<int>::serialize(obj.val.num, str);
+            break;
+        case absobj_field_type::obj:
+            str.put('{');
+            for (auto & item : obj.obj) {
+                if (first_field) {
+                    first_field = false;
+                }
+                else {
+                    str.put(',');
+                }
+                str.put('"');
+                str.write(item.first.c_str(), item.first.size());
+                str.put('"');
+                str.put(':');
+                serializer<absobj_field_value>::serialize(item.second, str);
+            }
+            str.put('}');
+        }
+    }
+
+    static void deserialize(absobj_field_value & obj, std::istringstream & str)
+    {
+        std::ostringstream key_str;
+
+        while (str.peek() != '"'
+               && (str.peek() < 'a' || 'z' < str.peek())
+               && str.peek() != '{'
+               && (str.peek() < '0' || '9' < str.peek())) {
+            str.get();
+        }
+
+        switch (str.peek()) {
+        case '"':
+            obj.type = absobj_field_type::str;
+            serializer<std::string>::deserialize(obj.str, str);
+            break;
+        case 'a' ... 'z':
+            obj.type = absobj_field_type::boolean;
+            serializer<bool>::deserialize(obj.val.boolean, str);
+            break;
+        case '0' ... '9':
+            obj.type = absobj_field_type::num;
+            serializer<int>::deserialize(obj.val.num, str);
+        case '{':
+            obj.type = absobj_field_type::obj;
+
+            while (str.peek() != '}') {
+                key_str.str("");
+                while (str.peek() != '"' && str.peek() != '}') {
+                    str.get();
+                }
+                if (str.peek() == '}') {
+                    break;
+                }
+                str.get();
+                while(str.peek() != '"') {
+                    key_str.put(str.get());
+                }
+                while (str.peek() != ':') {
+                    str.get();
+                }
+                absobj_field_value val;
+                serializer<absobj_field_value>::deserialize(val, str);
+                obj.obj[key_str.str()] = val;
+                std::cout << val.type << std::endl;
+            }
         }
     }
 };

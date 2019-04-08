@@ -1,8 +1,11 @@
 #ifndef _NAVAGRAHA_EXTENSION_OBJECT_WRAPPER_H
 #define _NAVAGRAHA_EXTENSION_OBJECT_WRAPPER_H
 
+#include "extensions/field.hpp"
 #include <functional>
 #include <sstream>
+#include <string>
+#include <map>
 
 namespace navagraha {
 namespace extensions {
@@ -10,10 +13,7 @@ namespace extensions {
 class object_wrapper {
 public:
     std::function<void (std::ostringstream &)> serializer;
-
-    static void serialize(object_wrapper & obj, std::ostringstream & str);
-
-    void serialize(std::ostringstream & str);
+    absobj_field_value obj;
 
     template <typename T_Field> object_wrapper & operator= (T_Field & field)
     {
@@ -21,6 +21,14 @@ public:
                                      field,
                                      std::placeholders::_1);
     }
+
+    static void serialize(object_wrapper & obj, std::ostringstream & str);
+
+    void serialize(std::ostringstream & str);
+
+    static void deserialize(object_wrapper & obj, std::istringstream & str);
+
+    void deserialize(std::istringstream & str);
 };
 
 }
