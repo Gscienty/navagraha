@@ -82,6 +82,11 @@ template <> struct serializer<std::string> {
             obj.push_back(c);
         }
     }
+
+    static absobj_field_value to_abstract(std::string & obj)
+    {
+        return absobj_field_value(obj);
+    }
 };
 
 template <> struct serializer<int> {
@@ -101,6 +106,11 @@ template <> struct serializer<int> {
             num_str.put(str.get());
         }
         obj = std::stoi(num_str.str());
+    }
+
+    static absobj_field_value to_abstract(int & obj)
+    {
+        return absobj_field_value(obj);
     }
 };
 
@@ -128,6 +138,11 @@ template <> struct serializer<bool> {
         else if (bool_.compare("false") == 0) {
             obj = false;
         }
+    }
+
+    static absobj_field_value to_abstract(bool & obj)
+    {
+        return absobj_field_value(obj);
     }
 };
 
@@ -232,6 +247,11 @@ template <> struct serializer<absobj_field_value> {
                 obj.list.push_back(val);
             }
         }
+    }
+
+    static absobj_field_value to_abstract(absobj_field_value & obj)
+    {
+        return obj;
     }
 };
 
