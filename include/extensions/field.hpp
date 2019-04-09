@@ -52,12 +52,17 @@ struct absobj_field_value {
 template <typename T_Type> struct serializer {
     static void serialize(T_Type & obj, std::ostringstream & str)
     {
-        T_Type::serialize(obj, str);
+        obj.serialize(str);
     }
 
     static void deserialize(T_Type & obj, std::istringstream & str)
     {
-        T_Type::deserialize(obj, str);
+        obj.deserialize(str);
+    }
+
+    static absobj_field_value to_abstract(T_Type & obj)
+    {
+        return obj.to_abstract();
     }
 };
 
