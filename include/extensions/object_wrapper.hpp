@@ -22,6 +22,8 @@ public:
                                      std::placeholders::_1);
     }
 
+    object_wrapper & serialized_self();
+
     static void serialize(object_wrapper & obj, std::ostringstream & str);
 
     void serialize(std::ostringstream & str);

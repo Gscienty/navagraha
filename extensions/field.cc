@@ -5,27 +5,27 @@
 namespace navagraha {
 namespace extensions {
 
-absobj_field_value::absobj_field_value(int val) : type(absobj_field_type::num)
+absobj_field_value::absobj_field_value(int val) : type(absobj_field_type_num)
 {
     this->val.num = val;
 }
 
-absobj_field_value::absobj_field_value(bool val) : type(absobj_field_type::boolean)
+absobj_field_value::absobj_field_value(bool val) : type(absobj_field_type_boolean)
 {
     this->val.boolean = val;
 }
 
-absobj_field_value::absobj_field_value(const char * const val) : type(absobj_field_type::str)
+absobj_field_value::absobj_field_value(const char * const val) : type(absobj_field_type_str)
 {
     this->str = val;
 }
 
-absobj_field_value::absobj_field_value(std::string val) : type(absobj_field_type::str)
+absobj_field_value::absobj_field_value(std::string val) : type(absobj_field_type_str)
 {
     this->str = val;
 }
 
-absobj_field_value::absobj_field_value() : type(absobj_field_type::obj)
+absobj_field_value::absobj_field_value() : type(absobj_field_type_obj)
 {
 
 }
@@ -56,6 +56,18 @@ void fields_serialize(std::list<std::pair<bool, std::function<void (std::ostring
                         }
                   });
 
+}
+
+absobj_field_value & absobj_field_value::self_serialize(std::ostringstream & str)
+{
+    absobj_field_value::serialize(*this, str);
+    return *this;
+}
+
+absobj_field_value & absobj_field_value::self_deserialize(std::istringstream & str)
+{
+    absobj_field_value::deserialize(*this, str);
+    return *this;
 }
 
 }

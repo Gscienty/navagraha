@@ -17,11 +17,11 @@ namespace navagraha {
 namespace extensions {
 
 enum absobj_field_type {
-    obj,
-    list,
-    str,
-    num,
-    boolean
+    absobj_field_type_obj,
+    absobj_field_type_list,
+    absobj_field_type_str,
+    absobj_field_type_num,
+    absobj_field_type_boolean
 };
 
 struct absobj_field_value {
@@ -43,6 +43,10 @@ struct absobj_field_value {
     static void serialize(absobj_field_value & obj, std::ostringstream & str);
 
     static void deserialize(absobj_field_value & obj, std::istringstream & str);
+
+    absobj_field_value & self_serialize(std::ostringstream & str);
+
+    absobj_field_value & self_deserialize(std::istringstream & str);
 };
 
 template <typename T_Type> struct serializer {
@@ -127,16 +131,16 @@ template <> struct serializer<absobj_field_value> {
     {
         bool first_field = true;
         switch (obj.type) {
-        case absobj_field_type::boolean:
+        case absobj_field_type_boolean:
             serializer<bool>::serialize(obj.val.boolean, str);
             break;
-        case absobj_field_type::str:
+        case absobj_field_type_str:
             serializer<std::string>::serialize(obj.str, str);
             break;
-        case absobj_field_type::num:
+        case absobj_field_type_num:
             serializer<int>::serialize(obj.val.num, str);
             break;
-        case absobj_field_type::obj:
+        case absobj_field_type_obj:
             str.put('{');
             for (auto & item : obj.obj) {
                 if (first_field) {
@@ -153,7 +157,7 @@ template <> struct serializer<absobj_field_value> {
             }
             str.put('}');
             break;
-        case absobj_field_type::list:
+        case absobj_field_type_list:
             str.put('[');
             for (auto & item : obj.list) {
                 if (first_field) {
@@ -181,19 +185,19 @@ template <> struct serializer<absobj_field_value> {
 
         switch (str.peek()) {
         case '"':
-            obj.type = absobj_field_type::str;
+            obj.type = absobj_field_type_str;
             serializer<std::string>::deserialize(obj.str, str);
             break;
         case 'a' ... 'z':
-            obj.type = absobj_field_type::boolean;
+            obj.type = absobj_field_type_boolean;
             serializer<bool>::deserialize(obj.val.boolean, str);
             break;
         case '0' ... '9':
-            obj.type = absobj_field_type::num;
+            obj.type = absobj_field_type_num;
             serializer<int>::deserialize(obj.val.num, str);
             break;
         case '{':
-            obj.type = absobj_field_type::obj;
+            obj.type = absobj_field_type_obj;
             while (str.peek() != '}') {
                 key_str.str("");
                 while (str.peek() != '"' && str.peek() != '}') {
@@ -216,7 +220,7 @@ template <> struct serializer<absobj_field_value> {
             }
             break;
         case '[':
-            obj.type = absobj_field_type::list;
+            obj.type = absobj_field_type_list;
             while (str.peek() != ']') {
                 absobj_field_value val;
                 serializer<absobj_field_value>::deserialize(val, str);

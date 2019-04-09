@@ -16,7 +16,7 @@ extern char CONTAINER_PORT_PROTOCOL[];
 
 class container_port {
 private:
-    static extensions::link_serializer bind(container_port & obj);
+    static extensions::link_serializer bind(container_port & obj, extensions::link_serializer_type type);
 public:
     extensions::field<int, CONTAINER_PORT_CONTAINER_PORT> container_port_;
     extensions::field<std::string, CONTAINER_PORT_HOST_IP> host_ip;
@@ -26,6 +26,11 @@ public:
 
     static void serialize(container_port & obj, std::ostringstream & str);
     static void deserialize(container_port & obj, std::istringstream & str);
+    static extensions::absobj_field_value to_abstract(container_port & obj);
+
+    container_port & serialize(std::ostringstream & str);
+    container_port & deserialize(std::istringstream & str);
+    extensions::absobj_field_value to_abstract();
 };
 }
 }

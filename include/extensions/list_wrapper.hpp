@@ -10,38 +10,13 @@ namespace navagraha {
 namespace extensions {
 
 class list_wrapper {
+private:
+    absobj_field_value _list;
 public:
-    std::list<std::function<void (std::ostringstream &)>> serializers;
-
-    template <typename T_Field> void append(T_Field & field)
-    {
-        this->serializers.push_back(std::bind(&T_Field::serialize,
-                                              field,
-                                              std::placeholders::_1));
-    }
-
-    void append(std::string & field)
-    {
-        this->serializers.push_back(std::bind(&serializer<std::string>::serialize,
-                                              field,
-                                              std::placeholders::_1));
-    }
-
-    void append(int & field)
-    {
-        this->serializers.push_back(std::bind(&serializer<int>::serialize,
-                                              field,
-                                              std::placeholders::_1));
-    }
-
-    void append(bool & field)
-    {
-        this->serializers.push_back(std::bind(&serializer<bool>::serialize,
-                                              field,
-                                              std::placeholders::_1));
-    }
-
+    list_wrapper();
+    std::vector<absobj_field_value> & values();
     static void serialize(list_wrapper & obj, std::ostringstream & str);
+    list_wrapper & serialize(std::ostringstream & str);
 };
 
 template <typename T>
@@ -51,12 +26,12 @@ private:
 public:
     void append(T & field)
     {
-        this->_wrapper.append(field);
+        this->_wrapper.values().push_back(field);
     }
 
     static void serialize(special_list<T> & obj, std::ostringstream & str)
     {
-        list_wrapper::serialize(obj._wrapper, str);
+        obj._wrapper.serialize(str);
     }
 };
 

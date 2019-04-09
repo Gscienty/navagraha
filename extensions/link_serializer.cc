@@ -9,41 +9,28 @@ link_serializer::link_serializer(link_serializer_type type)
 
 }
 
-char link_serializer::begin_brackets() const {
-    if (this->_type == link_serializer_type::list) {
-        return '[';
-    }
-    else {
-        return '{';
-    }
-}
-
-char link_serializer::end_brackets() const
-{
-    if (this->_type == link_serializer_type::list) {
-        return ']';
-    }
-    else {
-        return '}';
-    }
-}
-
 void link_serializer::serialize(std::ostringstream & str)
 {
-    str.put(this->begin_brackets());
+    if (this->_type != link_serializer_type_serialize) {
+        return;
+    }
+    str.put('{');
     fields_serialize(this->_serializers, str);
-    str.put(this->end_brackets());
+    str.put('}');
 }
 
 void link_serializer::deserialize(std::istringstream & str)
 {
+    if (this->_type != link_serializer_type_deserialize) {
+        return;
+    }
     std::ostringstream key_str;
-    while (str.peek() != this->end_brackets()) {
+    while (str.peek() != '}') {
         key_str.str("");
-        while (str.peek() != '"' && str.peek() != this->end_brackets()) {
+        while (str.peek() != '"' && str.peek() != '}') {
             str.get();
         }
-        if (str.peek() == this->end_brackets()) {
+        if (str.peek() == '}') {
             break;
         }
         str.get();
@@ -56,7 +43,11 @@ void link_serializer::deserialize(std::istringstream & str)
             deserialize_iter->second(str);
         }
     }
-    str.get();
+}
+
+absobj_field_value link_serializer::to_abstract()
+{
+    return this->_absobj;
 }
 
 }

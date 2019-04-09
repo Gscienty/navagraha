@@ -14,6 +14,14 @@ void object_wrapper::serialize(object_wrapper & obj, std::ostringstream & str)
     }
 }
 
+object_wrapper & object_wrapper::serialized_self()
+{
+    this->serializer = std::bind(&absobj_field_value::serialize,
+                                 this->obj,
+                                 std::placeholders::_1);
+    return *this;
+}
+
 void object_wrapper::serialize(std::ostringstream & str)
 {
     object_wrapper::serialize(*this, str);
