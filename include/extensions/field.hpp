@@ -9,6 +9,7 @@
 #include <list>
 #include <string>
 #include <map>
+#include <vector>
 
 #include <iostream>
 
@@ -17,6 +18,7 @@ namespace extensions {
 
 enum absobj_field_type {
     obj,
+    list,
     str,
     num,
     boolean
@@ -30,6 +32,7 @@ struct absobj_field_value {
     } val;
     std::string str;
     std::map<std::string, absobj_field_value> obj;
+    std::vector<absobj_field_value> list;
 
     absobj_field_value();
     absobj_field_value(int val);
@@ -149,6 +152,19 @@ template <> struct serializer<absobj_field_value> {
                 serializer<absobj_field_value>::serialize(item.second, str);
             }
             str.put('}');
+            break;
+        case absobj_field_type::list:
+            str.put('[');
+            for (auto & item : obj.list) {
+                if (first_field) {
+                    first_field = false;
+                }
+                else {
+                    str.put(',');
+                }
+                serializer<absobj_field_value>::serialize(item, str);
+            }
+            str.put(']');
         }
     }
 
@@ -197,6 +213,14 @@ template <> struct serializer<absobj_field_value> {
                 absobj_field_value val;
                 serializer<absobj_field_value>::deserialize(val, str);
                 obj.obj[key] = val;
+            }
+            break;
+        case '[':
+            obj.type = absobj_field_type::list;
+            while (str.peek() != ']') {
+                absobj_field_value val;
+                serializer<absobj_field_value>::deserialize(val, str);
+                obj.list.push_back(val);
             }
         }
     }

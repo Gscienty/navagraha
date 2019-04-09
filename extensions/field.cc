@@ -19,6 +19,7 @@ absobj_field_value::absobj_field_value(const char * const val) : type(absobj_fie
 {
     this->str = val;
 }
+
 absobj_field_value::absobj_field_value(std::string val) : type(absobj_field_type::str)
 {
     this->str = val;
