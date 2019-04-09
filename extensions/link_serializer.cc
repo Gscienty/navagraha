@@ -45,7 +45,7 @@ void link_serializer::deserialize(std::istringstream & str)
     }
 }
 
-absobj_field_value link_serializer::to_abstract()
+abstract_object link_serializer::to_abstract()
 {
     return this->_absobj;
 }

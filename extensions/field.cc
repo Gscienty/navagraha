@@ -5,39 +5,29 @@
 namespace navagraha {
 namespace extensions {
 
-absobj_field_value::absobj_field_value(int val) : type(absobj_field_type_num)
+abstract_object::abstract_object(int val) : type(absobj_field_type_num)
 {
     this->val.num = val;
 }
 
-absobj_field_value::absobj_field_value(bool val) : type(absobj_field_type_boolean)
+abstract_object::abstract_object(bool val) : type(absobj_field_type_boolean)
 {
     this->val.boolean = val;
 }
 
-absobj_field_value::absobj_field_value(const char * const val) : type(absobj_field_type_str)
+abstract_object::abstract_object(const char * const val) : type(absobj_field_type_str)
 {
     this->str = val;
 }
 
-absobj_field_value::absobj_field_value(std::string val) : type(absobj_field_type_str)
+abstract_object::abstract_object(std::string val) : type(absobj_field_type_str)
 {
     this->str = val;
 }
 
-absobj_field_value::absobj_field_value() : type(absobj_field_type_obj)
+abstract_object::abstract_object() : type(absobj_field_type_obj)
 {
 
-}
-
-void absobj_field_value::serialize(absobj_field_value & obj, std::ostringstream & str)
-{
-    serializer<absobj_field_value>::serialize(obj, str);
-}
-
-void absobj_field_value::deserialize(absobj_field_value & obj, std::istringstream & str)
-{
-    serializer<absobj_field_value>::deserialize(obj, str);
 }
 
 void fields_serialize(std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> & serializers,
@@ -58,15 +48,19 @@ void fields_serialize(std::list<std::pair<bool, std::function<void (std::ostring
 
 }
 
-absobj_field_value & absobj_field_value::self_serialize(std::ostringstream & str)
+abstract_object & abstract_object::serialize(std::ostringstream & str)
 {
-    absobj_field_value::serialize(*this, str);
+    serializer<abstract_object>::serialize(*this, str);
     return *this;
 }
 
-absobj_field_value & absobj_field_value::self_deserialize(std::istringstream & str)
+abstract_object & abstract_object::deserialize(std::istringstream & str)
 {
-    absobj_field_value::deserialize(*this, str);
+    serializer<abstract_object>::deserialize(*this, str);
+    return *this;
+}
+abstract_object abstract_object::to_abstract()
+{
     return *this;
 }
 

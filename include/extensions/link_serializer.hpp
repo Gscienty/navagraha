@@ -21,7 +21,7 @@ private:
     link_serializer_type _type;
     std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> _serializers;
     std::map<std::string, std::function<void (std::istringstream &)>> _deserializers;
-    absobj_field_value _absobj; 
+    abstract_object _absobj; 
 public:
     link_serializer(link_serializer_type type = link_serializer_type_serialize);
 
@@ -43,7 +43,7 @@ public:
 
     void serialize(std::ostringstream & str);
     void deserialize(std::istringstream & str);
-    absobj_field_value to_abstract();
+    abstract_object to_abstract();
 };
 
 }

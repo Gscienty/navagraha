@@ -16,37 +16,33 @@
 namespace navagraha {
 namespace extensions {
 
-enum absobj_field_type {
-    absobj_field_type_obj,
-    absobj_field_type_list,
-    absobj_field_type_str,
-    absobj_field_type_num,
-    absobj_field_type_boolean
+enum abstract_object_type {
+    abstract_object_type_obj,
+    abstract_object_type_list,
+    abstract_object_type_str,
+    abstract_object_type_num,
+    abstract_object_type_boolean
 };
 
-struct absobj_field_value {
-    absobj_field_type type;
+struct abstract_object {
+    abstract_object_type type;
     union {
         int num;
         bool boolean;
     } val;
     std::string str;
-    std::map<std::string, absobj_field_value> obj;
-    std::vector<absobj_field_value> list;
+    std::map<std::string, abstract_object> obj;
+    std::vector<abstract_object> list;
 
-    absobj_field_value();
-    absobj_field_value(int val);
-    absobj_field_value(bool val);
-    absobj_field_value(const char * const val);
-    absobj_field_value(std::string val);
+    abstract_object();
+    abstract_object(int val);
+    abstract_object(bool val);
+    abstract_object(const char * const val);
+    abstract_object(std::string val);
 
-    static void serialize(absobj_field_value & obj, std::ostringstream & str);
-
-    static void deserialize(absobj_field_value & obj, std::istringstream & str);
-
-    absobj_field_value & self_serialize(std::ostringstream & str);
-
-    absobj_field_value & self_deserialize(std::istringstream & str);
+    abstract_object & serialize(std::ostringstream & str);
+    abstract_object & deserialize(std::istringstream & str);
+    abstract_object to_abstract();
 };
 
 template <typename T_Type> struct serializer {
@@ -60,7 +56,7 @@ template <typename T_Type> struct serializer {
         obj.deserialize(str);
     }
 
-    static absobj_field_value to_abstract(T_Type & obj)
+    static abstract_object to_abstract(T_Type & obj)
     {
         return obj.to_abstract();
     }
@@ -83,9 +79,9 @@ template <> struct serializer<std::string> {
         }
     }
 
-    static absobj_field_value to_abstract(std::string & obj)
+    static abstract_object to_abstract(std::string & obj)
     {
-        return absobj_field_value(obj);
+        return abstract_object(obj);
     }
 };
 
@@ -108,9 +104,9 @@ template <> struct serializer<int> {
         obj = std::stoi(num_str.str());
     }
 
-    static absobj_field_value to_abstract(int & obj)
+    static abstract_object to_abstract(int & obj)
     {
-        return absobj_field_value(obj);
+        return abstract_object(obj);
     }
 };
 
@@ -140,27 +136,27 @@ template <> struct serializer<bool> {
         }
     }
 
-    static absobj_field_value to_abstract(bool & obj)
+    static abstract_object to_abstract(bool & obj)
     {
-        return absobj_field_value(obj);
+        return abstract_object(obj);
     }
 };
 
-template <> struct serializer<absobj_field_value> {
-    static void serialize(absobj_field_value & obj, std::ostringstream & str)
+template <> struct serializer<abstract_object> {
+    static void serialize(abstract_object & obj, std::ostringstream & str)
     {
         bool first_field = true;
         switch (obj.type) {
-        case absobj_field_type_boolean:
+        case abstract_object_type_boolean:
             serializer<bool>::serialize(obj.val.boolean, str);
             break;
-        case absobj_field_type_str:
+        case abstract_object_type_str:
             serializer<std::string>::serialize(obj.str, str);
             break;
-        case absobj_field_type_num:
+        case abstract_object_type_num:
             serializer<int>::serialize(obj.val.num, str);
             break;
-        case absobj_field_type_obj:
+        case abstract_object_type_obj:
             str.put('{');
             for (auto & item : obj.obj) {
                 if (first_field) {
@@ -173,11 +169,11 @@ template <> struct serializer<absobj_field_value> {
                 str.write(item.first.c_str(), item.first.size());
                 str.put('"');
                 str.put(':');
-                serializer<absobj_field_value>::serialize(item.second, str);
+                serializer<abstract_object>::serialize(item.second, str);
             }
             str.put('}');
             break;
-        case absobj_field_type_list:
+        case abstract_object_type_list:
             str.put('[');
             for (auto & item : obj.list) {
                 if (first_field) {
@@ -186,13 +182,13 @@ template <> struct serializer<absobj_field_value> {
                 else {
                     str.put(',');
                 }
-                serializer<absobj_field_value>::serialize(item, str);
+                serializer<abstract_object>::serialize(item, str);
             }
             str.put(']');
         }
     }
 
-    static void deserialize(absobj_field_value & obj, std::istringstream & str)
+    static void deserialize(abstract_object & obj, std::istringstream & str)
     {
         std::ostringstream key_str;
 
@@ -205,19 +201,19 @@ template <> struct serializer<absobj_field_value> {
 
         switch (str.peek()) {
         case '"':
-            obj.type = absobj_field_type_str;
+            obj.type = abstract_object_type_str;
             serializer<std::string>::deserialize(obj.str, str);
             break;
         case 'a' ... 'z':
-            obj.type = absobj_field_type_boolean;
+            obj.type = abstract_object_type_boolean;
             serializer<bool>::deserialize(obj.val.boolean, str);
             break;
         case '0' ... '9':
-            obj.type = absobj_field_type_num;
+            obj.type = abstract_object_type_num;
             serializer<int>::deserialize(obj.val.num, str);
             break;
         case '{':
-            obj.type = absobj_field_type_obj;
+            obj.type = abstract_object_type_obj;
             while (str.peek() != '}') {
                 key_str.str("");
                 while (str.peek() != '"' && str.peek() != '}') {
@@ -234,22 +230,22 @@ template <> struct serializer<absobj_field_value> {
                     str.get();
                 }
                 std::string key = key_str.str();
-                absobj_field_value val;
-                serializer<absobj_field_value>::deserialize(val, str);
+                abstract_object val;
+                serializer<abstract_object>::deserialize(val, str);
                 obj.obj[key] = val;
             }
             break;
         case '[':
-            obj.type = absobj_field_type_list;
+            obj.type = abstract_object_type_list;
             while (str.peek() != ']') {
-                absobj_field_value val;
-                serializer<absobj_field_value>::deserialize(val, str);
+                abstract_object val;
+                serializer<abstract_object>::deserialize(val, str);
                 obj.list.push_back(val);
             }
         }
     }
 
-    static absobj_field_value to_abstract(absobj_field_value & obj)
+    static abstract_object to_abstract(abstract_object & obj)
     {
         return obj;
     }
