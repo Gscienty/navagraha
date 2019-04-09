@@ -13,6 +13,8 @@ namespace extensions {
 class common_list : public special_abstract_object<common_list, abstract_object_type_list> {
 public:
     std::vector<abstract_object> & values();
+
+    static common_list to_special(abstract_object & obj);
 };
 
 }

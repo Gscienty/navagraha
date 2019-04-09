@@ -60,6 +60,11 @@ template <typename T_Type> struct serializer {
     {
         return obj.to_abstract();
     }
+
+    static T_Type to_special(abstract_object & obj)
+    {
+        return T_Type::to_special(obj);
+    }
 };
 
 template <> struct serializer<std::string> {
@@ -82,6 +87,14 @@ template <> struct serializer<std::string> {
     static abstract_object to_abstract(std::string & obj)
     {
         return abstract_object(obj);
+    }
+
+    static std::string to_special(abstract_object & obj)
+    {
+        if (obj.type != abstract_object_type_str) {
+            return std::string();
+        }
+        return obj.str;
     }
 };
 
@@ -107,6 +120,14 @@ template <> struct serializer<int> {
     static abstract_object to_abstract(int & obj)
     {
         return abstract_object(obj);
+    }
+
+    static int to_special(abstract_object & obj)
+    {
+        if (obj.type != abstract_object_type_num) {
+            return 0;
+        }
+        return obj.val.num;
     }
 };
 
@@ -139,6 +160,14 @@ template <> struct serializer<bool> {
     static abstract_object to_abstract(bool & obj)
     {
         return abstract_object(obj);
+    }
+
+    static bool to_special(abstract_object & obj)
+    {
+        if (obj.type != abstract_object_type_boolean) {
+            return false;
+        }
+        return obj.val.boolean;
     }
 };
 
@@ -195,6 +224,7 @@ template <> struct serializer<abstract_object> {
         while (str.peek() != '"'
                && (str.peek() < 'a' || 'z' < str.peek())
                && str.peek() != '{'
+               && str.peek() != '['
                && (str.peek() < '0' || '9' < str.peek())) {
             str.get();
         }
@@ -214,6 +244,7 @@ template <> struct serializer<abstract_object> {
             break;
         case '{':
             obj.type = abstract_object_type_obj;
+            str.get();
             while (str.peek() != '}') {
                 key_str.str("");
                 while (str.peek() != '"' && str.peek() != '}') {
@@ -237,7 +268,19 @@ template <> struct serializer<abstract_object> {
             break;
         case '[':
             obj.type = abstract_object_type_list;
+            str.get();
             while (str.peek() != ']') {
+                while (str.peek() != '"'
+                       && (str.peek() < 'a' || 'z' < str.peek())
+                       && str.peek() != '{'
+                       && str.peek() != '['
+                       && (str.peek() < '0' || '9' < str.peek())
+                       && str.peek() != ']') {
+                    str.get();
+                }
+                if (str.peek() == ']') {
+                    break;
+                }
                 abstract_object val;
                 serializer<abstract_object>::deserialize(val, str);
                 obj.list.push_back(val);
@@ -246,6 +289,11 @@ template <> struct serializer<abstract_object> {
     }
 
     static abstract_object to_abstract(abstract_object & obj)
+    {
+        return obj;
+    }
+
+    static abstract_object & to_special(abstract_object & obj)
     {
         return obj;
     }

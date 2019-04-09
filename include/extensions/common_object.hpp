@@ -19,6 +19,8 @@ public:
     {
         this->obj() = serializer<T_Field>::to_abstract(field);
     }
+
+    static common_object to_special(abstract_object & obj);
 };
 
 }

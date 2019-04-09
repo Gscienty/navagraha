@@ -23,13 +23,13 @@ public:
         this->_obj.type = Abstract_Object_Type;
     }
 
-    special_abstract_object & serialize(std::ostringstream & str)
+    special_abstract_object & abstract_serialize(std::ostringstream & str)
     {
         this->_obj.serialize(str);
         return *this;
     }
 
-    special_abstract_object * deserialize(std::istringstream & str)
+    special_abstract_object & abstract_deserialize(std::istringstream & str)
     {
         this->_obj.deserialize(str);
         return *this;

@@ -21,27 +21,39 @@ public:
     {
         this->obj().list.clear();
         for (auto & item : this->_list) {
-            this->obj.list.push_back(item.to_abstract());
+            this->obj().list.push_back(serializer<Special_Type>::to_abstract(item));
         }
-        this->special_abstract_object<Special_Type, abstract_object_type_list>::serialize(str);
+        this->abstract_serialize(str);
+        return *this;
     }
 
-    special_list * deserialize(std::istringstream & str)
+    special_list & deserialize(std::istringstream & str)
     {
-        this->special_abstract_object<Special_Type, abstract_object_type_list>::deserialize(str);
-
-        // TODO abstract_object to special_object
+        this->abstract_deserialize(str);
+        this->_list.clear();
+        for (auto & item : this->obj().list) {
+            this->values().push_back(serializer<Special_Type>::to_special(item));
+        }
+        return *this;
     }
-
 
     abstract_object to_abstract()
     {
-        this->obj().list.clear();
-        for (auto & item : this->_list) {
-            this->obj.list.push_back(item.to_abstract());
+        abstract_object ret;
+        ret.type = abstract_object_type_list;
+        for (auto & item : this->values()) {
+            ret.list.push_back(serializer<Special_Type>::to_abstract(item));
         }
+        return ret;
+    }
 
-        return this->obj();
+    static special_list<Special_Type> to_special(abstract_object & obj)
+    {
+        special_list<Special_Type> ret;
+        for (auto & item : obj.list) {
+            ret.values().push_back(serializer<Special_Type>::to_special(item));
+        }
+        return ret;
     }
 };
 

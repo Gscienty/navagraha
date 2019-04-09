@@ -5,27 +5,27 @@
 namespace navagraha {
 namespace extensions {
 
-abstract_object::abstract_object(int val) : type(absobj_field_type_num)
+abstract_object::abstract_object(int val) : type(abstract_object_type_num)
 {
     this->val.num = val;
 }
 
-abstract_object::abstract_object(bool val) : type(absobj_field_type_boolean)
+abstract_object::abstract_object(bool val) : type(abstract_object_type_boolean)
 {
     this->val.boolean = val;
 }
 
-abstract_object::abstract_object(const char * const val) : type(absobj_field_type_str)
+abstract_object::abstract_object(const char * const val) : type(abstract_object_type_str)
 {
     this->str = val;
 }
 
-abstract_object::abstract_object(std::string val) : type(absobj_field_type_str)
+abstract_object::abstract_object(std::string val) : type(abstract_object_type_str)
 {
     this->str = val;
 }
 
-abstract_object::abstract_object() : type(absobj_field_type_obj)
+abstract_object::abstract_object() : type(abstract_object_type_obj)
 {
 
 }
