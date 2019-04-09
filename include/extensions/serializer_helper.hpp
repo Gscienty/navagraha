@@ -1,5 +1,5 @@
-#ifndef _NAVAGRAHA_EXTENSION_LINK_SERIALIZER_H
-#define _NAVAGRAHA_EXTENSION_LINK_SERIALIZER_H
+#ifndef _NAVAGRAHA_EXTENSION_SERIALIZER_HELPER_H
+#define _NAVAGRAHA_EXTENSION_SERIALIZER_HELPER_H
 
 #include <list>
 #include <functional>
@@ -16,16 +16,16 @@ enum link_serializer_type {
     link_serializer_type_to_abstract
 };
 
-class link_serializer {
+class serializer_helper {
 private:
     link_serializer_type _type;
     std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> _serializers;
     std::map<std::string, std::function<void (std::istringstream &)>> _deserializers;
     abstract_object _absobj; 
 public:
-    link_serializer(link_serializer_type type = link_serializer_type_serialize);
+    serializer_helper(link_serializer_type type = link_serializer_type_serialize);
 
-    template <typename T_Field> link_serializer & add(T_Field & field)
+    template <typename T_Field> serializer_helper & add(T_Field & field)
     {
         switch (this->_type) {
         case link_serializer_type_serialize:

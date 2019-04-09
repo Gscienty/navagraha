@@ -2,7 +2,7 @@
 #define _NAVAGRAHA_KUBEENT_CONTAINER_PORT_H
 
 #include "extensions/field.hpp"
-#include "extensions/link_serializer.hpp"
+#include "extensions/serializer_helper.hpp"
 #include <string>
 
 namespace navagraha {
@@ -16,7 +16,7 @@ extern char CONTAINER_PORT_PROTOCOL[];
 
 class container_port {
 private:
-    extensions::link_serializer bind(extensions::link_serializer_type type);
+    extensions::serializer_helper bind(extensions::link_serializer_type type);
 public:
     extensions::field<int, CONTAINER_PORT_CONTAINER_PORT> container_port_;
     extensions::field<std::string, CONTAINER_PORT_HOST_IP> host_ip;
@@ -26,7 +26,8 @@ public:
 
     container_port & serialize(std::ostringstream & str);
     container_port & deserialize(std::istringstream & str);
-    extensions::absobj_field_value to_abstract();
+    extensions::abstract_object to_abstract();
+    static container_port to_special(extensions::abstract_object & obj);
 };
 }
 }

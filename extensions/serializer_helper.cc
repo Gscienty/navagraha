@@ -1,15 +1,15 @@
-#include "extensions/link_serializer.hpp"
+#include "extensions/serializer_helper.hpp"
 
 namespace navagraha {
 namespace extensions {
 
-link_serializer::link_serializer(link_serializer_type type)
+serializer_helper::serializer_helper(link_serializer_type type)
     : _type(type)
 {
 
 }
 
-void link_serializer::serialize(std::ostringstream & str)
+void serializer_helper::serialize(std::ostringstream & str)
 {
     if (this->_type != link_serializer_type_serialize) {
         return;
@@ -19,7 +19,7 @@ void link_serializer::serialize(std::ostringstream & str)
     str.put('}');
 }
 
-void link_serializer::deserialize(std::istringstream & str)
+void serializer_helper::deserialize(std::istringstream & str)
 {
     if (this->_type != link_serializer_type_deserialize) {
         return;
@@ -45,7 +45,7 @@ void link_serializer::deserialize(std::istringstream & str)
     }
 }
 
-abstract_object link_serializer::to_abstract()
+abstract_object serializer_helper::to_abstract()
 {
     return this->_absobj;
 }
