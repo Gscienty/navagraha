@@ -18,29 +18,5 @@ void container_port::bind(extensions::serializer_helper & helper)
         .add(this->protocol);
 }
 
-container_port & container_port::serialize(std::ostringstream & str)
-{
-    return *extensions::serializer_helper()
-        .serialize(&container_port::bind, this, str);
-}
-
-container_port & container_port::deserialize(std::istringstream & str)
-{
-    return *extensions::serializer_helper()
-        .deserialize(&container_port::bind, this, str);
-}
-
-extensions::abstract_object container_port::to_abstract()
-{
-    return extensions::serializer_helper()
-        .to_abstract(&container_port::bind, this);
-}
-
-container_port container_port::to_special(extensions::abstract_object & obj)
-{
-    return extensions::serializer_helper()
-        .to_special(&container_port::bind, container_port(), obj);
-}
-
 }
 }
