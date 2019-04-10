@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_CONFIG_MAP_KEY_SELECTOR_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +13,7 @@ extern char CONFIG_MAP_KEY_SELECTOR_KEY[];
 extern char CONFIG_MAP_KEY_SELECTOR_NAME[];
 extern char CONFIG_MAP_KEY_SELECTOR_OPTIONAL[];
 
-class config_map_key_selector {
+class config_map_key_selector : public serializable<config_map_key_selector> {
 public:
     extensions::field<
         std::string,
@@ -23,7 +25,7 @@ public:
         bool,
         CONFIG_MAP_KEY_SELECTOR_OPTIONAL> optional;
 
-    static void serialize(config_map_key_selector & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }
