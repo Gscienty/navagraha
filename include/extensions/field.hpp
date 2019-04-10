@@ -317,7 +317,7 @@ public:
         str.write(T_Name, strlen(T_Name));
         str.put('"');
         str.put(':');
-        T_Serializer::serialize(this->omittable<T_Type>::get(), str);
+        T_Serializer::serialize(this->get(), str);
     }
 
     void deserialize(std::istringstream & str)
@@ -325,12 +325,18 @@ public:
         while (str.peek() != ':') {
             str.get();
         }
-        T_Serializer::deserialize(this->omittable<T_Type>::get(), str);
+        T_Serializer::deserialize(this->get(), str);
     }
 
-    void to_special(abstract_object & obj) {
+    void to_special(abstract_object & obj)
+    {
         T_Type special_val = T_Serializer::to_special(obj);
         this->omittable<T_Type>::get() = special_val;
+    }
+
+    abstract_object to_abstract()
+    {
+        return serializer<T_Type>::to_abstract(this->get());
     }
 };
 

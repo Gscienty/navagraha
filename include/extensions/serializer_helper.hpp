@@ -41,7 +41,7 @@ public:
             if (field.omit() == false) {
                 return *this;
             }
-            this->_obj.values()[field.key] = field.get();
+            this->_obj.values()[field.key] = field.to_abstract();
             break;
         case serializer_helper_type_to_special:
             std::string key = field.key;    
