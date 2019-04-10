@@ -3,6 +3,8 @@
 
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/env_var.hpp"
 #include "kubeent/env_var_source.hpp"
 #include "kubeent/lifecycle.hpp"
@@ -39,7 +41,7 @@ extern char CONTAINER_VOLUME_DEVICES[];
 extern char CONTAINER_VOLUME_MOUNTS[];
 extern char CONTAINER_WORKING_DIR[];
 
-class container {
+class container : public serializable<container> {
 public:
     extensions::field<
         extensions::special_list<std::string>,
@@ -73,7 +75,7 @@ public:
     extensions::field<extensions::special_list<volume_mount>, CONTAINER_VOLUME_MOUNTS> volume_mounts;
     extensions::field<std::string, CONTAINER_WORKING_DIR> working_dir;
 
-    static void serialize(container & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 }
 }

@@ -1,5 +1,4 @@
 #include "kubeent/container.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -26,31 +25,31 @@ char CONTAINER_VOLUME_DEVICES[] = "volumeDevices";
 char CONTAINER_VOLUME_MOUNTS[] = "volumeMounts";
 char CONTAINER_WORKING_DIR[] = "workingDir";
 
-void container::serialize(container & obj, std::ostringstream & str)
+void container::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.args)
-        .add(obj.command)
-        .add(obj.env)
-        .add(obj.env_from)
-        .add(obj.image)
-        .add(obj.image_pull_policy)
-        .add(obj.lifecycle)
-        .add(obj.liveness_probe)
-        .add(obj.name)
-        .add(obj.ports)
-        .add(obj.readiness_probe)
-        .add(obj.resources)
-        .add(obj.security_context_)
-        .add(obj.stdin_)
-        .add(obj.stdin_once)
-        .add(obj.termination_message_path)
-        .add(obj.termination_message_policy)
-        .add(obj.tty)
-        .add(obj.volume_devices)
-        .add(obj.volume_mounts)
-        .add(obj.working_dir)
-        .serialize(str);
+    helper
+        .add(this->args)
+        .add(this->command)
+        .add(this->env)
+        .add(this->env_from)
+        .add(this->image)
+        .add(this->image_pull_policy)
+        .add(this->lifecycle)
+        .add(this->liveness_probe)
+        .add(this->name)
+        .add(this->ports)
+        .add(this->readiness_probe)
+        .add(this->resources)
+        .add(this->security_context_)
+        .add(this->stdin_)
+        .add(this->stdin_once)
+        .add(this->termination_message_path)
+        .add(this->termination_message_policy)
+        .add(this->tty)
+        .add(this->volume_devices)
+        .add(this->volume_mounts)
+        .add(this->working_dir);
 }
+
 }
 }

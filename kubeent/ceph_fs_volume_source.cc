@@ -1,5 +1,4 @@
 #include "kubeent/ceph_fs_volume_source.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {

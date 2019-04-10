@@ -1,5 +1,4 @@
 #include "kubeent/pod_dns_config_option.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -7,12 +6,11 @@ namespace kubeent {
 char POD_DNS_CONFIG_OPTION_NAME[] = "name";
 char POD_DNS_CONFIG_OPTION_VALUE[] = "value";
 
-void pod_dns_config_option::serialize(pod_dns_config_option & obj, std::ostringstream & str)
+void pod_dns_config_option::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.name)
-        .add(obj.value)
-        .serialize(str);
+    helper
+        .add(this->name)
+        .add(this->value);
 }
 
 }

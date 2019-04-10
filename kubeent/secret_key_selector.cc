@@ -1,5 +1,4 @@
 #include "kubeent/secret_key_selector.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -8,14 +7,13 @@ char SECRET_KEY_SELECTOR_KEY[] = "key";
 char SECRET_KEY_SELECTOR_NAME[] = "name";
 char SECRET_KEY_SELECTOR_OPTIONAL[] = "optional";
 
-void secret_key_selector::serialize(secret_key_selector & obj,
-                                    std::ostringstream & str)
+void secret_key_selector::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.key)
-        .add(obj.name)
-        .add(obj.optional)
-        .serialize(str);
+    helper
+        .add(this->key)
+        .add(this->name)
+        .add(this->optional);
 }
+
 }
 }

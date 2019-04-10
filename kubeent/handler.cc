@@ -1,5 +1,4 @@
 #include "kubeent/handler.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -8,13 +7,12 @@ char HANDLER_EXEC[] = "exec";
 char HANDLER_HTTP_GET[] = "httpGet";
 char HANDLER_TCP_SOCKET[] = "tcpSocket";
 
-void handler::serialize(handler & obj, std::ostringstream & str)
+void handler::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.exec)
-        .add(obj.http_get)
-        .add(obj.tcp_socket)
-        .serialize(str);
+    helper
+        .add(this->exec)
+        .add(this->http_get)
+        .add(this->tcp_socket);
 }
 
 }

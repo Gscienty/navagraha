@@ -1,5 +1,4 @@
 #include "kubeent/deployment_spec.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -13,19 +12,17 @@ char DEPOLYMENT_SPEC_SELECTOR[] = "selector";
 char DEPLOYMENT_SPEC_STRATEGY[] = "strategy";
 char DEPLOYMENT_SPEC_TEMPLATE[] = "template";
 
-
-void deployment_spec::serialize(deployment_spec & obj, std::ostringstream & str)
+void deployment_spec::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.min_ready_seconds)
-        .add(obj.paused)
-        .add(obj.progress_deadline_seconds)
-        .add(obj.replicas)
-        .add(obj.revision_history_limit)
-        .add(obj.selector)
-        .add(obj.strategy)
-        .add(obj.template_)
-        .serialize(str);
+    helper
+        .add(this->min_ready_seconds)
+        .add(this->paused)
+        .add(this->progress_deadline_seconds)
+        .add(this->replicas)
+        .add(this->revision_history_limit)
+        .add(this->selector)
+        .add(this->strategy)
+        .add(this->template_);
 }
 
 }

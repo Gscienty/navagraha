@@ -1,5 +1,4 @@
 #include "kubeent/pod_template_spec.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -7,12 +6,12 @@ namespace kubeent {
 char POD_TEMPLATE_SPEC_METADATA[] = "metadata";
 char POD_TEMPLATE_SPEC_SPEC[] = "spec";
 
-void pod_template_spec::serialize(pod_template_spec & obj, std::ostringstream & str)
+void pod_template_spec::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.metadata)
-        .add(obj.spec)
-        .serialize(str);
+    helper
+        .add(this->metadata)
+        .add(this->spec);
 }
+
 }
 }

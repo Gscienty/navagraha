@@ -1,5 +1,4 @@
 #include "kubeent/volume.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -11,16 +10,15 @@ char VOLUME_DOWNWARD_API[] = "downwardAPI";
 char VOLUME_EMPTY_DIR[] = "emptyDir";
 char VOLUME_NAME[] = "name";
 
-void volume::serialize(volume & obj, std::ostringstream & str)
+void volume::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.cephfs)
-        .add(obj.cinder)
-        .add(obj.config_map)
-        .add(obj.downward_api)
-        .add(obj.empty_dir)
-        .add(obj.name)
-        .serialize(str);
+    helper
+        .add(this->cephfs)
+        .add(this->cinder)
+        .add(this->config_map)
+        .add(this->downward_api)
+        .add(this->empty_dir)
+        .add(this->name);
 }
 
 }

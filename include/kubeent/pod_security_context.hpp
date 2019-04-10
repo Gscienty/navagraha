@@ -2,7 +2,9 @@
 #define _NAVAGRAHA_KUBEENT_POD_SECURITY_CONTEXT_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/selinux_options.hpp"
 #include "kubeent/sysctl.hpp"
 
@@ -17,7 +19,7 @@ extern char POD_SECURITY_CONTEXT_SELINUX_OPTIONS[];
 extern char POD_SECURITY_CONTEXT_SUPPLEMENTAL_GROUPS[];
 extern char POD_SECURITY_CONTEXT_SYSCTLS[];
 
-class pod_security_context {
+class pod_security_context : public serializable<pod_security_context> {
 public:
     extensions::field<int, POD_SECURITY_CONTEXT_FS_GROUP> fs_group;
     extensions::field<int, POD_SECURITY_CONTEXT_RUN_AS_GROUP> run_as_group;
@@ -31,7 +33,7 @@ public:
         extensions::special_list<sysctl>,
         POD_SECURITY_CONTEXT_SYSCTLS> sysctls;
 
-    static void serialize(pod_security_context & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

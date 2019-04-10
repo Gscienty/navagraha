@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_INITIALIZER_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 #include <sstream>
 
@@ -10,11 +12,11 @@ namespace kubeent {
 
 extern char INITIALIZERS_NAME[];
 
-class initializer {
+class initializer : public serializable<initializer> {
 public:
     extensions::field<std::string, INITIALIZERS_NAME> name;
 
-    static void serialize(initializer & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

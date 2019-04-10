@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_RESOURCE_FIELD_SELECTOR_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +13,7 @@ extern char RESOURCE_FIELD_SELECTOR_CONTAINER_NAME[];
 extern char RESOURCE_FIELD_SELECTOR_DIVISOR[];
 extern char RESOURCE_FIELD_SELECTOR_RESOURCE[];
 
-class resource_field_selector {
+class resource_field_selector : serializable<resource_field_selector> {
 public:
     extensions::field<
         std::string,
@@ -23,9 +25,7 @@ public:
         std::string,
         RESOURCE_FIELD_SELECTOR_RESOURCE> resource;
 
-    static void serialize(resource_field_selector & obj,
-                          std::ostringstream & str);
-
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

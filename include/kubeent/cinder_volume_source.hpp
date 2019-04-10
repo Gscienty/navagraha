@@ -15,7 +15,7 @@ extern char CINDER_VOLUME_SOURCE_READ_ONLY[];
 extern char CINDER_VOLUME_SOURCE_SECRET_REF[];
 extern char CINDER_VOLUME_SOURCE_VOLUME_ID[];
 
-class cinder_volume_source : serializable<cinder_volume_source> {
+class cinder_volume_source : public serializable<cinder_volume_source> {
 public:
     extensions::field<std::string, CINDER_VOLUME_SOURCE_FS_TYPE> fs_type;
     extensions::field<bool, CINDER_VOLUME_SOURCE_READ_ONLY> read_only;

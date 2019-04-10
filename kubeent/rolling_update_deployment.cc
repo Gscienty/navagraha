@@ -1,5 +1,4 @@
 #include "kubeent/rolling_update_deployment.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -7,13 +6,11 @@ namespace kubeent {
 char ROLLING_UPDATE_DEPLOYMENT_MAX_SURGE[] = "maxSurge";
 char ROLLING_UPDATE_DEPLOYMENT_MAX_UNAVAILABLE[] = "maxUnavailable";
 
-void rolling_update_deployment::serialize(rolling_update_deployment & obj,
-                                          std::ostringstream & str)
+void rolling_update_deployment::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.max_surge)
-        .add(obj.max_unavailable)
-        .serialize(str);
+    helper
+        .add(this->max_surge)
+        .add(this->max_unavailable);
 }
 
 }

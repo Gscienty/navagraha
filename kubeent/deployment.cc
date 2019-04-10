@@ -1,5 +1,4 @@
 #include "kubeent/deployment.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -10,15 +9,14 @@ char DEPLOYMENT_METADATA[] = "metadata";
 char DEPLOYMENT_SPEC[] = "spec";
 char DEPLOYMENT_STATUS[] = "status";
 
-void deployment::serialize(deployment & obj, std::ostringstream & str)
+void deployment::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.api_version)
-        .add(obj.kind)
-        .add(obj.metadata)
-        .add(obj.spec)
-        .add(obj.status)
-        .serialize(str);
+    helper
+        .add(this->api_version)
+        .add(this->kind)
+        .add(this->metadata)
+        .add(this->spec)
+        .add(this->status);
 }
 
 }

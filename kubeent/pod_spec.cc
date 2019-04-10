@@ -1,5 +1,4 @@
 #include "kubeent/pod_spec.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -35,40 +34,40 @@ char POD_SPEC_TERMINATION_GRACE_PERIOD_SECONDS[] = "terminationGracePeriodSecond
 char POD_SPEC_TOLERATIONS[] = "tolerations";
 char POD_SPEC_VOLUMES[] = "volumes";
 
-void pod_spec::serialize(pod_spec & obj, std::ostringstream & str)
+void pod_spec::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.active_deadline_seconds)
-        .add(obj.affinity_)
-        .add(obj.automount_service_account_token)
-        .add(obj.containers)
-        .add(obj.dns_config)
-        .add(obj.dns_policy)
-        .add(obj.enable_service_links)
-        .add(obj.hostname)
-        .add(obj.host_aliases)
-        .add(obj.host_ipc)
-        .add(obj.host_network)
-        .add(obj.host_pid)
-        .add(obj.image_pull_policy)
-        .add(obj.init_containers)
-        .add(obj.node_name)
-        .add(obj.node_selector)
-        .add(obj.priority)
-        .add(obj.priority_class_name)
-        .add(obj.readiness_gates)
-        .add(obj.restart_policy)
-        .add(obj.runtime_class_name)
-        .add(obj.schedular_name)
-        .add(obj.security_context)
-        .add(obj.service_account)
-        .add(obj.service_account_name)
-        .add(obj.share_process_namespace)
-        .add(obj.subdomain)
-        .add(obj.termination_grace_period_seconds)
-        .add(obj.tolerations)
-        .add(obj.volumes)
-        .serialize(str);
+    helper
+        .add(this->active_deadline_seconds)
+        .add(this->affinity_)
+        .add(this->automount_service_account_token)
+        .add(this->containers)
+        .add(this->dns_config)
+        .add(this->dns_policy)
+        .add(this->enable_service_links)
+        .add(this->hostname)
+        .add(this->host_aliases)
+        .add(this->host_ipc)
+        .add(this->host_network)
+        .add(this->host_pid)
+        .add(this->image_pull_policy)
+        .add(this->init_containers)
+        .add(this->node_name)
+        .add(this->node_selector)
+        .add(this->priority)
+        .add(this->priority_class_name)
+        .add(this->readiness_gates)
+        .add(this->restart_policy)
+        .add(this->runtime_class_name)
+        .add(this->schedular_name)
+        .add(this->security_context)
+        .add(this->service_account)
+        .add(this->service_account_name)
+        .add(this->share_process_namespace)
+        .add(this->subdomain)
+        .add(this->termination_grace_period_seconds)
+        .add(this->tolerations)
+        .add(this->volumes);
 }
+
 }
 }

@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_AFFINITY_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/pod_affinity.hpp"
 #include "kubeent/node_affinity.hpp"
 
@@ -12,7 +14,7 @@ extern char AFFINITY_NODE_AFFINITY[];
 extern char AFFINITY_POD_AFFINITY[];
 extern char AFFINITY_POD_ANTI_AFFINITY[];
 
-class affinity {
+class affinity : public serializable<affinity> {
 public:
     extensions::field<
         node_affinity,
@@ -24,7 +26,7 @@ public:
         pod_affinity,
         AFFINITY_POD_ANTI_AFFINITY> pod_anti_affinity;
 
-    static void serialize(affinity & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

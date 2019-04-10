@@ -16,7 +16,7 @@ extern char DOWNWARD_API_VOLUME_FILE_MODE[];
 extern char DOWNWARD_API_VOLUME_FILE_PATH[];
 extern char DOWNWARD_API_VOLUME_FILE_RESOURCE_FIELD_REF[];
 
-class downward_api_volume_file : serializable<downward_api_volume_file> {
+class downward_api_volume_file : public serializable<downward_api_volume_file> {
 public:
     extensions::field<
         object_field_selector,

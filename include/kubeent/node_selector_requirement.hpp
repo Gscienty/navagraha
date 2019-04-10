@@ -2,7 +2,9 @@
 #define _NAVAGRAHA_KUBEENT_NODE_SELECTOR_REQUIREMENT_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include <sstream>
 
 namespace navagraha {
@@ -12,7 +14,7 @@ extern char NODE_SELECTOR_REQUIREMENT_KEY[];
 extern char NODE_SELECTOR_REQUIREMENT_OPERATOR[];
 extern char NODE_SELECTOR_REQUIREMENT_VALUES[];
 
-class node_selector_requirement {
+class node_selector_requirement : public serializable<node_selector_requirement> {
 public:
     extensions::field<
         std::string,
@@ -24,7 +26,7 @@ public:
         extensions::special_list<std::string>,
         NODE_SELECTOR_REQUIREMENT_VALUES> values;
 
-    static void serialize(node_selector_requirement & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

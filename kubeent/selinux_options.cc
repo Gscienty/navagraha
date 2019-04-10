@@ -1,17 +1,21 @@
 #include "kubeent/selinux_options.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
-void selinux_options::serialize(selinux_options & obj, std::ostringstream & str)
+char SELINUX_OPTIONS_LEVEL[] = "level";
+char SELINUX_OPTIONS_ROLE[] = "role";
+char SELINUX_OPTIONS_TYPE[] = "type";
+char SELINUX_OPTIONS_USER[] = "user";
+
+void selinux_options::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.level)
-        .add(obj.role)
-        .add(obj.type)
-        .add(obj.user)
-        .serialize(str);
+    helper
+        .add(this->level)
+        .add(this->role)
+        .add(this->type)
+        .add(this->user);
 }
+
 }
 }

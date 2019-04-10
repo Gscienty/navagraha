@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_ROLLING_UPDATE_DEPLOYMENT_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -9,7 +11,7 @@ namespace kubeent {
 extern char ROLLING_UPDATE_DEPLOYMENT_MAX_SURGE[];
 extern char ROLLING_UPDATE_DEPLOYMENT_MAX_UNAVAILABLE[];
 
-class rolling_update_deployment {
+class rolling_update_deployment : public serializable<rolling_update_deployment> {
 public:
     extensions::field<
         int,
@@ -18,8 +20,7 @@ public:
         int, 
         ROLLING_UPDATE_DEPLOYMENT_MAX_UNAVAILABLE> max_unavailable;
 
-    static void serialize(rolling_update_deployment & obj,
-                          std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

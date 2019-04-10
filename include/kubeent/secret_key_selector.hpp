@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_SECRET_KEY_SELECTOR_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +13,7 @@ extern char SECRET_KEY_SELECTOR_KEY[];
 extern char SECRET_KEY_SELECTOR_NAME[];
 extern char SECRET_KEY_SELECTOR_OPTIONAL[];
 
-class secret_key_selector {
+class secret_key_selector : public serializable<secret_key_selector> {
 public:
     extensions::field<
         std::string,
@@ -23,8 +25,7 @@ public:
         bool,
         SECRET_KEY_SELECTOR_OPTIONAL> optional;
 
-    static void serialize(secret_key_selector & obj,
-                          std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

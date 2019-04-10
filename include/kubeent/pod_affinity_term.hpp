@@ -2,7 +2,9 @@
 #define _NAVAGRAHA_KUBEENT_POD_AFFINITY_TERM_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include <string>
 
@@ -13,7 +15,7 @@ extern char POD_AFFINITY_TERM_LABEL_SELECTOR[];
 extern char POD_AFFINITY_NAMESPACES[];
 extern char POD_AFFINITY_TOPOLOGY_KEY[];
 
-class pod_affinity_term {
+class pod_affinity_term : public serializable<pod_affinity_term> {
 public:
     extensions::field<
         label_selector,
@@ -25,7 +27,7 @@ public:
         std::string,
         POD_AFFINITY_TOPOLOGY_KEY> topology_key;
 
-    static void serialize(pod_affinity_term & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

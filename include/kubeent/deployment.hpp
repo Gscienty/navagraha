@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_DEPLOYMENT_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/deployment_spec.hpp"
 #include "kubeent/deployment_status.hpp"
@@ -16,7 +18,7 @@ extern char DEPLOYMENT_METADATA[];
 extern char DEPLOYMENT_SPEC[];
 extern char DEPLOYMENT_STATUS[];
 
-class deployment {
+class deployment : public serializable<deployment> {
 public:
     extensions::field<std::string, DEPLOYMENT_API_VERSION> api_version;
     extensions::field<std::string, DEPLOYMENT_KIND> kind;
@@ -24,7 +26,7 @@ public:
     extensions::field<deployment_spec, DEPLOYMENT_SPEC> spec;
     extensions::field<deployment_status, DEPLOYMENT_STATUS> status;
 
-    static void serialize(deployment & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

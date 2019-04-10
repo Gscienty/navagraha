@@ -2,6 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_DEPLOYMENT_SPEC_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include "kubeent/deployment_strategy.hpp"
 #include "kubeent/pod_template_spec.hpp"
@@ -18,7 +20,7 @@ extern char DEPOLYMENT_SPEC_SELECTOR[];
 extern char DEPLOYMENT_SPEC_STRATEGY[];
 extern char DEPLOYMENT_SPEC_TEMPLATE[];
 
-class deployment_spec {
+class deployment_spec : public serializable<deployment_spec> {
 public:
     extensions::field<int, DEPLOYMENT_SPEC_MIN_READY_SECONDS> min_ready_seconds;
     extensions::field<bool, DEPLOYMENT_SPCE_PAUSED> paused;
@@ -29,7 +31,7 @@ public:
     extensions::field<deployment_strategy, DEPLOYMENT_SPEC_STRATEGY> strategy;
     extensions::field<pod_template_spec, DEPLOYMENT_SPEC_TEMPLATE> template_;
 
-    static void serialize(deployment_spec & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

@@ -2,7 +2,10 @@
 #define _NAVAGRAHA_KUBEENT_POD_SPEC_H
 
 #include "extensions/field.hpp"
-#include "extensions/object_wrapper.hpp"
+#include "extensions/common_object.hpp"
+#include "extensions/special_list.hpp"
+#include "extensions/serializer_helper.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/affinity.hpp"
 #include "kubeent/container.hpp"
 #include "kubeent/pod_dns_config.hpp"
@@ -48,7 +51,7 @@ extern char POD_SPEC_TERMINATION_GRACE_PERIOD_SECONDS[];
 extern char POD_SPEC_TOLERATIONS[];
 extern char POD_SPEC_VOLUMES[];
 
-class pod_spec {
+class pod_spec : public serializable<pod_spec> {
 public:
     extensions::field<int, POD_SPEC_ACTIVE_DEADLINE_SECONDS> active_deadline_seconds;
     extensions::field<affinity, POD_SPEC_AFFINITY> affinity_;
@@ -70,7 +73,7 @@ public:
     extensions::field<
         extensions::special_list<container>, POD_SPEC_INIT_CONTAINERS> init_containers;
     extensions::field<std::string, POD_SPEC_NODE_NAME> node_name;
-    extensions::field<extensions::object_wrapper, POD_SPEC_NODE_SELECTOR> node_selector;
+    extensions::field<extensions::common_object, POD_SPEC_NODE_SELECTOR> node_selector;
     extensions::field<int, POD_SPEC_PRIORITY> priority;
     extensions::field<std::string, POD_SPEC_PRIORITY_CLASS_NAME> priority_class_name;
     extensions::field<
@@ -90,7 +93,7 @@ public:
     extensions::field<
         extensions::special_list<volume>, POD_SPEC_VOLUMES> volumes;
 
-    static void serialize(pod_spec & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

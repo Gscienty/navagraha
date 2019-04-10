@@ -1,5 +1,4 @@
 #include "kubeent/security_context.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -14,19 +13,19 @@ char SECURITY_CONTEXT_RUN_AS_NON_ROOT[] = "runAsNonRoot";
 char SECURITY_CONTEXT_RUN_AS_USER[] = "runAsUser";
 char SECURITY_CONTEXT_SELINUX_OPTIONS[] = "seLinuxOptions";
 
-void security_context::serialize(security_context & obj, std::ostringstream & str)
+void security_context::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.allow_privilege_escalation)
-        .add(obj.capabilities_)
-        .add(obj.privileged)
-        .add(obj.proc_mount)
-        .add(obj.read_only_root_filesystem)
-        .add(obj.run_as_group)
-        .add(obj.run_as_non_root)
-        .add(obj.run_as_user)
-        .add(obj.selinux_options_)
-        .serialize(str);
+    helper
+        .add(this->allow_privilege_escalation)
+        .add(this->capabilities_)
+        .add(this->privileged)
+        .add(this->proc_mount)
+        .add(this->read_only_root_filesystem)
+        .add(this->run_as_group)
+        .add(this->run_as_non_root)
+        .add(this->run_as_user)
+        .add(this->selinux_options_);
 }
+
 }
 }

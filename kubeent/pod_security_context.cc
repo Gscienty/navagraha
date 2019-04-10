@@ -1,5 +1,4 @@
 #include "kubeent/pod_security_context.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -12,17 +11,17 @@ char POD_SECURITY_CONTEXT_SELINUX_OPTIONS[] = "seLinuxOptions";
 char POD_SECURITY_CONTEXT_SUPPLEMENTAL_GROUPS[] = "supplementalGroups";
 char POD_SECURITY_CONTEXT_SYSCTLS[] = "sysctls";
 
-void pod_security_context::serialize(pod_security_context & obj, std::ostringstream & str)
+void pod_security_context::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.fs_group)
-        .add(obj.run_as_group)
-        .add(obj.run_as_non_root)
-        .add(obj.run_as_user)
-        .add(obj.selinux_options)
-        .add(obj.supplemental_groups)
-        .add(obj.sysctls)
-        .serialize(str);
+    helper
+        .add(this->fs_group)
+        .add(this->run_as_group)
+        .add(this->run_as_non_root)
+        .add(this->run_as_user)
+        .add(this->selinux_options)
+        .add(this->supplemental_groups)
+        .add(this->sysctls);
 }
+
 }
 }
