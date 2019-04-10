@@ -293,7 +293,7 @@ template <> struct serializer<abstract_object> {
         return obj;
     }
 
-    static abstract_object & to_special(abstract_object & obj)
+    static abstract_object to_special(abstract_object & obj)
     {
         return obj;
     }
@@ -331,7 +331,8 @@ public:
     }
 
     void to_special(abstract_object & obj) {
-        this->omittable<T_Type>::operator=(T_Serializer::to_special(obj));
+        T_Type special_val = T_Serializer::to_special(obj);
+        this->omittable<T_Type>::get() = special_val;
     }
 };
 

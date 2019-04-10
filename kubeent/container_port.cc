@@ -40,9 +40,8 @@ extensions::abstract_object container_port::to_abstract()
 
 container_port container_port::to_special(extensions::abstract_object & obj)
 {
-    container_port ret;
     return extensions::serializer_helper()
-        .to_special(&container_port::bind, ret, obj);
+        .to_special(&container_port::bind, container_port(), obj);
 }
 
 }

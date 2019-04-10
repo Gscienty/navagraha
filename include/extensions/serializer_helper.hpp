@@ -29,12 +29,18 @@ public:
     {
         switch (this->_type) {
         case serializer_helper_type_serialize:
+            if (field.omit() == false) {
+                return *this;
+            }
             this->_serializers.push_back(field_serializer(field));
             break;
         case serializer_helper_type_deserialize:
             this->_deserializers.insert(field_deserialize(field));
             break;
         case serializer_helper_type_to_abstract:
+            if (field.omit() == false) {
+                return *this;
+            }
             this->_obj.values()[field.key] = field.get();
             break;
         case serializer_helper_type_to_special:
@@ -90,11 +96,12 @@ public:
     }
 
     template <typename T_Func_Ptr, typename T_Obj>
-    T_Obj & to_special(T_Func_Ptr func_ptr, T_Obj & special_obj, abstract_object & obj)
+    T_Obj && to_special(T_Func_Ptr func_ptr, T_Obj && special_obj, abstract_object & obj)
     {
         this->_type = serializer_helper_type_to_special;
         this->_obj = obj;
         ((&special_obj)->*func_ptr)(*this);
+        return std::move(special_obj);
     }
 };
 

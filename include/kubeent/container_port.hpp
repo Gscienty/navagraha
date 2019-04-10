@@ -16,7 +16,7 @@ extern char CONTAINER_PORT_PROTOCOL[];
 
 class container_port {
 private:
-    extensions::serializer_helper bind(extensions::link_serializer_type type);
+    void bind(extensions::serializer_helper & helper);
 public:
     extensions::field<int, CONTAINER_PORT_CONTAINER_PORT> container_port_;
     extensions::field<std::string, CONTAINER_PORT_HOST_IP> host_ip;

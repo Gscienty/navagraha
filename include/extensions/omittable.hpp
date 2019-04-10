@@ -1,6 +1,8 @@
 #ifndef _NAVAGRAHA_EXTENSION_OMITTABLE_H
 #define _NAVAGRAHA_EXTENSION_OMITTABLE_H
 
+#include <utility>
+
 namespace navagraha {
 namespace extensions {
 
@@ -24,6 +26,7 @@ public:
     {
         this->_omit = true;
         this->_obj = obj;
+        return this->_obj;
     }
 
     bool omit() const
