@@ -1,5 +1,4 @@
 #include "kubeent/deployment_condition.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -10,15 +9,14 @@ char DEPLOYMENT_CONDITION_MESSAGE[] = "message";
 char DEPLOYMENT_CONDITION_STATUS[] = "status";
 char DEPLOYMENT_CONDITION_TYPE[] = "type";
 
-void deployment_condition::serialize(deployment_condition & obj, std::ostringstream & str)
+void deployment_condition::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.last_transition_time)
-        .add(obj.last_update_time)
-        .add(obj.message)
-        .add(obj.status)
-        .add(obj.type)
-        .serialize(str);
+    helper
+        .add(this->last_transition_time)
+        .add(this->last_update_time)
+        .add(this->message)
+        .add(this->status)
+        .add(this->type);
 }
 }
 }

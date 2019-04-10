@@ -2,7 +2,7 @@
 #define _NAVAGRAHA_KUBEENT_CONTAINER_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
 #include "kubeent/env_var.hpp"
 #include "kubeent/env_var_source.hpp"
 #include "kubeent/lifecycle.hpp"

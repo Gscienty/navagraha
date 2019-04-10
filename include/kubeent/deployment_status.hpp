@@ -2,8 +2,9 @@
 #define _NAVAGRAHA_KUBEENT_DEPLOYMENT_STATUS_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
 #include "kubeent/deployment_condition.hpp"
+#include "kubeent/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -17,7 +18,7 @@ extern char DEPLOYMENT_STATUS_REPLICAS[];
 extern char DEPLOYMENT_STATUS_UNAVAILABLE_REPLICAS[];
 extern char DEPLOYMENT_STATUS_UPDATED_REPLICAS[];
 
-class deployment_status {
+class deployment_status : public serializable<deployment_status> {
 public:
     extensions::field<int, DEPLOYMENT_STATUS_AVAILABLE_REPLICAS> available_replicas;
     extensions::field<int, DEPLOYMENT_STATUS_COLLISION_COUNT> collision_count;
@@ -25,11 +26,12 @@ public:
         extensions::special_list<deployment_condition>,
         DEPLOYMENT_STATUS_CONDITIONS> conditions;
     extensions::field<int, DEPLOYMENT_STATUS_OBSERVED_GENERATION> observed_generation;
+    extensions::field<int, DEPLOYMENT_STATUS_READY_REPLICAS> ready_replicas;
     extensions::field<int, DEPLOYMENT_STATUS_REPLICAS> replicas;
     extensions::field<int, DEPLOYMENT_STATUS_UNAVAILABLE_REPLICAS> unavailable_replicas;
     extensions::field<int, DEPLOYMENT_STATUS_UPDATED_REPLICAS> updated_replicas;
 
-    static void serialize(deployment_status & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

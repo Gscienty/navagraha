@@ -2,7 +2,8 @@
 #define _NAVAGRAHA_KUBEENT_HTTP_GET_ACTION_H
 
 #include "extensions/field.hpp"
-#include "extensions/list_wrapper.hpp"
+#include "extensions/special_list.hpp"
+#include "kubeent/serializable.hpp"
 #include "kubeent/http_header.hpp"
 
 namespace navagraha {
@@ -14,7 +15,7 @@ extern char HTTP_GET_ACTION_PATH[];
 extern char HTTP_GET_ACTION_PORT[];
 extern char HTTP_GET_ACTION_SCHEME[];
 
-class http_get_action {
+class http_get_action : public serializable<http_get_action> {
 public:
     extensions::field<std::string, HTTP_GET_ACTION_HOST> host;
     extensions::field<
@@ -24,7 +25,7 @@ public:
     extensions::field<int, HTTP_GET_ACTION_PORT> port;
     extensions::field<std::string, HTTP_GET_ACTION_SCHEME> scheme;
 
-    static void serialize(http_get_action & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }

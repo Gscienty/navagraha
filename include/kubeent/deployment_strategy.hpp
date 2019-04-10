@@ -2,7 +2,9 @@
 #define _NAVAGRAHA_KUBEENT_DEPLOYMENT_STRATEGY_H
 
 #include "extensions/field.hpp"
+#include "extensions/serializer_helper.hpp"
 #include "kubeent/rolling_update_deployment.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +13,7 @@ namespace kubeent {
 extern char DEPLOYMENT_STRATEGY_ROLLING_UPDATE[];
 extern char DEPLOYMENT_STRATEGY_TYPE[];
 
-class deployment_strategy {
+class deployment_strategy : public serializable<deployment_strategy> {
 public:
     extensions::field<
         rolling_update_deployment,
@@ -20,7 +22,7 @@ public:
         std::string,
         DEPLOYMENT_STRATEGY_TYPE> type;
 
-    static void serialize(deployment_strategy & obj, std::ostringstream & str);
+    void bind(extensions::serializer_helper & helper);
 };
 
 }
