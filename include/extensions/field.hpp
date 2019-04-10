@@ -329,6 +329,10 @@ public:
         }
         T_Serializer::deserialize(this->omittable<T_Type>::get(), str);
     }
+
+    void to_special(abstract_object & obj) {
+        this->omittable<T_Type>::operator=(T_Serializer::to_special(obj));
+    }
 };
 
 template <typename T_Field>

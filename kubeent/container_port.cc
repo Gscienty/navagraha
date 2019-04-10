@@ -9,10 +9,9 @@ char CONTAINER_PORT_HOST_PORT[] = "hostPort";
 char CONTAINER_PORT_NAME[] = "name";
 char CONTAINER_PORT_PROTOCOL[] = "protocol";
 
-extensions::serializer_helper container_port::bind(extensions::link_serializer_type type)
+void container_port::bind(extensions::serializer_helper & helper)
 {
-    return extensions::serializer_helper(type)
-        .add(this->container_port_)
+    helper.add(this->container_port_)
         .add(this->host_ip)
         .add(this->host_port)
         .add(this->name)
@@ -21,26 +20,29 @@ extensions::serializer_helper container_port::bind(extensions::link_serializer_t
 
 container_port & container_port::serialize(std::ostringstream & str)
 {
-    container_port::bind(extensions::link_serializer_type_serialize).serialize(str);
+    extensions::serializer_helper()
+        .serialize(&container_port::bind, this, str);
     return *this;
 }
 
 container_port & container_port::deserialize(std::istringstream & str)
 {
-    container_port::bind(extensions::link_serializer_type_deserialize).deserialize(str);
+    extensions::serializer_helper()
+        .deserialize(&container_port::bind, this, str);
     return *this;
 }
 
 extensions::abstract_object container_port::to_abstract()
 {
-    return container_port::bind(extensions::link_serializer_type_to_abstract).to_abstract();
+    return extensions::serializer_helper()
+        .to_abstract(&container_port::bind, this);
 }
 
 container_port container_port::to_special(extensions::abstract_object & obj)
 {
     container_port ret;
-
-    return ret;
+    return extensions::serializer_helper()
+        .to_special(&container_port::bind, ret, obj);
 }
 
 }
