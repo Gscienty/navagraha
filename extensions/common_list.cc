@@ -1,5 +1,4 @@
 #include "extensions/common_list.hpp"
-#include <algorithm>
 
 namespace navagraha {
 namespace extensions {

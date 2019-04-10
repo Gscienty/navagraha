@@ -61,16 +61,18 @@ public:
         return this->_obj.to_abstract();
     }
 
-    template <typename T_Func_Ptr, typename T_Obj_Ptr> void serialize(T_Func_Ptr func_ptr, T_Obj_Ptr obj_ptr, std::ostringstream & str)
+    template <typename T_Func_Ptr, typename T_Obj_Ptr> T_Obj_Ptr serialize(T_Func_Ptr func_ptr, T_Obj_Ptr obj_ptr, std::ostringstream & str)
     {
         this->_type = serializer_helper_type_serialize;
         (obj_ptr->*func_ptr)(*this);
         str.put('{');
         fields_serialize(this->_serializers, str);
         str.put('}');
+
+        return obj_ptr;
     }
 
-    template <typename T_Func_Ptr, typename T_Obj_Ptr> void deserialize(T_Func_Ptr func_ptr, T_Obj_Ptr obj_ptr, std::istringstream & str)
+    template <typename T_Func_Ptr, typename T_Obj_Ptr> T_Obj_Ptr deserialize(T_Func_Ptr func_ptr, T_Obj_Ptr obj_ptr, std::istringstream & str)
     {
         this->_type = serializer_helper_type_deserialize;
         (obj_ptr->*func_ptr)(*this);
@@ -93,6 +95,8 @@ public:
                 deserialize_iter->second(str);
             }
         }
+
+        return obj_ptr;
     }
 
     template <typename T_Func_Ptr, typename T_Obj>

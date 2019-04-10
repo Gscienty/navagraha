@@ -20,16 +20,14 @@ void container_port::bind(extensions::serializer_helper & helper)
 
 container_port & container_port::serialize(std::ostringstream & str)
 {
-    extensions::serializer_helper()
+    return *extensions::serializer_helper()
         .serialize(&container_port::bind, this, str);
-    return *this;
 }
 
 container_port & container_port::deserialize(std::istringstream & str)
 {
-    extensions::serializer_helper()
+    return *extensions::serializer_helper()
         .deserialize(&container_port::bind, this, str);
-    return *this;
 }
 
 extensions::abstract_object container_port::to_abstract()

@@ -11,8 +11,6 @@
 #include <map>
 #include <vector>
 
-#include <iostream>
-
 namespace navagraha {
 namespace extensions {
 
