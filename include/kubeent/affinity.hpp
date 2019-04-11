@@ -18,7 +18,7 @@ class affinity : public serializable<affinity> {
 public:
     extensions::field<
         node_affinity,
-        AFFINITY_NODE_AFFINITY> node_affinity;
+        AFFINITY_NODE_AFFINITY> node_affinity_;
     extensions::field<
         pod_affinity,
         AFFINITY_POD_AFFINITY> pod_affinity_;

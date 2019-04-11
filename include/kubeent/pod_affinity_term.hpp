@@ -19,7 +19,7 @@ class pod_affinity_term : public serializable<pod_affinity_term> {
 public:
     extensions::field<
         label_selector,
-        POD_AFFINITY_TERM_LABEL_SELECTOR> label_selector;
+        POD_AFFINITY_TERM_LABEL_SELECTOR> label_selector_;
     extensions::field<
         extensions::special_list<std::string>,
         POD_AFFINITY_NAMESPACES> namespaces;

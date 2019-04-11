@@ -14,6 +14,10 @@ class common_list : public special_abstract_object<common_list, abstract_object_
 public:
     std::vector<abstract_object> & values();
 
+    common_list & serialize(std::ostringstream & str);
+
+    common_list & deserialize(std::istringstream & str);
+
     static common_list to_special(abstract_object & obj);
 };
 

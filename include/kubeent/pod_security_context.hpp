@@ -25,7 +25,7 @@ public:
     extensions::field<int, POD_SECURITY_CONTEXT_RUN_AS_GROUP> run_as_group;
     extensions::field<bool, POD_SECURITY_CONTEXT_RUN_AS_NON_ROOT> run_as_non_root;
     extensions::field<int, POD_SECURITY_CONTEXT_RUN_AS_USER> run_as_user;
-    extensions::field<selinux_options, POD_SECURITY_CONTEXT_SELINUX_OPTIONS> selinux_options;
+    extensions::field<selinux_options, POD_SECURITY_CONTEXT_SELINUX_OPTIONS> selinux_options_;
     extensions::field<
         extensions::special_list<int>,
         POD_SECURITY_CONTEXT_SUPPLEMENTAL_GROUPS> supplemental_groups;

@@ -12,7 +12,7 @@ void node_affinity::bind(extensions::serializer_helper & helper)
 {
     helper 
         .add(this->preferred_during_scheduling_ignored_during_execution)
-        .add(this->required_during_scheduling_ignored_during_execution)
+        .add(this->required_during_scheduling_ignored_during_execution);
 }
 
 }

@@ -18,7 +18,7 @@ void pod_security_context::bind(extensions::serializer_helper & helper)
         .add(this->run_as_group)
         .add(this->run_as_non_root)
         .add(this->run_as_user)
-        .add(this->selinux_options)
+        .add(this->selinux_options_)
         .add(this->supplemental_groups)
         .add(this->sysctls);
 }

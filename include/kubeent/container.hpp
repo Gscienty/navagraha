@@ -57,7 +57,7 @@ public:
         CONTAINER_ENV_FROM> env_from;
     extensions::field<std::string, CONTAINER_IMAGE> image;
     extensions::field<std::string, CONTAINER_IMAGE_PULL_POLICY> image_pull_policy;
-    extensions::field<lifecycle, CONTAINER_LIFECYCLE> lifecycle;
+    extensions::field<lifecycle, CONTAINER_LIFECYCLE> lifecycle_;
     extensions::field<probe, CONTAINER_LIVENESS_PROBE> liveness_probe;
     extensions::field<std::string, CONTAINER_NAME> name;
     extensions::field<

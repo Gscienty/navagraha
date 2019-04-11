@@ -13,7 +13,7 @@ extern char RESOURCE_FIELD_SELECTOR_CONTAINER_NAME[];
 extern char RESOURCE_FIELD_SELECTOR_DIVISOR[];
 extern char RESOURCE_FIELD_SELECTOR_RESOURCE[];
 
-class resource_field_selector : serializable<resource_field_selector> {
+class resource_field_selector : public serializable<resource_field_selector> {
 public:
     extensions::field<
         std::string,

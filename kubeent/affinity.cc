@@ -10,7 +10,7 @@ char AFFINITY_POD_ANTI_AFFINITY[] = "podAntiAffinity";
 void affinity::bind(extensions::serializer_helper & helper)
 {
     helper
-        .add(this->node_affinity)
+        .add(this->node_affinity_)
         .add(this->pod_affinity_)
         .add(this->pod_anti_affinity);
 }
