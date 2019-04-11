@@ -302,7 +302,34 @@ template <typename T_Type,
          typename T_Serializer = serializer<T_Type>>
 class field : public omittable<T_Type> {
 public:
-    const char * const key = T_Name;
+    const char * key = T_Name;
+
+    field() { }
+
+    field(const field<T_Type, T_Name, T_Serializer> & copyed)
+    {
+        //this->key = copyed.key;
+        if (copyed.omit()) {
+            this->get() = copyed.const_get();
+        }
+    }
+
+    field(field<T_Type, T_Name, T_Serializer> && moved)
+    {
+        //this->key = moved.key;
+        if (moved.omit()) {
+            this->get() = moved.const_get();
+        }
+    }
+
+    field & operator=(const field<T_Type, T_Name, T_Serializer> copyed)
+    {
+        //this->key = copyed.key;
+        if (copyed.omit()) {
+            this->get() = copyed.const_get();
+        }
+        return *this;
+    }
 
     field<T_Type, T_Name, T_Serializer> & operator=(T_Type && obj)
     {

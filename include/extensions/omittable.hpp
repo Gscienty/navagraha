@@ -39,6 +39,10 @@ public:
         this->_omit = true;
         return this->_obj;
     }
+
+    T const_get() const {
+        return this->_obj;
+    }
 };
 
 }

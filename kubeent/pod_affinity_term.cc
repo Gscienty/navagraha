@@ -1,5 +1,4 @@
 #include "kubeent/pod_affinity_term.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -8,13 +7,12 @@ char POD_AFFINITY_TERM_LABEL_SELECTOR[] = "labelSelector";
 char POD_AFFINITY_NAMESPACES[] = "namespaces";
 char POD_AFFINITY_TOPOLOGY_KEY[] = "topologyKey";
 
-void pod_affinity_term::serialize(pod_affinity_term & obj, std::ostringstream & str)
+void pod_affinity_term::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.label_selector)
-        .add(obj.namespaces)
-        .add(obj.topology_key)
-        .serialize(str);
+    helper
+        .add(this->label_selector)
+        .add(this->namespaces)
+        .add(this->topology_key);
 }
 
 }

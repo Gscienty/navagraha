@@ -5,7 +5,6 @@
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/serializable.hpp"
-#include <sstream>
 
 namespace navagraha {
 namespace kubeent {
@@ -21,7 +20,7 @@ public:
         NODE_SELECTOR_REQUIREMENT_KEY> key;
     extensions::field<
         std::string,
-        NODE_SELECTOR_REQUIREMENT_OPERATOR> oper;
+        NODE_SELECTOR_REQUIREMENT_OPERATOR> operator_;
     extensions::field<
         extensions::special_list<std::string>,
         NODE_SELECTOR_REQUIREMENT_VALUES> values;

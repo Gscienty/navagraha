@@ -20,6 +20,10 @@ public:
         this->obj() = serializer<T_Field>::to_abstract(field);
     }
 
+    common_object & serialize(std::ostringstream & str);
+
+    common_object & deserialize(std::istringstream & str);
+
     static common_object to_special(abstract_object & obj);
 };
 

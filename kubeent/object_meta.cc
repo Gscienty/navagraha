@@ -2,7 +2,6 @@
 #include <list>
 #include <functional>
 #include <algorithm>
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -24,26 +23,25 @@ char OBJECT_META_RESOURCE_VERSION[] = "resourceVersion";
 char OBJECT_META_SELF_LINK[] = "selfLink";
 char OBJECT_META_UID[] = "uid";
 
-void object_meta::serialize(object_meta & obj, std::ostringstream & str)
+void object_meta::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.annotations)
-        .add(obj.cluster_name)
-        .add(obj.creation_timestamp)
-        .add(obj.deletion_grace_period_seconds)
-        .add(obj.deletion_timestamp)
-        .add(obj.finalizers)
-        .add(obj.generate_name)
-        .add(obj.generation)
-        .add(obj.inits)
-        .add(obj.labels)
-        .add(obj.name)
-        .add(obj.owner_references)
-        .add(obj.resource_version)
-        .add(obj.self_link)
-        .add(obj.space)
-        .add(obj.uid)
-        .serialize(str);
+    helper
+        .add(this->annotations)
+        .add(this->cluster_name)
+        .add(this->creation_timestamp)
+        .add(this->deletion_grace_period_seconds)
+        .add(this->deletion_timestamp)
+        .add(this->finalizers)
+        .add(this->generate_name)
+        .add(this->generation)
+        .add(this->inits)
+        .add(this->labels)
+        .add(this->name)
+        .add(this->owner_references)
+        .add(this->resource_version)
+        .add(this->self_link)
+        .add(this->space)
+        .add(this->uid);
 }
 
 }

@@ -1,5 +1,4 @@
 #include "kubeent/preferred_scheduling_term.hpp"
-#include "extensions/link_serializer.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -7,13 +6,11 @@ namespace kubeent {
 char PREFERRED_SCHEDULING_TERM_PREFERENCE[] = "preference";
 char PREFERRED_SCHEDULING_TERM_WEIGHT[] = "weight";
 
-void preferred_scheduling_term::serialize(preferred_scheduling_term & obj,
-                                         std::ostringstream & str)
+void preferred_scheduling_term::bind(extensions::serializer_helper & helper)
 {
-    extensions::link_serializer()
-        .add(obj.perference)
-        .add(obj.weight)
-        .serialize(str);
+    helper
+        .add(this->perference)
+        .add(this->weight);
 }
 
 }
