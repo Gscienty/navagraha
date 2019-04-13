@@ -18,7 +18,7 @@ extern char DAEMON_SET_METADATA[];
 extern char DAEMON_SET_SPEC[];
 extern char DAEMON_SET_STATUS[];
 
-class daemon_set : serializable<daemon_set> {
+class daemon_set : public serializable<daemon_set> {
 public:
     extensions::field<std::string, DAEMON_SET_API_VERSION> api_version;
     extensions::field<std::string, DAEMON_SET_KIND> kind;
