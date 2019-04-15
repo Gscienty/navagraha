@@ -29,6 +29,8 @@ protected:
 public:
     client(CURL * curl, const std::string base_uri);
 
+    virtual ~client();
+
     size_t write(const char * ptr, size_t size);
 };
 

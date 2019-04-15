@@ -22,6 +22,11 @@ client::client(CURL * curl, const std::string base_uri)
 
 }
 
+client::~client()
+{
+    curl_easy_cleanup(this->curl);
+}
+
 std::string client::uri(const std::string path) const
 {
     return this->base_uri + path;
