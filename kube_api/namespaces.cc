@@ -11,11 +11,18 @@ namespaces::namespaces(CURL * curl, const std::string base_uri)
 
 }
 
-void namespaces::get(std::string name)
+void namespaces::read(std::string name)
 {
     std::string & payload = this->get_call("/api/v1/namespaces/" + name);
 
-    // TODO deserialize namespace
+    // TODO deserialize Namespace
+}
+
+void namespaces::list()
+{
+    std::string & payload = this->get_call("/api/v1/namespaces");
+
+    // TODO deserialize NamespaceList
 }
 
 }

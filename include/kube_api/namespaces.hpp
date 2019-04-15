@@ -10,7 +10,9 @@ class namespaces : public http_client::client {
 public:
     namespaces(CURL * curl, const std::string base_uri);
 
-    void get(std::string name);
+    void read(std::string name);
+
+    void list();
 };
 
 }
