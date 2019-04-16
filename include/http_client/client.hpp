@@ -20,11 +20,30 @@ private:
     std::string & curl_abstract_process(const std::string path, const char * method);
 
 protected:
-    std::string & get_call(const std::string path);
-    std::string & put_call(const std::string path);
-    std::string & delete_call(const std::string path);
-    std::string & post_call(const std::string path);
-    std::string & patch_call(const std::string path);
+    template <typename T> T get_call(const std::string path)
+    {
+        return T::deserialize(this->curl_abstract_process(path, "GET"));
+    }
+
+    template <typename T> T put_call(const std::string path)
+    {
+        return T::deserialize(this->curl_abstract_process(path, "PUT"));
+    }
+
+    template <typename T> T delete_call(const std::string path)
+    {
+        return T::deserialize(this->curl_abstract_process(path, "DELETE"));
+    }
+
+    template <typename T> T post_call(const std::string path)
+    {
+        return T::deserialize(this->curl_abstract_process(path, "POST"));
+    }
+
+    template <typename T> T patch_call(const std::string path)
+    {
+        return T::deserialize(this->curl_abstract_process(path, "PATCH"));
+    }
 
 public:
     client(CURL * curl, const std::string base_uri);

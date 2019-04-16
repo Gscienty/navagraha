@@ -23,6 +23,15 @@ public:
             .deserialize(&T_Obj::bind, reinterpret_cast<T_Obj *>(this), str);
     }
 
+    static T_Obj deserialize(std::string & payload)
+    {
+        std::istringstream str(payload);
+        T_Obj obj;
+
+        obj.deserialize(str);
+        return obj;
+    }
+
     extensions::abstract_object to_abstract()
     {
         return extensions::serializer_helper()

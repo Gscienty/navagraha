@@ -64,30 +64,5 @@ std::string & client::curl_abstract_process(const std::string path, const char *
     return this->result;
 }
 
-std::string & client::get_call(const std::string path)
-{
-    return this->curl_abstract_process(path, CURLOPT_HTTPGET);
-}
-
-std::string & client::put_call(const std::string path)
-{
-    return this->curl_abstract_process(path, CURLOPT_PUT);
-}
-
-std::string & client::delete_call(const std::string path)
-{
-    return this->curl_abstract_process(path, "DELETE");
-}
-
-std::string & client::post_call(const std::string path)
-{
-    return this->curl_abstract_process(path, CURLOPT_POST);
-}
-
-std::string & client::patch_call(const std::string path)
-{
-    return this->curl_abstract_process(path, "PATCH");
-}
-
 }
 }
