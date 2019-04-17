@@ -94,6 +94,9 @@ public:
             if (deserialize_iter != this->_deserializers.end()) {
                 deserialize_iter->second(str);
             }
+            else {
+                return obj_ptr;
+            }
         }
         str.get();
 
