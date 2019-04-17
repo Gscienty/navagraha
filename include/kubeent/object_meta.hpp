@@ -39,10 +39,10 @@ public:
     extensions::field<extensions::common_list, OBJECT_META_FINALIZERS> finalizers;
     extensions::field<std::string, OBJECT_META_GENERATE_NAME> generate_name;
     extensions::field<int, OBJECT_META_GENERATION> generation;
-    extensions::field<initializers, OBJECT_META_INITIALIZERS> inits;
+    extensions::field<initializers, OBJECT_META_INITIALIZERS> initializers_;
     extensions::field<extensions::common_object, OBJECT_META_LABELS> labels;
     extensions::field<std::string, OBJECT_META_NAME> name;
-    extensions::field<std::string, OBJECT_META_NAMESPACE> space;
+    extensions::field<std::string, OBJECT_META_NAMESPACE> namespace_;
     extensions::field<extensions::common_list, OBJECT_META_OWNER_REFERENCES> owner_references;
     extensions::field<std::string, OBJECT_META_RESOURCE_VERSION> resource_version;
     extensions::field<std::string, OBJECT_META_SELF_LINK> self_link;
