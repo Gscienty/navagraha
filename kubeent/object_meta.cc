@@ -1,7 +1,4 @@
 #include "kubeent/object_meta.hpp"
-#include <list>
-#include <functional>
-#include <algorithm>
 
 namespace navagraha {
 namespace kubeent {
@@ -34,13 +31,13 @@ void object_meta::bind(extensions::serializer_helper & helper)
         .add(this->finalizers)
         .add(this->generate_name)
         .add(this->generation)
-        .add(this->inits)
+        .add(this->initializers_)
         .add(this->labels)
         .add(this->name)
+        .add(this->namespace_)
         .add(this->owner_references)
         .add(this->resource_version)
         .add(this->self_link)
-        .add(this->space)
         .add(this->uid);
 }
 
