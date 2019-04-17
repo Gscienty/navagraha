@@ -263,6 +263,7 @@ template <> struct serializer<abstract_object> {
                 serializer<abstract_object>::deserialize(val, str);
                 obj.obj[key] = val;
             }
+            str.get();
             break;
         case '[':
             obj.type = abstract_object_type_list;
@@ -283,6 +284,7 @@ template <> struct serializer<abstract_object> {
                 serializer<abstract_object>::deserialize(val, str);
                 obj.list.push_back(val);
             }
+            str.get();
         }
     }
 
