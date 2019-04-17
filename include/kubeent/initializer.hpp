@@ -5,7 +5,6 @@
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/serializable.hpp"
 #include <string>
-#include <sstream>
 
 namespace navagraha {
 namespace kubeent {
