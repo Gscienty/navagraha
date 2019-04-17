@@ -95,6 +95,7 @@ public:
                 deserialize_iter->second(str);
             }
         }
+        str.get();
 
         return obj_ptr;
     }
