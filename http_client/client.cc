@@ -15,9 +15,9 @@ static size_t __write_cb(void * ptr, size_t size, size_t nitems, void * stream)
     return c->write(reinterpret_cast<const char *>(ptr), readed_len);
 }
 
-client::client(CURL * curl, const std::string base_uri)
+client::client(CURL * curl, const std::string host)
     : curl(curl)
-    , base_uri(base_uri)
+    , host(host)
 {
 
 }
@@ -29,7 +29,7 @@ client::~client()
 
 std::string client::uri(const std::string path) const
 {
-    return this->base_uri + path;
+    return this->host + path;
 }
 
 size_t client::write(const char * ptr, size_t size)

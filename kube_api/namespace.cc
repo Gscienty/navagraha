@@ -1,17 +1,15 @@
 #include "kube_api/namespace.hpp"
 
-#include <iostream>
-
 namespace navagraha {
 namespace kube_api {
 
-namespace_::namespace_(CURL * curl, const std::string base_uri)
-    : http_client::client(curl, base_uri)
+namespace_::namespace_(CURL * curl, const std::string host)
+    : http_client::client(curl, host)
 {
 
 }
 
-kubeent::namespace_ namespace_::read(std::string name)
+kubeent::namespace_ namespace_::read(const std::string name)
 {
     return this->get_call<kubeent::namespace_>("/api/v1/namespaces/" + name);
 }

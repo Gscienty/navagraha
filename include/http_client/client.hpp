@@ -11,7 +11,7 @@ namespace http_client {
 class client {
 private:
     CURL * curl;
-    const std::string base_uri;
+    const std::string host;
     std::string result;
 
     std::string uri(const std::string path) const;
@@ -46,7 +46,7 @@ protected:
     }
 
 public:
-    client(CURL * curl, const std::string base_uri);
+    client(CURL * curl, const std::string host);
 
     virtual ~client();
 

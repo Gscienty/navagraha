@@ -10,9 +10,9 @@ namespace kube_api {
 
 class namespace_ : public http_client::client {
 public:
-    namespace_(CURL * curl, const std::string base_uri);
+    namespace_(CURL * curl, const std::string host);
 
-    kubeent::namespace_ read(std::string name);
+    kubeent::namespace_ read(const std::string name);
 
     kubeent::namespace_list list();
 };
