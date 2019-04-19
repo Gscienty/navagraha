@@ -12,6 +12,7 @@ class client {
 private:
     CURL * curl;
     const std::string host;
+    std::string payload;
     std::string result;
 
     std::string uri(const std::string path) const;
@@ -43,6 +44,13 @@ protected:
     template <typename T> T patch_call(const std::string path)
     {
         return T::deserialize(this->curl_abstract_process(path, "PATCH"));
+    }
+
+    template <typename T> void set_payload(T && obj)
+    {
+        std::ostringstream str;
+        obj.serialize(str);
+        this->payload = str.str();
     }
 
 public:

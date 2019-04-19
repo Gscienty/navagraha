@@ -46,6 +46,12 @@ std::string & client::curl_abstract_process(const std::string path, CURLoption o
     curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, __write_cb);
     curl_easy_setopt(this->curl, option, 1L);
 
+    if (this->payload.size() != 0)
+    {
+        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->payload.c_str());
+        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->payload.size());
+    }
+
     curl_easy_perform(this->curl);
 
     return this->result;
