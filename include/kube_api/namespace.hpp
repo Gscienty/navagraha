@@ -4,6 +4,7 @@
 #include "http_client/client.hpp"
 #include "kubeent/namespace.hpp"
 #include "kubeent/namespace_list.hpp"
+#include "kubeent/delete_options.hpp"
 
 namespace navagraha {
 namespace kube_api {
@@ -13,8 +14,10 @@ public:
     namespace_(CURL * curl, const std::string host);
 
     kubeent::namespace_ read(const std::string name);
-
     kubeent::namespace_list list();
+
+    kubeent::namespace_ create(kubeent::namespace_ & payload);
+    kubeent::namespace_ put(const std::string name, kubeent::namespace_ & payload);
 };
 
 }
