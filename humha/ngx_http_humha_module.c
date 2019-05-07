@@ -3,8 +3,6 @@
 #include <ngx_http.h>
 #include "humha_process.h"
 
-#include <stdio.h>
-
 typedef struct {
     ngx_str_t cmd;
 } ngx_http_humha_loc_conf_t;
