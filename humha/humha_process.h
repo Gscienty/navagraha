@@ -6,13 +6,19 @@
 
 typedef struct {
     pid_t pid;
+    int in_opened;
     int in;
+    int out_opened;
     int out;
 } humha_process_t;
 
 int humha_process(const u_char * cmd, humha_process_t * p);
 
 int humha_process_wait(humha_process_t * p);
+
+int humha_process_in_close(humha_process_t * p);
+
+int humha_process_out_close(humha_process_t * p);
 
 int humha_process_close(humha_process_t * p);
 

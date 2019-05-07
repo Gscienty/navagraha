@@ -32,7 +32,9 @@ int humha_process(const u_char * cmd, humha_process_t * p)
     }
 
     p->pid = pid;
+    p->in_opened = 1;
     p->in = pipe_stdin[1];
+    p->out_opened = 1;
     p->out = pipe_stdout[0];
 
     flag = fcntl(p->out, F_GETFL, 0);
@@ -55,8 +57,8 @@ int humha_process_wait(humha_process_t * p)
 
 int humha_process_close(humha_process_t * p)
 {
-    close(p->in);
-    close(p->out);
+    humha_process_in_close(p);
+    humha_process_out_close(p);
 
     return 0;
 }
@@ -64,6 +66,26 @@ int humha_process_close(humha_process_t * p)
 int humha_process_kill(humha_process_t * p)
 {
     kill(p->pid, SIGHUP);
+
+    return 0;
+}
+
+int humha_process_in_close(humha_process_t * p)
+{
+    if (p->in_opened) {
+        close(p->in);
+        p->in_opened = 0;
+    }
+
+    return 0;
+}
+
+int humha_process_out_close(humha_process_t * p)
+{
+    if (p->out_opened) {
+        close(p->out);
+        p->out_opened = 0;
+    }
 
     return 0;
 }
