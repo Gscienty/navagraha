@@ -12,6 +12,9 @@ typedef struct {
 static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r);
 static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf);
+static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r);
+static ngx_int_t ngx_http_humha_process_input(ngx_http_request_t * r, humha_process_t * p);
+static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_process_t * p);
 
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
@@ -90,8 +93,59 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 {
+    return ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
+}
+
+static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
+{
     ngx_http_humha_loc_conf_t * lcf;
     humha_process_t p;
+    ngx_int_t retcode;
+
+    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    if (lcf == NULL || lcf->cmd.data == NULL) {
+        return;
+    }
+
+    humha_process(lcf->cmd.data, &p);
+
+    retcode = ngx_http_humha_process_input(r, &p);
+    if (retcode != NGX_OK) {
+        r->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
+        humha_process_kill(&p);
+        humha_process_close(&p);
+        goto output;
+    }
+
+    retcode = humha_process_wait(&p);
+    if (retcode != 0) {
+        r->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
+    }
+    else {
+        r->headers_out.status = NGX_HTTP_OK;
+    }
+
+output:
+    retcode = ngx_http_humha_process_output(r, &p);
+    humha_process_close(&p);
+}
+
+static ngx_int_t ngx_http_humha_process_input(ngx_http_request_t * r, humha_process_t * p)
+{
+    ngx_chain_t * cur_chain;
+    if (r->request_body == NULL || r->request_body->bufs == NULL) {
+        return NGX_OK;
+    }
+
+    for (cur_chain = r->request_body->bufs; cur_chain != NULL; cur_chain = cur_chain->next) {
+        write(p->in, cur_chain->buf->pos, ngx_buf_size(cur_chain->buf));
+    }
+
+    return NGX_OK;
+}
+
+static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_process_t * p)
+{
     ngx_int_t retcode;
     ngx_int_t yield_size = 0;
     ngx_int_t remain_size = NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE;
@@ -102,28 +156,13 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     out->buf->last = out->buf->pos;
     out->buf->last_buf = 0;
 
-    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
-    if (lcf == NULL || lcf->cmd.data == NULL) {
-        return NGX_DECLINED;
-    }
-
-    humha_process(lcf->cmd.data, &p);
-    retcode = humha_process_wait(&p);
-
-    if (retcode != 0) {
-        r->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
-    }
-    else {
-        r->headers_out.status = NGX_HTTP_OK;
-    }
-
     r->headers_out.content_length_n = 0;
     ngx_str_set(&r->headers_out.content_type, "application/octet-stream");
     if (ngx_http_set_content_type(r) != NGX_OK) {
-        return NGX_HTTP_INTERNAL_SERVER_ERROR;
+        return NGX_ERROR;
     }
 
-    while ((yield_size = read(p.out, cur_chain->buf->pos + (NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE - remain_size), remain_size)) > 0) {
+    while ((yield_size = read(p->out, cur_chain->buf->pos + (NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE - remain_size), remain_size)) > 0) {
         r->headers_out.content_length_n += yield_size;
         remain_size += yield_size;
         cur_chain->buf->last += yield_size;
@@ -142,14 +181,13 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     retcode = ngx_http_send_header(r);
 
     if (retcode == NGX_ERROR || retcode > NGX_OK || r->header_only) {
-        return retcode;
+        return NGX_ERROR;
     }
 
     retcode = ngx_http_output_filter(r, out);
 
-    humha_process_close(&p);
     cur_chain = out;
     while ((cur_chain = ngx_chain_free_link(r->pool, cur_chain)) != NULL);
-    
-    return retcode;
+
+    return NGX_OK;
 }

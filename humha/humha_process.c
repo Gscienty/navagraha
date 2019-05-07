@@ -60,3 +60,10 @@ int humha_process_close(humha_process_t * p)
 
     return 0;
 }
+
+int humha_process_kill(humha_process_t * p)
+{
+    kill(p->pid, SIGHUP);
+
+    return 0;
+}

@@ -16,4 +16,6 @@ int humha_process_wait(humha_process_t * p);
 
 int humha_process_close(humha_process_t * p);
 
+int humha_process_kill(humha_process_t * p);
+
 #endif
