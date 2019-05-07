@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-int humha_process(const char * cmd, humha_process_t * p)
+int humha_process(const u_char * cmd, humha_process_t * p)
 {
     pid_t pid;
     int pipe_stdin[2];

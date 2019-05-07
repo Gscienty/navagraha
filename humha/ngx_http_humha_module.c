@@ -1,6 +1,7 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+#include "humha_process.h"
 
 #include <stdio.h>
 
@@ -79,14 +80,63 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
     ngx_http_humha_loc_conf_t * humha_conf = conf;
     ngx_str_t * value = cf->args->elts;
 
-    humha_conf->cmd.data = value->data;
-    humha_conf->cmd.len = value->len;
+    humha_conf->cmd.data = value[1].data;
+    humha_conf->cmd.len = value[1].len;
 
     return NGX_CONF_OK;
 }
 
+#define ngx_chain_free_link(p, x) ({\
+                                   ngx_chain_t * __tmp = (x)->next;\
+                                   ngx_pfree((p), (x));\
+                                   __tmp; \
+                                   })
+
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 {
+    ngx_http_humha_loc_conf_t * lcf;
+    humha_process_t p;
+    ngx_int_t retcode;
+    ngx_int_t yield_size = 0;
+    ngx_chain_t * out = ngx_alloc_chain_link(r->pool);
+    ngx_chain_t * cur_chain = out;
+    out->next = NULL;
+    out->buf = ngx_create_temp_buf(r->pool, 1024);
 
-    return NGX_OK;
+    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    if (lcf == NULL || lcf->cmd.data == NULL) {
+        return NGX_DECLINED;
+    }
+
+    humha_process(lcf->cmd.data, &p);
+    retcode = humha_process_wait(&p);
+
+    if (retcode != 0) {
+        r->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
+    }
+    else {
+        r->headers_out.status = NGX_HTTP_OK;
+    }
+
+    r->headers_out.content_length_n = 0;
+    while ((yield_size = read(p.out, cur_chain->buf->pos, ngx_buf_size(cur_chain->buf))) > 0) {
+        r->headers_out.content_length_n += yield_size;
+        cur_chain->next = ngx_alloc_chain_link(r->pool);
+        cur_chain = cur_chain->next;
+        cur_chain->next = NULL;
+        cur_chain->buf = ngx_create_temp_buf(r->pool, 1024);
+    }
+
+    retcode = ngx_http_send_header(r);
+    if (retcode == NGX_ERROR || retcode > NGX_OK || r->header_only) {
+        return retcode;
+    }
+
+    retcode = ngx_http_output_filter(r, out);
+
+    humha_process_close(&p);
+    cur_chain = out;
+    while ((cur_chain = ngx_chain_free_link(r->pool, cur_chain)) != NULL);
+    
+    return retcode;
 }
