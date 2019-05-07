@@ -12,7 +12,6 @@ typedef struct {
 static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r);
 static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf);
-static ngx_int_t ngx_http_humha_init(ngx_conf_t * cf);
 
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
@@ -29,7 +28,7 @@ static ngx_command_t ngx_http_humha_module_commands[] = {
 
 static ngx_http_module_t ngx_http_humha_module_ctx = {
     NULL, // preconfiguration
-    ngx_http_humha_init, // postconfiguration
+    NULL, // postconfiguration
     NULL, // create main configuration
     NULL, // init main configuration
     NULL, // create server configuration
@@ -65,23 +64,18 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
     return conf;
 }
 
-static ngx_int_t ngx_http_humha_init(ngx_conf_t * cf)
-{
-    ngx_http_core_loc_conf_t * lcf;
-    lcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    lcf->handler = ngx_http_humha_handler;
-
-    return NGX_OK;
-}
 
 static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 {
     (void) cmd;
+    ngx_http_core_loc_conf_t * ccf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
     ngx_http_humha_loc_conf_t * humha_conf = conf;
     ngx_str_t * value = cf->args->elts;
 
     humha_conf->cmd.data = value[1].data;
     humha_conf->cmd.len = value[1].len;
+
+    ccf->handler = ngx_http_humha_handler;
 
     return NGX_CONF_OK;
 }
@@ -119,7 +113,8 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     }
 
     r->headers_out.content_length_n = 0;
-    while ((yield_size = read(p.out, cur_chain->buf->pos, ngx_buf_size(cur_chain->buf))) > 0) {
+
+    while ((yield_size = read(p.out, cur_chain->buf->pos, 1024)) > 0) {
         r->headers_out.content_length_n += yield_size;
         cur_chain->next = ngx_alloc_chain_link(r->pool);
         cur_chain = cur_chain->next;

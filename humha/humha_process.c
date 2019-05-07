@@ -1,12 +1,14 @@
 #include "humha_process.h"
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 int humha_process(const u_char * cmd, humha_process_t * p)
 {
     pid_t pid;
     int pipe_stdin[2];
     int pipe_stdout[2];
+    int flag;
 
     if (pipe(pipe_stdin) != 0) {
         return -1;
@@ -32,6 +34,9 @@ int humha_process(const u_char * cmd, humha_process_t * p)
     p->pid = pid;
     p->in = pipe_stdin[1];
     p->out = pipe_stdout[0];
+
+    flag = fcntl(p->out, F_GETFL, 0);
+    fcntl(p->out, F_SETFL, flag | O_NONBLOCK);
 
     return 0;
 }
