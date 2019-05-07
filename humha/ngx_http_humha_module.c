@@ -86,16 +86,21 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
                                    __tmp; \
                                    })
 
+#define NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE 1024
+
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 {
     ngx_http_humha_loc_conf_t * lcf;
     humha_process_t p;
     ngx_int_t retcode;
     ngx_int_t yield_size = 0;
+    ngx_int_t remain_size = NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE;
     ngx_chain_t * out = ngx_alloc_chain_link(r->pool);
     ngx_chain_t * cur_chain = out;
     out->next = NULL;
-    out->buf = ngx_create_temp_buf(r->pool, 1024);
+    out->buf = ngx_create_temp_buf(r->pool, NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE);
+    out->buf->last = out->buf->pos;
+    out->buf->last_buf = 0;
 
     lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     if (lcf == NULL || lcf->cmd.data == NULL) {
@@ -113,16 +118,29 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     }
 
     r->headers_out.content_length_n = 0;
-
-    while ((yield_size = read(p.out, cur_chain->buf->pos, 1024)) > 0) {
-        r->headers_out.content_length_n += yield_size;
-        cur_chain->next = ngx_alloc_chain_link(r->pool);
-        cur_chain = cur_chain->next;
-        cur_chain->next = NULL;
-        cur_chain->buf = ngx_create_temp_buf(r->pool, 1024);
+    ngx_str_set(&r->headers_out.content_type, "application/octet-stream");
+    if (ngx_http_set_content_type(r) != NGX_OK) {
+        return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 
+    while ((yield_size = read(p.out, cur_chain->buf->pos + (NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE - remain_size), remain_size)) > 0) {
+        r->headers_out.content_length_n += yield_size;
+        remain_size += yield_size;
+        cur_chain->buf->last += yield_size;
+
+        if (remain_size == NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE) {
+            cur_chain->next = ngx_alloc_chain_link(r->pool);
+            cur_chain = cur_chain->next;
+            cur_chain->buf = ngx_create_temp_buf(r->pool, NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE);
+            cur_chain->buf->last = cur_chain->buf->pos;
+            cur_chain->buf->last_buf = 0;
+            remain_size = NGX_HTTP_HUMHA_CHAIN_BLOCK_SIZE;
+        }
+    }
+    cur_chain->buf->last_buf = 1;
+
     retcode = ngx_http_send_header(r);
+
     if (retcode == NGX_ERROR || retcode > NGX_OK || r->header_only) {
         return retcode;
     }
