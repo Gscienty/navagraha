@@ -4,8 +4,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include <stdio.h>
-
 int humha_process(const u_char * executor, const u_char ** args, humha_process_t * p)
 {
     int pipe_stdin[2];
@@ -14,7 +12,6 @@ int humha_process(const u_char * executor, const u_char ** args, humha_process_t
     int ret;
 
     if ((ret = pipe(pipe_stdin)) != 0) {
-        printf("pipe error: %d\n", errno);
         return -1;
     }
     p->in_opened = 1;
@@ -22,17 +19,11 @@ int humha_process(const u_char * executor, const u_char ** args, humha_process_t
     p->peer_in = pipe_stdin[0];
 
     if ((ret = pipe(pipe_stdout)) != 0) {
-        printf("pipe error: %d\n", errno);
         return -1;
     }
     p->out_opened = 1;
     p->peer_out = pipe_stdout[1];
     p->out = pipe_stdout[0];
-
-    printf("open: %d\t", p->peer_in);
-    printf("open: %d\t", p->in);
-    printf("open: %d\t", p->out);
-    printf("open: %d\n", p->peer_out);
 
     flag = fcntl(p->out, F_GETFL, 0);
     fcntl(p->out, F_SETFL, flag | O_NONBLOCK | O_CLOEXEC);
@@ -74,7 +65,6 @@ int humha_process_close(humha_process_t * p)
 {
     humha_process_in_close(p);
     humha_process_out_close(p);
-    printf("\n");
 
     return 0;
 }
@@ -91,8 +81,6 @@ int humha_process_in_close(humha_process_t * p)
     if (p->in_opened) {
         close(p->peer_in);
         close(p->in);
-        printf("close: %d\t", p->peer_in);
-        printf("close: %d\t", p->in);
         p->in_opened = 0;
     }
 
@@ -104,8 +92,6 @@ int humha_process_out_close(humha_process_t * p)
     if (p->out_opened) {
         close(p->out);
         close(p->peer_out);
-        printf("close: %d\t", p->out);
-        printf("close: %d\t", p->peer_out);
         p->out_opened = 0;
     }
 

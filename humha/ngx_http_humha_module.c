@@ -139,7 +139,14 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 
 static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 {
-    return ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
+    ngx_int_t ret;
+    ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
+    if (ret >= NGX_HTTP_SPECIAL_RESPONSE) {
+        return ret;
+    }
+
+    ngx_http_finalize_request(r, NGX_DONE);
+    return ret;
 }
 
 static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
