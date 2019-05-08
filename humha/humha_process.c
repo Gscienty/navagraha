@@ -3,7 +3,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-int humha_process(const u_char * cmd, humha_process_t * p)
+int humha_process(const u_char * executor, const u_char ** args, humha_process_t * p)
 {
     pid_t pid;
     int pipe_stdin[2];
@@ -27,7 +27,7 @@ int humha_process(const u_char * cmd, humha_process_t * p)
         dup2(pipe_stdin[0], 0);
         close(pipe_stdout[0]);
         dup2(pipe_stdout[1], 1);
-        execl("/bin/sh", "sh", "-c", cmd, NULL);
+        execv((const char *) executor, (char * const *) args);
         exit(127);
     }
 

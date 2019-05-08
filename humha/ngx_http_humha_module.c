@@ -3,8 +3,11 @@
 #include <ngx_http.h>
 #include "humha_process.h"
 
+#define NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT 16
+
 typedef struct {
-    ngx_str_t cmd;
+    ngx_str_t executor;
+    ngx_str_t args[NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT];
 } ngx_http_humha_loc_conf_t;
 
 static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
@@ -17,7 +20,7 @@ static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_pro
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
         ngx_string("humha"),
-        NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        NGX_HTTP_LOC_CONF | NGX_CONF_TAKE3,
         ngx_http_humha,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
@@ -56,10 +59,18 @@ ngx_module_t ngx_http_humha_module = {
 static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
 {
     ngx_http_humha_loc_conf_t * conf;
+    ngx_uint_t args_idx;
 
     conf = ngx_palloc(cf->pool, sizeof(ngx_http_humha_loc_conf_t));
     if (conf == NULL) {
         return NULL;
+    }
+    conf->executor.data = NULL;
+    conf->executor.len = 0;
+    
+    for (args_idx = 0; args_idx < 16; args_idx++) {
+        conf->args->data = NULL;
+        conf->args->len = 0;
     }
 
     return conf;
@@ -72,9 +83,45 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
     ngx_http_core_loc_conf_t * ccf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
     ngx_http_humha_loc_conf_t * humha_conf = conf;
     ngx_str_t * value = cf->args->elts;
+    const char * executor_executor_base  = getenv((char *) value[1].data);
+    const char * executor_name_base = getenv((char *) value[2].data);
+    const char * executor_args_base = getenv((char *) value[3].data);
+    const char * args_delimiter = NULL;
+    ngx_uint_t args_idx;
 
-    humha_conf->cmd.data = value[1].data;
-    humha_conf->cmd.len = value[1].len;
+    if (executor_executor_base == NULL) {
+        return NGX_CONF_ERROR;
+    }
+    humha_conf->executor.data = (u_char *) executor_executor_base;
+    humha_conf->executor.len = ngx_strlen(executor_executor_base);
+    if (executor_name_base == NULL) {
+        return NGX_CONF_ERROR;
+    }
+    humha_conf->args[0].data = (u_char *) executor_name_base;
+    humha_conf->args[0].len = ngx_strlen(executor_name_base);
+
+    if (executor_args_base != NULL) {
+        for (args_idx = 1; args_idx < NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT - 1; args_idx++) {
+            args_delimiter = ngx_strchr(executor_args_base, ' ');
+            if (args_delimiter == NULL) {
+                break;
+            }
+            humha_conf->args[args_idx].len = (size_t) (args_delimiter - executor_args_base);
+            if (humha_conf->args[args_idx].len == 0) {
+                args_idx--;
+                executor_args_base = args_delimiter + 1;
+                continue;
+            }
+            humha_conf->args[args_idx].data = ngx_palloc(cf->pool, humha_conf->args[args_idx].len + 1);
+            ngx_memzero(humha_conf->args[args_idx].data, humha_conf->args[args_idx].len + 1);
+            ngx_memcpy(humha_conf->args[args_idx].data, executor_args_base, humha_conf->args[args_idx].len);
+            executor_args_base = args_delimiter + 1;
+        }
+
+        if (args_idx == NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT && args_delimiter != NULL) {
+            return NGX_CONF_ERROR;
+        }
+    }
 
     ccf->handler = ngx_http_humha_handler;
 
@@ -99,13 +146,18 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     ngx_http_humha_loc_conf_t * lcf;
     humha_process_t p;
     ngx_int_t retcode;
+    u_char * args[NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT] = { NULL }; 
+    ngx_uint_t args_idx;
 
     lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
-    if (lcf == NULL || lcf->cmd.data == NULL) {
+    if (lcf == NULL || lcf->executor.data == NULL) {
         return;
     }
+    for (args_idx = 0; args_idx < NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT && lcf->args[args_idx].data != NULL; args_idx++) {
+        args[args_idx] = lcf->args[args_idx].data;
+    }
 
-    humha_process(lcf->cmd.data, &p);
+    humha_process(lcf->executor.data, (const u_char **) args, &p);
 
     retcode = ngx_http_humha_process_input(r, &p);
     if (retcode != NGX_OK) {

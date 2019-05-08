@@ -18,7 +18,3 @@ RUN apk add --no-cache gcc make curl musl-dev \
     && make install \
     && rm -rf /var/tmp/* \
     && apk del gcc make curl musl-dev
-
-EXPOSE 80/tcp
-
-CMD ["/var/lib/nginx/sbin/nginx", "-g", "\"daemon off;\""]
