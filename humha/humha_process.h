@@ -8,8 +8,10 @@ typedef struct {
     pid_t pid;
     int in_opened;
     int in;
+    int peer_in;
     int out_opened;
     int out;
+    int peer_out;
 } humha_process_t;
 
 int humha_process(const u_char * executor, const u_char ** args, humha_process_t * p);
