@@ -108,9 +108,9 @@ static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
                 continue;
             }
 
-            args_delimiter = ngx_strchr(executor_executor_base, ' ');
+            args_delimiter = ngx_strchr(executor_args_base, ' ');
             if (args_delimiter == NULL) {
-                args_delimiter = executor_executor_base + ngx_strlen(executor_executor_base);
+                args_delimiter = executor_args_base + ngx_strlen(executor_args_base);
             }
             humha_conf->args[args_idx].len = (size_t) (args_delimiter - executor_args_base);
             humha_conf->args[args_idx].data = ngx_palloc(cf->pool, humha_conf->args[args_idx].len + 1);
