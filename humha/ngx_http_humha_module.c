@@ -23,6 +23,10 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r);
 static ngx_int_t ngx_http_humha_process_input(ngx_http_request_t * r, humha_process_t * p);
 static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_process_t * p);
 
+static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r);
+static ngx_int_t ngx_http_humha_call_process_status_line(ngx_http_request_t * r);
+static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r);
+
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
         ngx_string("humha_recv"),
@@ -243,6 +247,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         u->schema.len = 7;
 
         // TODO register 
+        u->create_request = ngx_http_humha_call_create_request;
 
         ngx_pfree(r->pool, u->uri.data);
         u->uri.data = NULL;
@@ -360,4 +365,162 @@ static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_pro
     while ((cur_chain = ngx_chain_free_link(r->pool, cur_chain)) != NULL);
 
     return NGX_OK;
+}
+
+static char ngx_http_humha_call_http_version[] = "HTTP/1.0" CRLF;
+
+static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r)
+{
+    ngx_http_upstream_t * u = r->upstream;
+    ngx_list_part_t * part;
+    ngx_table_elt_t * header;
+    ngx_chain_t * cl;
+    ngx_chain_t * body;
+    ngx_buf_t * b;
+    ngx_str_t method;
+    size_t len = 0;
+    ngx_uint_t idx;
+
+    if (u->method.len) {
+        method = u->method;
+    }
+    else {
+        method = r->method_name;
+    }
+
+    len += method.len + 1
+        + u->uri.len + 1
+        + sizeof(ngx_http_humha_call_http_version) - 1
+        + sizeof(CRLF) - 1;
+
+    part = &r->headers_in.headers.part;
+
+    for (idx = 0; ; idx++) {
+        if (idx >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            header = part->elts;
+            idx = 0;
+        }
+        len += header[idx].key.len + sizeof(": ") - 1
+            + header[idx].value.len + sizeof(CRLF) - 1;
+    }
+
+    b = ngx_create_temp_buf(r->pool, len);
+    if (b == NULL) {
+        return NGX_ERROR;
+    }
+
+    cl = ngx_alloc_chain_link(r->pool);
+    if (cl != NULL) {
+        return NGX_ERROR;
+    }
+
+    cl->buf = b;
+
+    b->last = ngx_copy(b->last, method.data, method.len);
+    *b->last++ = ' ';
+    b->last = ngx_copy(b->last, r->upstream->uri.data, r->upstream->uri.len);
+    *b->last++ = ' ';
+    b->last = ngx_copy(b->last, ngx_http_humha_call_http_version, sizeof(ngx_http_humha_call_http_version) - 1);
+
+    part = &r->headers_in.headers.part;
+    header = part->elts;
+    for (idx = 0; ; idx++) {
+        if (idx >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            header = part->elts;
+            idx = 0;
+        }
+
+        b->last = ngx_copy(b->last, header[idx].key.data, header[idx].key.len);
+        *b->last++ = ':';
+        *b->last++ = ' ';
+        b->last = ngx_copy(b->last, header[idx].value.data, header[idx].value.len);
+        *b->last++ = CR;
+        *b->last++ = LF;
+    }
+    *b->last++ = CR;
+    *b->last++ = LF;
+
+    u->request_bufs = cl;
+    if (!r->request_body_no_buffering) {
+        body = u->request_bufs;
+        u->request_bufs = cl;
+
+        while (body) {
+            b = ngx_alloc_buf(r->pool);
+            if (b == NULL) {
+                return NGX_ERROR;
+            }
+
+            ngx_memcpy(b, body->buf, sizeof(ngx_buf_t));
+            
+            cl->next = ngx_alloc_chain_link(r->pool);
+            if (cl->next == NULL) {
+                return NGX_ERROR;
+            }
+
+            cl = cl->next;
+            cl->buf = b;
+
+            body = body->next;
+        }
+    }
+
+    b->flush = 1;
+    cl->next = NULL;
+
+    return NGX_OK;
+}
+
+static ngx_int_t ngx_http_humha_call_process_status_line(ngx_http_request_t * r)
+{
+    size_t len;
+    ngx_http_status_t status;
+    ngx_http_upstream_t * u = r->upstream;
+    ngx_int_t ret;
+
+    ret = ngx_http_parse_status_line(r, &u->buffer, &status);
+    if (ret == NGX_AGAIN) {
+        return ret;
+    }
+
+    if (ret == NGX_ERROR) {
+        r->http_version = NGX_HTTP_VERSION_9;
+        u->state->status = NGX_HTTP_OK;
+        u->headers_in.connection_close = 1;
+
+        return NGX_OK;
+    }
+
+    if (u->state && u->state->status == 0) {
+        u->state->status = status.code;
+    }
+
+    u->headers_in.status_n = status.code;
+    len = status.end - status.start;
+    u->headers_in.status_line.len = len;
+    u->headers_in.status_line.data = ngx_palloc(r->pool, len);
+    if (u->headers_in.status_line.data == NULL) {
+        return NGX_ERROR;
+    }
+    ngx_memcpy(u->headers_in.status_line.data, status.start, len);
+
+    // because use HTTP/1.0
+    u->headers_in.connection_close = 1;
+
+    u->process_header = ngx_http_humha_call_process_header;
+
+    return ngx_http_humha_call_process_header(r);
+}
+
+static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r)
+{
+
 }
