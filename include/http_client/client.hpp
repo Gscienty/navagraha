@@ -17,10 +17,11 @@ private:
 
     std::string uri(const std::string path) const;
 
-    std::string & curl_abstract_process(const std::string path, CURLoption option);
-    std::string & curl_abstract_process(const std::string path, const char * method);
-
 protected:
+
+    virtual std::string & curl_abstract_process(const std::string path, CURLoption option);
+    virtual std::string & curl_abstract_process(const std::string path, const char * method);
+
     template <typename T> T get_call(const std::string path)
     {
         return T::deserialize(this->curl_abstract_process(path, "GET"));
