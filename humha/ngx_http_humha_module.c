@@ -25,6 +25,8 @@ static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_pro
 
 static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r);
 static ngx_int_t ngx_http_humha_call_process_status_line(ngx_http_request_t * r);
+static void ngx_http_humha_call_abort_request(ngx_http_request_t * r);
+static void ngx_http_humha_call_finalize_request(ngx_http_request_t * r, ngx_int_t rc);
 static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r);
 
 static ngx_command_t ngx_http_humha_module_commands[] = {
@@ -246,8 +248,15 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         u->schema.data = u->uri.data;
         u->schema.len = 7;
 
-        // TODO register 
         u->create_request = ngx_http_humha_call_create_request;
+        u->abort_request = ngx_http_humha_call_abort_request;
+        u->process_header = ngx_http_humha_call_process_status_line;
+        u->finalize_request = ngx_http_humha_call_finalize_request;
+        r->state = 0;
+
+        u->buffering = 0;
+
+        // TODO add input filter(refer: ngx_http_proxy_module, 915 line)
 
         ngx_pfree(r->pool, u->uri.data);
         u->uri.data = NULL;
@@ -522,5 +531,65 @@ static ngx_int_t ngx_http_humha_call_process_status_line(ngx_http_request_t * r)
 
 static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r)
 {
+    ngx_int_t ret;
+    ngx_table_elt_t * h;
 
+    for ( ;; ) {
+        ret = ngx_http_parse_header_line(r, &r->upstream->buffer, 1);
+
+        switch (ret) {
+        case NGX_OK:
+            h = ngx_list_push(&r->upstream->headers_in.headers);
+            if (h == NULL) {
+                return NGX_ERROR;
+            }
+
+            h->hash = r->header_hash;
+
+            h->key.len = r->header_name_end - r->header_name_start;
+            h->value.len = r->header_end - r->header_start;
+
+            h->key.data = ngx_palloc(r->pool,
+                                     h->key.len + 1 + h->value.len + 1 + h->key.len);
+            if (h->key.data == NULL) {
+                h->hash = 0;
+                return NGX_ERROR;
+            }
+            h->value.data = h->key.data + h->key.len + 1;
+            h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+
+            ngx_memcpy(h->key.data, r->header_name_start, h->key.len);
+            h->key.data[h->key.len] = 0;
+            ngx_memcpy(h->value.data, r->header_start, h->value.len);
+            h->value.data[h->value.len] = 0;
+            if (h->key.len == r->lowcase_index) {
+                ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+            }
+            else {
+                ngx_strlow(h->lowcase_key, h->key.data, h->key.len);
+            }
+            break;
+        case NGX_HTTP_PARSE_HEADER_DONE:
+            return NGX_OK;
+        case NGX_AGAIN:
+            return NGX_AGAIN;
+        default:
+            return NGX_HTTP_UPSTREAM_INVALID_HEADER;
+        }
+    }
+}
+
+static void ngx_http_humha_call_abort_request(ngx_http_request_t * r)
+{
+    (void) r;
+
+    return;
+}
+
+static void ngx_http_humha_call_finalize_request(ngx_http_request_t * r, ngx_int_t ret)
+{
+    (void) r;
+    (void) ret;
+
+    return;
 }
