@@ -23,6 +23,11 @@ public:
 
     }
 
+    std::string & operator[] (int const idx)
+    {
+        return this->params[idx];
+    }
+
     template <typename T_Prerequired> void require(T_Prerequired prerequired_arg)
     {
         this->require_arg_used = std::bind(&T_Prerequired::used, &prerequired_arg);
