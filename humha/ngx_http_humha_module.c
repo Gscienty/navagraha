@@ -346,6 +346,8 @@ static ngx_int_t ngx_http_humha_process_input(ngx_http_request_t * r, humha_proc
 {
     ngx_chain_t * cur_chain;
     if (r->request_body == NULL || r->request_body->bufs == NULL) {
+        write(p->in, NULL, 0);
+        humha_process_in_close(p);
         return NGX_OK;
     }
 
