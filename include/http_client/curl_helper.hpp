@@ -14,14 +14,14 @@ private:
     const std::string cert;
     const std::string key;
     const std::string ca;
-    const std::string base_uri;
+    const std::string host;
 public:
     static void static_construct();
 
     curl_helper(const std::string cert,
                 const std::string key,
                 const std::string ca,
-                const std::string base_uri);
+                const std::string host);
 
     template <typename T> T build()
     {
@@ -32,7 +32,7 @@ public:
         curl_easy_setopt(curl, CURLOPT_SSLKEY, this->key.c_str());
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
 
-        return T(curl, this->base_uri);
+        return T(curl, this->host);
     }
 };
 

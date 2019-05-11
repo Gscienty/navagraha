@@ -10,11 +10,11 @@ namespace http_client {
 curl_helper::curl_helper(const std::string cert,
                          const std::string key,
                          const std::string ca,
-                         const std::string base_uri)
+                         const std::string host)
     : cert(cert)
     , key(key)
     , ca(ca)
-    , base_uri(base_uri)
+    , host(host)
 {
 
 }
