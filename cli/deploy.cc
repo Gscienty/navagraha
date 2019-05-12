@@ -1,4 +1,5 @@
 #include "cli/deploy.hpp"
+#include "cli/config.hpp"
 #include "kubeent/deployment.hpp"
 #include "kube_api/deployment.hpp"
 #include <iostream>
@@ -34,7 +35,7 @@ bool deploy::satisfy() const
     return true;
 }
 
-void deploy::create_deployment()
+void deploy::create_deployment(http_client::curl_helper & helper)
 {
     kubeent::deployment req_obj;
 
@@ -75,15 +76,16 @@ void deploy::create_deployment()
         .containers.get().values().front()
         .ports.get().values().front().container_port_ = 80;
 
-    std::ostringstream str;
-    req_obj.serialize(str);
-
-    std::cout << str.str() << std::endl;
+    helper.build<kube_api::deployment>().create("1", req_obj);
 }
 
 int deploy::execute()
 {
-    this->create_deployment();
+    http_client::curl_helper helper(config::instance.kube_cert,
+                                    config::instance.kube_key,
+                                    config::instance.kube_ca,
+                                    config::instance.kube_ctl_api);
+    this->create_deployment(helper);
     
     return 0;
 }

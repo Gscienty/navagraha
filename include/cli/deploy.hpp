@@ -3,6 +3,7 @@
 
 #include "cli_arg/abstract_process.hpp"
 #include "cli_arg/arg.hpp"
+#include "http_client/curl_helper.hpp"
 
 namespace navagraha {
 namespace cli {
@@ -17,7 +18,7 @@ private:
     cli_arg::arg<CLI_DEPLOY_POLICY, 1> policy_arg;
     cli_arg::arg<CLI_DEPLOY_IMAGE, 1> image_arg;
 
-    void create_deployment();
+    void create_deployment(http_client::curl_helper & helper);
 
 public:
     virtual void bind(cli_arg::process_helper<deploy> & helper) override;
