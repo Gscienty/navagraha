@@ -15,7 +15,7 @@ extern char NODE_CONFIG_STATUS_ASSIGNED[];
 extern char NODE_CONFIG_STATUS_ERROR[];
 extern char NODE_CONFIG_STATUS_LAST_KNOWN_GOOD[];
 
-class node_config_status : public serializable<node_config_source> {
+class node_config_status : public serializable<node_config_status> {
 public:
     extensions::field<node_config_source, NODE_CONFIG_STATUS_ACTIVE> active;
     extensions::field<node_config_source, NODE_CONFIG_STATUS_ASSIGNED> assigned;

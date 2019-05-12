@@ -8,7 +8,6 @@ char SERVICE_LIST_ITEMS[] = "items";
 char SERVICE_LIST_KIND[] = "kind";
 char SERVICE_LIST_METADATA[] = "metadata";
 
-
 void service_list::bind(extensions::serializer_helper & helper)
 {
     helper

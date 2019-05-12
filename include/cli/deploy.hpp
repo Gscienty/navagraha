@@ -8,10 +8,16 @@ namespace navagraha {
 namespace cli {
 
 extern char CLI_DEPLOY_NAME[];
+extern char CLI_DEPLOY_POLICY[];
+extern char CLI_DEPLOY_IMAGE[];
 
 class deploy : public cli_arg::abstract_process<deploy> {
 private:
-    cli_arg::arg<CLI_DEPLOY_NAME, 0> switched_flag;
+    cli_arg::arg<CLI_DEPLOY_NAME, 1> name_arg;
+    cli_arg::arg<CLI_DEPLOY_POLICY, 1> policy_arg;
+    cli_arg::arg<CLI_DEPLOY_IMAGE, 1> image_arg;
+
+    void create_deployment();
 
 public:
     virtual void bind(cli_arg::process_helper<deploy> & helper) override;

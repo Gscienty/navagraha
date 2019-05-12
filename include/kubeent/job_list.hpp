@@ -6,6 +6,7 @@
 #include "extensions/special_list.hpp"
 #include "kubeent/job.hpp"
 #include "kubeent/list_meta.hpp"
+#include "kubeent/serializable.hpp"
 #include <string>
 
 namespace navagraha {

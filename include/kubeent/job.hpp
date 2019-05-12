@@ -18,7 +18,7 @@ extern char JOB_METADATA[];
 extern char JOB_SPEC[];
 extern char JOB_STATUS[];
 
-class job : serializable<job> {
+class job : public serializable<job> {
 public:
     extensions::field<std::string, JOB_API_VERSION> api_version;
     extensions::field<std::string, JOB_KIND> kind;

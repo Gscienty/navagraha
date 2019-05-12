@@ -18,7 +18,7 @@ extern char SERVICE_METADATA[];
 extern char SERVICE_SPEC[];
 extern char SERVICE_STATUS[];
 
-class service : serializable<service> {
+class service : public serializable<service> {
 public:
     extensions::field<std::string, SERVICE_API_VERSION> api_version;
     extensions::field<std::string, SERVICE_KIND> kind;

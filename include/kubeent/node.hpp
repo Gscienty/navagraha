@@ -18,7 +18,7 @@ extern char NODE_METADATA[];
 extern char NODE_SPEC[];
 extern char NODE_STATUS[];
 
-class node : serializable<node> {
+class node : public serializable<node> {
 public:
     extensions::field<std::string, NODE_API_VERSION> api_version;
     extensions::field<std::string, NODE_KIND> kind;

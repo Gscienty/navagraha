@@ -1,15 +1,15 @@
-#include "kubeent/node.hpp"
+#include "kubeent/job.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
-char NODE_API_VERSION[] = "apiVersion";
-char NODE_KIND[] = "kind";
-char NODE_METADATA[] = "metadata";
-char NODE_SPEC[] = "spec";
-char NODE_STATUS[] = "status";
+char JOB_API_VERSION[] = "apiVersion";
+char JOB_KIND[] = "kind";
+char JOB_METADATA[] = "metadata";
+char JOB_SPEC[] = "spec";
+char JOB_STATUS[] = "status";
 
-void node::bind(extensions::serializer_helper & helper)
+void job::bind(extensions::serializer_helper & helper)
 {
     helper
         .add(this->api_version)
