@@ -13,7 +13,7 @@ kubeent::service service::create(const std::string namespace_,
                                  kubeent::service & service_)
 {
     this->set_payload(service_);
-    return this->post_call<kubeent::service>("/api/v1/namesapces/"
+    return this->post_call<kubeent::service>("/api/v1/namespaces/"
                                              + namespace_
                                              + "/services");
 }
@@ -35,7 +35,7 @@ kubeent::status service::delete_(const std::string namespace_,
                                  kubeent::delete_options & opt)
 {
     this->set_payload(opt);
-    return this->delete_call<kubeent::status>("/api/v1/namesapces/"
+    return this->delete_call<kubeent::status>("/api/v1/namespaces/"
                                                + namespace_
                                                + "/services/"
                                                + name);
