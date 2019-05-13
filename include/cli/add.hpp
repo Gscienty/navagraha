@@ -1,5 +1,5 @@
-#ifndef _NAVAGAHA_CLI_DEPLOY_H
-#define _NAVAGAHA_CLI_DEPLOY_H
+#ifndef _NAVAGAHA_CLI_ADD_H
+#define _NAVAGAHA_CLI_ADD_H
 
 #include "cli_arg/abstract_process.hpp"
 #include "cli_arg/arg.hpp"
@@ -13,7 +13,7 @@ extern char CLI_DEPLOY_POLICY[];
 extern char CLI_DEPLOY_IMAGE[];
 extern char CLI_DEPLOY_NAMESPACE[];
 
-class deploy : public cli_arg::abstract_process<deploy> {
+class add : public cli_arg::abstract_process<add> {
 private:
     cli_arg::arg<CLI_DEPLOY_NAME, 1> name_arg;
     cli_arg::arg<CLI_DEPLOY_POLICY, 1> policy_arg;
@@ -24,7 +24,7 @@ private:
     void create_service(std::string namespace_, http_client::curl_helper & helper);
 
 public:
-    virtual void bind(cli_arg::process_helper<deploy> & helper) override;
+    virtual void bind(cli_arg::process_helper<add> & helper) override;
     virtual int execute() override;
     virtual bool satisfy() const override;
 

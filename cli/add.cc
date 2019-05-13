@@ -1,4 +1,4 @@
-#include "cli/deploy.hpp"
+#include "cli/add.hpp"
 #include "cli/config.hpp"
 #include "kubeent/deployment.hpp"
 #include "kubeent/service.hpp"
@@ -8,12 +8,12 @@
 namespace navagraha {
 namespace cli {
 
-char CLI_DEPLOY_NAME[] = "deploy";
+char CLI_DEPLOY_NAME[] = "add";
 char CLI_DEPLOY_POLICY[] = "--policy";
 char CLI_DEPLOY_IMAGE[] = "--image";
 char CLI_DEPLOY_NAMESPACE[] = "--namespace";
 
-void deploy::bind(cli_arg::process_helper<deploy> & helper)
+void add::bind(cli_arg::process_helper<add> & helper)
 {
     this->policy_arg.require(this->name_arg);
     this->image_arg.require(this->name_arg);
@@ -25,7 +25,7 @@ void deploy::bind(cli_arg::process_helper<deploy> & helper)
         .add(this->image_arg);
 }
 
-bool deploy::satisfy() const 
+bool add::satisfy() const 
 {
     if (!this->name_arg.used()) {
         return false;
@@ -38,7 +38,7 @@ bool deploy::satisfy() const
     return true;
 }
 
-void deploy::create_deployment(std::string namespace_, http_client::curl_helper & helper)
+void add::create_deployment(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::deployment req_obj;
 
@@ -65,7 +65,7 @@ void deploy::create_deployment(std::string namespace_, http_client::curl_helper 
     helper.build<kube_api::deployment>().create(namespace_, req_obj);
 }
 
-void deploy::create_service(std::string namespace_, http_client::curl_helper & helper)
+void add::create_service(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::service req_obj;
 
@@ -79,7 +79,7 @@ void deploy::create_service(std::string namespace_, http_client::curl_helper & h
     helper.build<kube_api::service>().create(namespace_, req_obj);
 }
 
-int deploy::execute()
+int add::execute()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,
