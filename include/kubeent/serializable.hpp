@@ -25,6 +25,9 @@ public:
 
     static T_Obj deserialize(std::string & payload)
     {
+        if (payload.length() == 0) {
+            payload = "{}";
+        }
         std::istringstream str(payload);
         T_Obj obj;
 
