@@ -11,14 +11,17 @@ namespace cli {
 extern char CLI_DEPLOY_NAME[];
 extern char CLI_DEPLOY_POLICY[];
 extern char CLI_DEPLOY_IMAGE[];
+extern char CLI_DEPLOY_NAMESPACE[];
 
 class deploy : public cli_arg::abstract_process<deploy> {
 private:
     cli_arg::arg<CLI_DEPLOY_NAME, 1> name_arg;
     cli_arg::arg<CLI_DEPLOY_POLICY, 1> policy_arg;
     cli_arg::arg<CLI_DEPLOY_IMAGE, 1> image_arg;
+    cli_arg::arg<CLI_DEPLOY_NAMESPACE, 1> namespace_arg;
 
-    void create_deployment(http_client::curl_helper & helper);
+    void create_deployment(std::string namespace_, http_client::curl_helper & helper);
+    void create_service(std::string namespace_, http_client::curl_helper & helper);
 
 public:
     virtual void bind(cli_arg::process_helper<deploy> & helper) override;
