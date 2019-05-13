@@ -29,7 +29,7 @@ public:
 
     process_helper & bind(int argc, char ** argv)
     {
-        for (int i = 0; i < argc; i++) {
+        for (int i = 1; i < argc; i++) {
             for (auto & arg : this->args) {
                 if (arg.name.compare(std::string(argv[i])) == 0
                     && arg.prerequired()
@@ -38,6 +38,7 @@ public:
                         arg.params_append(argv[++i]);
                     }
                     arg.use();
+                    break;
                 }
             }
         }
