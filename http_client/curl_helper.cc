@@ -19,6 +19,12 @@ curl_helper::curl_helper(const std::string cert,
 
 }
 
+curl_helper::curl_helper(const std::string unix_socket)
+    : unix_socket(unix_socket)
+{
+
+}
+
 void curl_helper::static_construct()
 {
     curl_global_init(CURL_GLOBAL_SSL);

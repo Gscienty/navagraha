@@ -19,6 +19,8 @@ public:
     common_list & deserialize(std::istringstream & str);
 
     static common_list to_special(abstract_object & obj);
+
+    static common_list deserialize(std::string & payload);
 };
 
 }

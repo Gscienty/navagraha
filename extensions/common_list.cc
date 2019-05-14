@@ -27,5 +27,17 @@ common_list & common_list::deserialize(std::istringstream & str)
     return *this;
 }
 
+common_list common_list::deserialize(std::string & payload)
+{
+    if (payload.length() == 0) {
+        payload = "{}";
+    }
+    std::istringstream str(payload);
+    common_list obj;
+
+    obj.deserialize(str);
+    return obj;
+}
+
 }
 }

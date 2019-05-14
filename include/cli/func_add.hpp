@@ -1,5 +1,5 @@
-#ifndef _NAVAGAHA_CLI_FUNC_ADD_H
-#define _NAVAGAHA_CLI_FUNC_ADD_H
+#ifndef _NAVAGRAHA_CLI_FUNC_ADD_H
+#define _NAVAGRAHA_CLI_FUNC_ADD_H
 
 #include "cli_arg/abstract_process.hpp"
 #include "cli_arg/arg.hpp"

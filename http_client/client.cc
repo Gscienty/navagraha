@@ -38,25 +38,6 @@ size_t client::write(const char * ptr, size_t size)
     return size;
 }
 
-std::string & client::curl_abstract_process(const std::string path, CURLoption option)
-{
-    const std::string uri = this->uri(path);
-    curl_easy_setopt(this->curl, CURLOPT_URL, uri.c_str());
-    curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, __write_cb);
-    curl_easy_setopt(this->curl, option, 1L);
-
-    if (this->payload.size() != 0)
-    {
-        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->payload.c_str());
-        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->payload.size());
-    }
-
-    curl_easy_perform(this->curl);
-
-    return this->result;
-}
-
 std::string & client::curl_abstract_process(const std::string path, const char * method)
 {
     curl_slist * headers = NULL;

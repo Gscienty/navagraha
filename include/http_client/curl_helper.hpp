@@ -15,6 +15,8 @@ private:
     const std::string key;
     const std::string ca;
     const std::string host;
+    const std::string unix_socket;
+
 public:
     static void static_construct();
 
@@ -22,6 +24,9 @@ public:
                 const std::string key,
                 const std::string ca,
                 const std::string host);
+
+    curl_helper(const std::string unix_socket);
+
 
     template <typename T> T build()
     {
@@ -33,6 +38,15 @@ public:
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
 
         return T(curl, this->host);
+    }
+
+    template <typename T> T unix_socket_build()
+    {
+        CURL * curl = curl_easy_init();
+
+        curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH, this->unix_socket.c_str());
+
+        return T(curl);
     }
 };
 
