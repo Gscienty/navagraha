@@ -1,4 +1,4 @@
-#include "cli/del.hpp"
+#include "cli/func_del.hpp"
 #include "cli/config.hpp"
 #include "http_client/curl_helper.hpp"
 #include "kube_api/deployment.hpp"
@@ -12,7 +12,7 @@ char CLI_DEL_NAME[] = "del";
 char CLI_DEL_NAMESPACE[] = "--namespace";
 
 
-void del::bind(cli_arg::process_helper<del> & helper) 
+void func_del::bind(cli_arg::process_helper<func_del> & helper) 
 {
     this->namespace_arg.require(this->name_arg);
 
@@ -21,7 +21,7 @@ void del::bind(cli_arg::process_helper<del> & helper)
         .add(this->namespace_arg);
 }
 
-bool del::satisfy() const
+bool func_del::satisfy() const
 {
     if (!this->name_arg.used()) {
         return false;
@@ -30,7 +30,7 @@ bool del::satisfy() const
     return true;
 }
 
-int del::execute()
+int func_del::execute()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,

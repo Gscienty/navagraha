@@ -1,4 +1,4 @@
-#include "cli/add.hpp"
+#include "cli/func_add.hpp"
 #include "cli/config.hpp"
 #include "kubeent/deployment.hpp"
 #include "kubeent/service.hpp"
@@ -13,7 +13,7 @@ char CLI_DEPLOY_POLICY[] = "--policy";
 char CLI_DEPLOY_IMAGE[] = "--image";
 char CLI_DEPLOY_NAMESPACE[] = "--namespace";
 
-void add::bind(cli_arg::process_helper<add> & helper)
+void func_add::bind(cli_arg::process_helper<func_add> & helper)
 {
     this->policy_arg.require(this->name_arg);
     this->image_arg.require(this->name_arg);
@@ -25,7 +25,7 @@ void add::bind(cli_arg::process_helper<add> & helper)
         .add(this->image_arg);
 }
 
-bool add::satisfy() const 
+bool func_add::satisfy() const 
 {
     if (!this->name_arg.used()) {
         return false;
@@ -38,7 +38,7 @@ bool add::satisfy() const
     return true;
 }
 
-void add::create_deployment(std::string namespace_, http_client::curl_helper & helper)
+void func_add::create_deployment(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::deployment req_obj;
 
@@ -65,7 +65,7 @@ void add::create_deployment(std::string namespace_, http_client::curl_helper & h
     helper.build<kube_api::deployment>().create(namespace_, req_obj);
 }
 
-void add::create_service(std::string namespace_, http_client::curl_helper & helper)
+void func_add::create_service(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::service req_obj;
 
@@ -79,7 +79,7 @@ void add::create_service(std::string namespace_, http_client::curl_helper & help
     helper.build<kube_api::service>().create(namespace_, req_obj);
 }
 
-int add::execute()
+int func_add::execute()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,
