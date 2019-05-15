@@ -37,6 +37,18 @@ public:
         return *this;
     }
 
+    static special_list deserialize(std::string & payload)
+    {
+        if (payload.length() == 0) {
+            payload = "[]";
+        }
+        std::istringstream str(payload);
+        special_list obj;
+
+        obj.deserialize(str);
+        return obj;
+    }
+
     abstract_object to_abstract()
     {
         abstract_object ret;
