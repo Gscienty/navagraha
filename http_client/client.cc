@@ -49,7 +49,12 @@ std::string & client::curl_abstract_process(const std::string path, const char *
 
     if (this->payload.size() != 0)
     {
-        headers = curl_slist_append(headers, "Content-Type: application/json; charset=UTF-8");
+        if (this->content_type.empty()) {
+            headers = curl_slist_append(headers, "Content-Type: application/json; charset=UTF-8");
+        }
+        else {
+            headers = curl_slist_append(headers, ("Content-Type: " + this->content_type).c_str());
+        }
         curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->payload.c_str());
         curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->payload.size());
@@ -61,6 +66,17 @@ std::string & client::curl_abstract_process(const std::string path, const char *
         curl_slist_free_all(headers);
     }
     return this->result;
+}
+
+client & client::set_content_type(std::string content_type)
+{
+    this->content_type = content_type;
+    return *this;
+}
+
+void client::set_payload(std::string && val)
+{
+    this->payload = val;
 }
 
 }

@@ -14,6 +14,7 @@ private:
     const std::string host;
     std::string payload;
     std::string result;
+    std::string content_type;
 
     std::string uri(const std::string path) const;
 
@@ -52,12 +53,16 @@ protected:
         this->payload = str.str();
     }
 
+    void set_payload(std::string && val);
+
 public:
     client(CURL * curl, const std::string host);
 
     virtual ~client();
 
     size_t write(const char * ptr, size_t size);
+
+    client & set_content_type(std::string content_type);
 };
 
 }
