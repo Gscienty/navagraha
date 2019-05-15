@@ -21,7 +21,7 @@ extern char IMAGE_VIRTUAL_SIZE[];
 extern char IMAGE_LABELS[];
 extern char IMAGE_CONTAINERS[];
 
-class image : public extensions::serializer<image> {
+class image : public extensions::serializable<image> {
 public:
     extensions::field<std::string, IMAGE_ID> id;
     extensions::field<std::string, IMAGE_PARENT_ID> parent_id;
