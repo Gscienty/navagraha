@@ -12,6 +12,7 @@ public:
     std::string kube_key;
     std::string kube_ca;
     std::string kube_api_server;
+    std::string docker_sock;
 
     static config & get_instance();
 };

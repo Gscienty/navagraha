@@ -11,9 +11,9 @@ images::images(CURL * curl)
 }
 
 
-extensions::common_list images::read()
+extensions::special_list<dockerent::image> images::list()
 {
-    return this->get_call<extensions::common_list>("/images/json");
+    return this->get_call<extensions::special_list<dockerent::image>>("/images/json");
 }
 
 }
