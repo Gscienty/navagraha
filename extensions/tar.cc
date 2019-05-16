@@ -49,5 +49,23 @@ void tar::operator() ()
     this->direct_each("");
 }
 
+size_t tar::size() const
+{
+    int fd = open(this->tar_name.c_str(), O_RDONLY);
+    lseek(fd, 0, SEEK_END);
+    size_t ret = lseek(fd, 0, SEEK_CUR);
+    close(fd);
+    return ret;
+}
+
+void tar::extract(std::string & str)
+{
+    size_t tar_size = this->size();
+    str.resize(tar_size);
+    int fd = open(this->tar_name.c_str(), O_RDONLY);
+    read(fd, const_cast<char *>(str.data()), tar_size);
+    close(fd);
+}
+
 }
 }

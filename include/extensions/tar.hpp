@@ -20,6 +20,10 @@ public:
     virtual ~tar();
 
     void operator() ();
+
+    size_t size() const;
+
+    void extract(std::string & str);
 };
 
 }
