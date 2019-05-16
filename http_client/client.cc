@@ -18,6 +18,8 @@ static size_t __write_cb(void * ptr, size_t size, size_t nitems, void * stream)
 client::client(CURL * curl, const std::string host)
     : curl(curl)
     , host(host)
+    , binary_payload(NULL)
+    , binary_payload_length(0)
 {
 
 }
@@ -47,7 +49,7 @@ std::string & client::curl_abstract_process(const std::string path, const char *
     curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, __write_cb);
     curl_easy_setopt(this->curl, CURLOPT_CUSTOMREQUEST, method);
 
-    if (this->payload.size() != 0)
+    if (this->payload.size() != 0 || this->binary_payload_length != 0)
     {
         if (this->content_type.empty()) {
             headers = curl_slist_append(headers, "Content-Type: application/json; charset=UTF-8");
@@ -56,8 +58,14 @@ std::string & client::curl_abstract_process(const std::string path, const char *
             headers = curl_slist_append(headers, ("Content-Type: " + this->content_type).c_str());
         }
         curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->payload.c_str());
-        curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->payload.size());
+        if (this->payload.size() != 0) {
+            curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->payload.c_str());
+            curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->payload.size());
+        }
+        else {
+            curl_easy_setopt(this->curl, CURLOPT_POSTFIELDS, this->binary_payload);
+            curl_easy_setopt(this->curl, CURLOPT_POSTFIELDSIZE, this->binary_payload_length);
+        }
     }
 
     curl_easy_perform(this->curl);
@@ -74,9 +82,10 @@ client & client::set_content_type(std::string content_type)
     return *this;
 }
 
-void client::set_payload(std::string && val)
+void client::set_binary_content(std::string & val)
 {
-    this->payload = val;
+    this->binary_payload = val.c_str();
+    this->binary_payload_length = val.size();
 }
 
 }

@@ -15,6 +15,8 @@ private:
     std::string payload;
     std::string result;
     std::string content_type;
+    const char * binary_payload;
+    size_t binary_payload_length;
 
     std::string uri(const std::string path) const;
 
@@ -53,7 +55,7 @@ protected:
         this->payload = str.str();
     }
 
-    void set_payload(std::string && val);
+    void set_binary_content(std::string & val);
 
 public:
     client(CURL * curl, const std::string host);
