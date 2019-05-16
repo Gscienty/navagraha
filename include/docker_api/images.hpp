@@ -13,6 +13,8 @@ public:
     images(CURL * curl);
 
     extensions::special_list<dockerent::image> list();
+
+    extensions::common_object create(std::string dockerfile, std::string tag);
 };
 
 }
