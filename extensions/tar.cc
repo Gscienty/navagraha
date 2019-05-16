@@ -25,17 +25,19 @@ tar::~tar()
 
 void tar::direct_each(std::string direct_name)
 {
-    DIR * dir = opendir(direct_name.c_str());
+    std::string real_direct_name = this->dir + direct_name;
+    DIR * dir = opendir(real_direct_name.c_str());
     if (dir == NULL) {
         return;
     }
     for (dirent * node = readdir(dir); node; node = readdir(dir)) {
-        std::string sub_node = direct_name + "/" + std::string(node->d_name);
+        std::string log_path = direct_name + "/" + std::string(node->d_name);
+        std::string real_path = this->dir + direct_name + "/" + std::string(node->d_name);
         if (node->d_type == DT_DIR && strcmp(node->d_name, ".") != 0 && strcmp(node->d_name, "..") != 0) {
-            this->direct_each(sub_node);
+            this->direct_each(log_path);
         }
         else if (node->d_type != DT_DIR) {
-            tar_append_file(this->tar_handler, const_cast<char *>(sub_node.c_str()), const_cast<char *>(sub_node.c_str()));
+            tar_append_file(this->tar_handler, const_cast<char *>(real_path.c_str()), const_cast<char *>(("." + log_path).c_str()));
         }
     }
     closedir(dir);
@@ -44,7 +46,7 @@ void tar::direct_each(std::string direct_name)
 
 void tar::operator() ()
 {
-    this->direct_each(this->dir);
+    this->direct_each("");
 }
 
 }
