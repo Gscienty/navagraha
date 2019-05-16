@@ -2,13 +2,13 @@ import sys
 from function import handler
 
 def getit():
-    buf = b''
+    buf = ''
     while True:
         b = sys.stdin.read(1)
         if not b:
             break
-        buf += b.encode('utf-8')
+        buf += b
     return buf
 
 if __name__ == '__main__':
-    print(handler.handle(getit()))
+    sys.stdout.write(handler.handle(getit()))
