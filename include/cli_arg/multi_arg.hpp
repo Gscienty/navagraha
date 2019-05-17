@@ -1,32 +1,29 @@
-#ifndef _NAVAGRAHA_CLI_ARG_ARG_H
-#define _NAVAGRAHA_CLI_ARG_ARG_H
+#ifndef _NAVAGRAHA_CLI_ARG_MULTI_ARG_H
+#define _NAVAGRAHA_CLI_ARG_MULTI_ARG_H
 
-#include "cli_arg/arg_type.hpp"
-#include <array>
 #include <string>
+#include <array>
+#include <vector>
 #include <functional>
+#include "cli_arg/arg_type.hpp"
 
 namespace navagraha {
 namespace cli_arg {
 
 template <char * T_Arg_Name, int T_Arg_Params_Count = 0>
-class arg {
+class multi_arg {
 private:
     int params_count_;
-    std::array<std::string, T_Arg_Params_Count> params;
+    std::vector<std::array<std::string, T_Arg_Params_Count>> params_;
     std::function<bool ()> require_arg_used;
     bool used_;
+
 public:
-    arg()
+    multi_arg()
         : params_count_(0)
         , used_(false)
     {
 
-    }
-
-    std::string & operator[] (int const idx)
-    {
-        return this->params[idx];
     }
 
     template <typename T_Prerequired> void require(T_Prerequired & prerequired_arg)
@@ -47,9 +44,15 @@ public:
         return this->require_arg_used();
     }
 
+    void begin()
+    {
+        this->params_.push_back(std::array<std::string, T_Arg_Params_Count>());
+        this->params_count_ = 0;
+    }
+
     void params_append(const char * const param)
     {
-        this->params[this->params_count_++] = std::string(param);
+        this->params_.back()[this->params_count_++] = std::string(param);
     }
 
     int params_remain() const
@@ -77,9 +80,9 @@ public:
 
     }
 
-    void begin()
+    std::vector<std::array<std::string, T_Arg_Params_Count>> & get_params()
     {
-
+        return this->params_;
     }
 };
 

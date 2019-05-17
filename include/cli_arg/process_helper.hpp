@@ -33,9 +33,16 @@ public:
             for (auto & arg : this->args) {
                 if (arg.name.compare(std::string(argv[i])) == 0
                     && arg.prerequired()
-                    && argc - i >= arg.params_remain()) {
-                    while (arg.params_remain() > 0) {
-                        arg.params_append(argv[++i]);
+                    && (arg.type == arg_type_process_arg
+                        || argc - i >= arg.params_remain())) {
+                    arg.begin();
+                    if (arg.type == arg_type_common_arg) {
+                        while (arg.params_remain() > 0) {
+                            arg.params_append(argv[++i]);
+                        }
+                    }
+                    else {
+                        arg.set_args(argc - i, argv + i);
                     }
                     arg.use();
                     break;
@@ -45,11 +52,13 @@ public:
         return *this;
     }
 
-    int result() const {
+    int result() const
+    {
         return this->result_;
     }
 
-    bool operator() () {
+    bool operator() ()
+    {
         if (this->process.satisfy()) {
             this->result_ = this->process.execute();        
             return true;
