@@ -1,7 +1,5 @@
 #include "http_client/client.hpp"
 
-#include <iostream>
-
 namespace navagraha {
 namespace http_client {
 
@@ -36,7 +34,11 @@ std::string client::uri(const std::string path) const
 
 size_t client::write(const char * ptr, size_t size)
 {
-    this->result = std::string(ptr, size);
+    std::string block = std::string(ptr, size);
+    if (this->receive_cb) {
+        this->receive_cb(block);
+    }
+    this->result += block;
     return size;
 }
 
@@ -86,6 +88,13 @@ void client::set_binary_content(std::string & val)
 {
     this->binary_payload = val.c_str();
     this->binary_payload_length = val.size();
+}
+
+client & client::set_receive_cb(std::function<void (std::string &)> cb)
+{
+    this->receive_cb = cb;
+
+    return *this;
 }
 
 }

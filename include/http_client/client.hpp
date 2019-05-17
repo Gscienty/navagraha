@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <sstream>
 #include <string>
+#include <functional>
 
 namespace navagraha {
 namespace http_client {
@@ -17,6 +18,7 @@ private:
     std::string content_type;
     const char * binary_payload;
     size_t binary_payload_length;
+    std::function<void (std::string &)> receive_cb;
 
     std::string uri(const std::string path) const;
 
@@ -65,6 +67,8 @@ public:
     size_t write(const char * ptr, size_t size);
 
     client & set_content_type(std::string content_type);
+
+    client & set_receive_cb(std::function<void (std::string &)> cb);
 };
 
 }
