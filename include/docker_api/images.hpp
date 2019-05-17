@@ -14,7 +14,7 @@ public:
 
     extensions::special_list<dockerent::image> list();
 
-    extensions::common_object create(std::string dockerfile, std::string tag);
+    extensions::common_object create(std::string path, std::string tag);
 };
 
 }
