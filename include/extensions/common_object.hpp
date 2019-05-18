@@ -18,6 +18,7 @@ public:
     template <typename T_Field> common_object & operator= (T_Field & field)
     {
         this->obj() = serializer<T_Field>::to_abstract(field);
+        return *this;
     }
 
     common_object & serialize(std::ostringstream & str);

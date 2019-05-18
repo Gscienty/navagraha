@@ -3,7 +3,16 @@ cmake_minimum_required(VERSION 2.8.8)
 project (navagraha)
 
 set (NAVAGRAHA_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-add_compile_options(-std=c++11)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+
+    add_compile_options(-std=c++11)
+    message(STATUS "optional: -std=c++11")
+
+    add_compile_options(-Wall)
+    message(STATUS "optional: -Wall")
+
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 link_libraries(curl tar)
 
