@@ -2,3 +2,6 @@
 obj/
 test/
 __pycache__/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
