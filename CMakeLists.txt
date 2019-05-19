@@ -14,7 +14,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
-link_libraries(curl tar)
+link_libraries(curl tar git2)
 
 include_directories(${NAVAGRAHA_INCLUDE})
 
