@@ -1,4 +1,4 @@
-#include "cli/func_add.hpp"
+#include "cli/func_deploy.hpp"
 #include "cli/config.hpp"
 #include "kubeent/deployment.hpp"
 #include "kubeent/service.hpp"
@@ -8,12 +8,12 @@
 namespace navagraha {
 namespace cli {
 
-char CLI_DEPLOY_NAME[] = "add";
-char CLI_DEPLOY_POLICY[] = "--policy";
-char CLI_DEPLOY_IMAGE[] = "--image";
-char CLI_DEPLOY_NAMESPACE[] = "--namespace";
+char CLI_FUNC_DEPLOY_NAME[] = "publish";
+char CLI_FUNC_DEPLOY_POLICY[] = "--policy";
+char CLI_FUNC_DEPLOY_IMAGE[] = "--image";
+char CLI_FUNC_DEPLOY_NAMESPACE[] = "--namespace";
 
-void func_add::bind(cli_arg::process_helper<func_add> & helper)
+void func_deploy::bind(cli_arg::process_helper<func_deploy> & helper)
 {
     this->policy_arg.require(this->name_arg);
     this->image_arg.require(this->name_arg);
@@ -25,7 +25,7 @@ void func_add::bind(cli_arg::process_helper<func_add> & helper)
         .add(this->image_arg);
 }
 
-bool func_add::satisfy() const 
+bool func_deploy::satisfy() const 
 {
     if (!this->name_arg.used()) {
         return false;
@@ -38,7 +38,7 @@ bool func_add::satisfy() const
     return true;
 }
 
-void func_add::create_deployment(std::string namespace_, http_client::curl_helper & helper)
+void func_deploy::create_deployment(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::deployment req_obj;
 
@@ -65,7 +65,7 @@ void func_add::create_deployment(std::string namespace_, http_client::curl_helpe
     helper.build<kube_api::deployment>().create(namespace_, req_obj);
 }
 
-void func_add::create_service(std::string namespace_, http_client::curl_helper & helper)
+void func_deploy::create_service(std::string namespace_, http_client::curl_helper & helper)
 {
     kubeent::service req_obj;
 
@@ -79,7 +79,7 @@ void func_add::create_service(std::string namespace_, http_client::curl_helper &
     helper.build<kube_api::service>().create(namespace_, req_obj);
 }
 
-int func_add::execute()
+int func_deploy::execute()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,

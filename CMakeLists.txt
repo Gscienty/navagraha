@@ -26,6 +26,7 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/dockerent NAVAGRAHA_DOCKERENT)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/docker_api NAVAGRAHA_DOCKER_API)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/cli_arg NAVAGRAHA_CLI_ARG)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/cli NAVAGRAHA_CLI)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/git NAVAGRAHA_GIT)
 
 add_executable(nava cli/cli.cc
     ${NAVAGRAHA_EXTENSIONS}
@@ -36,6 +37,7 @@ add_executable(nava cli/cli.cc
     ${NAVAGRAHA_DOCKER_API}
     ${NAVAGRAHA_CLI}
     ${NAVAGRAHA_CLI_ARG}
+    ${NAVAGRAHA_GIT}
     )
 
 #target_link_libraries(nava tar)
