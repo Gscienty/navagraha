@@ -7,8 +7,8 @@
 namespace navagraha {
 namespace cli {
 
-char IMAGE_BUILD[] = "build";
-char IMAGE_PATH[] = "--path";
+char CLI_FUNC_BUILD_BUILD[] = "build";
+char CLI_FUNC_BUILD_PATH[] = "--path";
 
 void func_build::bind(cli_arg::process_helper<func_build> & helper)
 {

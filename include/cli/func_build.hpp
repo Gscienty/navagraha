@@ -9,7 +9,6 @@ namespace navagraha {
 namespace cli {
 
 extern char CLI_FUNC_BUILD_BUILD[];
-extern char CLI_FUNC_BUILD_TAG[];
 extern char CLI_FUNC_BUILD_PATH[];
 
 class func_build : public cli_arg::abstract_process<func_build> {
