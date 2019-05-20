@@ -35,7 +35,7 @@ public:
         curl_easy_setopt(curl, CURLOPT_CAINFO, this->ca.c_str());
         curl_easy_setopt(curl, CURLOPT_SSLCERT, this->cert.c_str());
         curl_easy_setopt(curl, CURLOPT_SSLKEY, this->key.c_str());
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 
         return T(curl, this->host);
     }
