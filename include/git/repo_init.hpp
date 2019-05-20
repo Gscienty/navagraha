@@ -16,12 +16,8 @@ private:
     std::string github_uri;
     std::string template_path;
 
-    void set_sparse_checkout();
     void set_template_remote();
-    void set_config();
     void merge();
-    void init_head(const unsigned char sign[20]);
-    void write_char(int fd, unsigned char c);
     void perform_fastforward(const git_oid * target_oid, bool is_unborn);
 public:
     repo_init(std::string repo_path, std::string github_uri, std::string template_path);

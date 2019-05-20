@@ -51,33 +51,7 @@ void repo_init::init()
 {
     git_repository_init(&this->repo_handler, this->repo_path.c_str(), 0);
 
-    this->set_sparse_checkout();
     this->set_template_remote();
-    this->set_config();
-}
-
-void repo_init::set_config()
-{
-    git_config * config = nullptr;
-    git_config_open_ondisk(&config, (this->repo_path + "/.git/config").c_str());
-    if (config == nullptr) {
-        return;
-    }
-    git_config_set_bool(config, "core.sparsecheckout", 1);
-    git_config_free(config);
-}
-
-void repo_init::set_sparse_checkout()
-{
-    int sparse_checkout_fd
-        = open((this->repo_path + "/.git/info/sparse-checkout").c_str(),
-               O_CREAT | O_RDWR);
-    fchmod(sparse_checkout_fd,
-           S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-    write(sparse_checkout_fd,
-          this->template_path.c_str(),
-          this->template_path.size());
-    close(sparse_checkout_fd);
 }
 
 void repo_init::set_template_remote()
@@ -86,46 +60,6 @@ void repo_init::set_template_remote()
                       this->repo_handler,
                       "nava_template",
                       this->github_uri.c_str());
-}
-
-void repo_init::write_char(int fd, unsigned char c)
-{
-    switch (c) {
-    case 0: write(fd, "0", 1); break;
-    case 1: write(fd, "1", 1); break;
-    case 2: write(fd, "2", 1); break;
-    case 3: write(fd, "3", 1); break;
-    case 4: write(fd, "4", 1); break;
-    case 5: write(fd, "5", 1); break;
-    case 6: write(fd, "6", 1); break;
-    case 7: write(fd, "7", 1); break;
-    case 8: write(fd, "8", 1); break;
-    case 9: write(fd, "9", 1); break;
-    case 0xA: write(fd, "a", 1); break;
-    case 0xB: write(fd, "b", 1); break;
-    case 0xC: write(fd, "c", 1); break;
-    case 0xD: write(fd, "d", 1); break;
-    case 0xE: write(fd, "e", 1); break;
-    case 0xF: write(fd, "f", 1); break;
-    default:
-        break;
-    }
-}
-
-void repo_init::init_head(const unsigned char sign[20])
-{
-    int head_fd = open((this->repo_path + "/.git/refs/heads/master").c_str(),
-                       O_CREAT | O_RDWR);
-    fchmod(head_fd,
-           S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-
-    for (int i = 0; i < 20; i++) {
-        unsigned char c = sign[i];
-        this->write_char(head_fd, (c & 0xF0) >> 4);
-        this->write_char(head_fd, (c & 0x0F));
-    }
-
-    close(head_fd);
 }
 
 void repo_init::perform_fastforward(const git_oid * target_oid, bool is_unborn)
