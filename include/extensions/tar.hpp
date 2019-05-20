@@ -14,7 +14,7 @@ private:
     std::string tar_name;
     std::string dir;
 
-    void direct_each(std::string direct_name);
+    void direct_each(std::string real_direct_name, std::string logic_direct_name);
 public:
     tar(std::string tar_name, std::string dir);
     virtual ~tar();
