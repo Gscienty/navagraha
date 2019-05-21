@@ -2,7 +2,7 @@
 #include "cli/func_deploy.hpp"
 #include "cli/func_offline.hpp"
 #include "cli/project_init.hpp"
-#include "cli/namespace_list.hpp"
+#include "cli/namespace.hpp"
 #include "cli_arg/process_collection.hpp"
 #include "cli/config.hpp"
 
@@ -19,6 +19,6 @@ int main(int argc, char ** argv)
         .add(navagraha::cli::func_deploy())
         .add(navagraha::cli::func_offline())
         .add(navagraha::cli::project_init())
-        .add(navagraha::cli::namespace_list())
+        .add(navagraha::cli::namespace_())
         .result();
 }

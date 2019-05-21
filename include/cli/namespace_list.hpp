@@ -9,11 +9,11 @@
 namespace navagraha {
 namespace cli {
 
-extern char CLI_NAMESPACE_FLAG[];
+extern char CLI_NAMESPACE_LIST_FLAG[];
 
 class namespace_list : public cli_arg::abstract_process<namespace_list> {
 private:
-    cli_arg::arg<CLI_NAMESPACE_FLAG, 0> list_flag;
+    cli_arg::arg<CLI_NAMESPACE_LIST_FLAG, 0> list_flag;
 
     void display_item(kubeent::namespace_ & namespace_);
 public:
