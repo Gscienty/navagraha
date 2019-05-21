@@ -1,5 +1,6 @@
 #include "cli/namespace.hpp"
 #include "cli/namespace_list.hpp"
+#include "cli/namespace_add.hpp"
 #include "cli_arg/process_collection.hpp"
 
 namespace navagraha {
@@ -23,6 +24,7 @@ int namespace_::execute()
     return navagraha::cli_arg::process_collection(this->name_flag.argc(),
                                                   this->name_flag.argv())
         .add(navagraha::cli::namespace_list())
+        .add(navagraha::cli::namespace_add())
         .result();
 }
 
