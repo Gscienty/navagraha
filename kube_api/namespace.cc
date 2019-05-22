@@ -31,5 +31,11 @@ kubeent::namespace_ namespace_::put(const std::string name, kubeent::namespace_ 
     return this->post_call<kubeent::namespace_>("/api/v1/namespaces/" + name);
 }
 
+kubeent::status namespace_::delete_(const std::string name, kubeent::delete_options & opt)
+{
+    this->set_payload(opt);
+    return this->delete_call<kubeent::status>("/api/v1/namespaces/" + name);
+}
+
 }
 }

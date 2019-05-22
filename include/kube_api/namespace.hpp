@@ -5,6 +5,7 @@
 #include "kubeent/namespace.hpp"
 #include "kubeent/namespace_list.hpp"
 #include "kubeent/delete_options.hpp"
+#include "kubeent/status.hpp"
 
 namespace navagraha {
 namespace kube_api {
@@ -18,6 +19,7 @@ public:
 
     kubeent::namespace_ create(kubeent::namespace_ & payload);
     kubeent::namespace_ put(const std::string name, kubeent::namespace_ & payload);
+    kubeent::status delete_(const std::string name, kubeent::delete_options & opt);
 };
 
 }
