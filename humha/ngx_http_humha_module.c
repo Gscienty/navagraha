@@ -308,6 +308,8 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     ngx_int_t retcode;
     u_char * args[NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT] = { NULL }; 
     ngx_uint_t args_idx;
+    ngx_str_t async_cb = { 0, NULL };
+    ngx_chain_t async_out = { NULL, NULL };
 
     lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     if (lcf == NULL || lcf->executor.data == NULL) {
@@ -316,8 +318,11 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     for (args_idx = 0; args_idx < NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT && lcf->args[args_idx].data != NULL; args_idx++) {
         args[args_idx] = lcf->args[args_idx].data;
     }
+    // TODO request header param 'Async-Callback'
+    // OR loc_conf set 'async' 'on'
+    p.is_async = 0;
 
-    if (humha_process(lcf->executor.data, (const u_char **) args, &p) < 0) {
+    if (humha_process(lcf->executor.data, (const u_char **) args, &p, &async_cb) < 0) {
         goto output;
     }
 
@@ -327,6 +332,21 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
         humha_process_kill(&p);
         humha_process_close(&p);
         goto output;
+    }
+
+    if (p.is_async == 1) {
+
+        r->headers_out.status = NGX_HTTP_ACCEPTED;
+        r->headers_out.content_length_n = strlen("Accepted");
+
+        async_out.buf = ngx_create_temp_buf(r->pool, strlen("Accepted"));
+        async_out.buf->last_buf = 1;
+        ngx_memcpy(async_out.buf->pos, "Accepted", strlen("Accepted"));
+        async_out.buf->last = async_out.buf->pos + strlen("Accepted");
+
+        ngx_http_send_header(r);
+        retcode = ngx_http_output_filter(r, &async_out);
+        return;
     }
 
     retcode = humha_process_wait(&p);

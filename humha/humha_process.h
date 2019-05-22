@@ -3,9 +3,11 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <ngx_core.h>
 
 typedef struct {
     pid_t pid;
+    int is_async;
     int in_opened;
     int in;
     int peer_in;
@@ -14,7 +16,10 @@ typedef struct {
     int peer_out;
 } humha_process_t;
 
-int humha_process(const u_char * executor, const u_char ** args, humha_process_t * p);
+int humha_process(const u_char * executor,
+                  const u_char ** args,
+                  humha_process_t * p,
+                  ngx_str_t * async_cb);
 
 int humha_process_wait(humha_process_t * p);
 
