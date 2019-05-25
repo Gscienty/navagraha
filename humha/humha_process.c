@@ -84,6 +84,7 @@ int humha_process(const u_char * executor,
             }
             else { // async process (postman)
                 humha_process_async(p, async_cb);
+                exit(0);
             }
         }
     }
