@@ -24,7 +24,7 @@ public:
     extensions::field<extensions::common_object, SECRET_DATA> data;
     extensions::field<std::string, SECRET_KIND> kind;
     extensions::field<object_meta, SECRET_METADATA> metadata;
-    extensions::field<object_meta, SECRET_STRING_DATA> string_data;
+    extensions::field<extensions::common_object, SECRET_STRING_DATA> string_data;
     extensions::field<std::string, SECRET_TYPE> type;
 
     void bind(extensions::serializer_helper & helper);

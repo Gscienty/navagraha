@@ -3,8 +3,9 @@
 #include "cli/func_offline.hpp"
 #include "cli/project_init.hpp"
 #include "cli/namespace.hpp"
-#include "cli_arg/process_collection.hpp"
+#include "cli/secret.hpp"
 #include "cli/config.hpp"
+#include "cli_arg/process_collection.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -20,5 +21,6 @@ int main(int argc, char ** argv)
         .add(navagraha::cli::func_offline())
         .add(navagraha::cli::project_init())
         .add(navagraha::cli::namespace_())
+        .add(navagraha::cli::secret())
         .result();
 }
