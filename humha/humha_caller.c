@@ -6,7 +6,9 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-static int humha_remote_fd(char * hostname)
+#include <stdio.h>
+
+static int humha_remote_fd(char * hostname, int port)
 {
     struct sockaddr_in peer_sock;
     struct hostent * host = gethostbyname(hostname);
@@ -17,7 +19,7 @@ static int humha_remote_fd(char * hostname)
     }
     peer_ip_str = inet_ntoa(*(struct in_addr *) (host->h_addr_list[0]));
     peer_sock.sin_family = AF_INET;
-    peer_sock.sin_port = htons(80);
+    peer_sock.sin_port = htons(port);
     peer_sock.sin_addr.s_addr = inet_addr(peer_ip_str);
 
     retfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -89,9 +91,9 @@ static humha_caller_chain_t * humha_caller_chain_set_int(humha_caller_chain_t * 
     return chain;
 }
 
-int humha_caller(int out_fd, char * hostname)
+int humha_caller(int out_fd, char * hostname, int port)
 {
-    int remote_fd = humha_remote_fd(hostname);
+    int remote_fd = humha_remote_fd(hostname, port);
     humha_caller_chain_t * head = humha_caller_chain_alloc(512);
     humha_caller_chain_t * payload = humha_caller_chain_alloc(512);
     int payload_size = 0;
@@ -101,6 +103,7 @@ int humha_caller(int out_fd, char * hostname)
     cur = payload;
     while ((yield_size = read(out_fd, cur->buf_ptr + cur->used_size, cur->size - cur->used_size)) > 0) {
         payload_size += yield_size;
+        cur->used_size += yield_size;
 
         if (yield_size + cur->used_size >= cur->size) {
             cur->next = humha_caller_chain_alloc(512);
@@ -110,7 +113,7 @@ int humha_caller(int out_fd, char * hostname)
 
     cur = humha_caller_chain_set(head, "POST / HTTP/1.1");
     cur = humha_caller_chain_set(cur, "\r\n");
-    cur = humha_caller_chain_set(cur, "host: ");
+    cur = humha_caller_chain_set(cur, "Host: ");
     cur = humha_caller_chain_set(cur, hostname);
     cur = humha_caller_chain_set(cur, "\r\n");
     cur = humha_caller_chain_set(cur, "Content-Length: ");
@@ -121,10 +124,14 @@ int humha_caller(int out_fd, char * hostname)
     cur = humha_caller_chain_set(cur, "\r\n");
     cur->next = payload;
 
+    for (cur = head; cur != NULL; cur = cur->next) {
+        write(remote_fd, cur->buf_ptr, cur->used_size);
+    }
 
-    // TODO call send remote
-    //
-    // TODO free chain
+    for (; head != NULL; head = cur) {
+        cur = head->next;
+        free(head);
+    }
 
     close(remote_fd);
     return 0;

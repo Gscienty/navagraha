@@ -1,4 +1,5 @@
 #include "humha_process.h"
+#include "humha_caller.h"
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
@@ -22,13 +23,11 @@ static int humha_process_async(humha_process_t * p, ngx_str_t * cb)
 {
     (void) cb;
     int retcode = 0;
-    ngx_int_t yield_size;
-    char buf[256];
 
     retcode = humha_process_wait(p);
-    while ((yield_size = read(p->out, buf, 256)) > 0) {
-        // TODO post `cb`
-    }
+
+    humha_caller(p->out, (char *) cb->data, 80);
+
     humha_process_close(p);
     return retcode;
 }
@@ -66,8 +65,6 @@ int humha_process(const u_char * executor,
                   humha_process_t * p,
                   ngx_str_t * async_cb)
 {
-    (void) async_cb;
-
     if (p->is_async == 1) {
         p->pid = fork();
         if (p->pid < 0) {

@@ -33,6 +33,8 @@ static ngx_int_t ngx_http_humha_call_input_filter_init(void * data);
 static ngx_int_t ngx_http_humha_call_chunked_filter(ngx_event_pipe_t * p, ngx_buf_t * buf);
 static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ssize_t bytes);
 
+static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb);
+
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
         ngx_string("humha_recv"),
@@ -301,6 +303,32 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     return NGX_DONE;
 }
 
+static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb)
+{
+    ngx_list_part_t * part = &headers->part;
+    ngx_table_elt_t * header = NULL;
+    ngx_uint_t idx;
+
+    for (idx = 0; ; idx++) {
+        if (idx >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            header = part->elts;
+            idx = 0;
+        }
+        if (ngx_strcmp(header[idx].lowcase_key, "async-callback") == 0) {
+            async_cb->data = header[idx].value.data;
+            async_cb->len = header[idx].value.len;
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
 {
     ngx_http_humha_loc_conf_t * lcf;
@@ -318,9 +346,7 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     for (args_idx = 0; args_idx < NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT && lcf->args[args_idx].data != NULL; args_idx++) {
         args[args_idx] = lcf->args[args_idx].data;
     }
-    // TODO request header param 'Async-Callback'
-    // OR loc_conf set 'async' 'on'
-    p.is_async = 0;
+    p.is_async = ngx_http_humha_request_is_async(&r->headers_in.headers, &async_cb);
 
     if (humha_process(lcf->executor.data, (const u_char **) args, &p, &async_cb) < 0) {
         goto output;

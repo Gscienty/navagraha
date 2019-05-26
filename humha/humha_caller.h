@@ -11,6 +11,6 @@ struct humha_caller_chain_s {
     char buf_ptr[0];
 };
 
-int humha_caller(int out_fd, char * hostname);
+int humha_caller(int out_fd, char * hostname, int port);
 
 #endif
