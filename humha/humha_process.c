@@ -21,13 +21,10 @@ static void humha_exec_worker(const u_char * executor, const u_char ** args, hum
 
 static int humha_process_async(humha_process_t * p, ngx_str_t * cb)
 {
-    (void) cb;
     int retcode = 0;
 
     retcode = humha_process_wait(p);
-
     humha_caller(p->out, (char *) cb->data, 80);
-
     humha_process_close(p);
     return retcode;
 }
