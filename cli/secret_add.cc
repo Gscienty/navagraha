@@ -4,6 +4,8 @@
 #include "kube_api/secret.hpp"
 #include <algorithm>
 
+#include <iostream>
+
 namespace navagraha {
 namespace cli {
 
@@ -52,6 +54,10 @@ int secret_add::execute()
                   {
                   secret.string_data.get().values()[kv[0]] = kv[1];
                   });
+
+    std::ostringstream str;
+    secret.serialize(str);
+    std::cout << str.str() << std::endl;
 
     helper.build<kube_api::secret>().create(namespace_, secret);
 

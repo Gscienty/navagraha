@@ -13,7 +13,7 @@ kubeent::secret secret::create(const std::string namespace_,
                                kubeent::secret & secret)
 {
     this->set_payload(secret);
-    return this->post_call<kubeent::secret>("/api/v1/namespaces"
+    return this->post_call<kubeent::secret>("/api/v1/namespaces/"
                                             + namespace_
                                             + "/secrets");
 }
