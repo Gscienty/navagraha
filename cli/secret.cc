@@ -1,5 +1,6 @@
 #include "cli/secret.hpp"
 #include "cli/secret_add.hpp"
+#include "cli/secret_remove.hpp"
 #include "cli_arg/process_collection.hpp"
 
 namespace navagraha {
@@ -23,6 +24,7 @@ int secret::execute()
     return navagraha::cli_arg::process_collection(this->name_flag.argc(),
                                                   this->name_flag.argv())
         .add(secret_add())
+        .add(secret_remove())
         .result();
 }
 

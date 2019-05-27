@@ -1,7 +1,5 @@
 #include "http_client/client.hpp"
 
-#include <iostream>
-
 namespace navagraha {
 namespace http_client {
 
@@ -77,7 +75,6 @@ std::string & client::curl_abstract_process(const std::string path, const char *
     if (headers != NULL) {
         curl_slist_free_all(headers);
     }
-    std::cout << this->result << std::endl;
     return this->result;
 }
 
