@@ -25,4 +25,36 @@ int prome_notation_labels_append(prome_notation_t * notation, prome_label_t * la
 
 int prome_notation_serialize(prome_notation_t * notation, prome_buf_t * buf);
 
+typedef struct prome_counter_s prome_counter_t;
+struct prome_counter_s {
+    prome_notation_t notation;
+
+    double value;
+};
+
+int prome_counter_init(prome_counter_t * counter, const char * metric_name);
+
+int prome_counter_inc(prome_counter_t * counter);
+
+int prome_counter_add(prome_counter_t * counter, double val);
+
+typedef struct prome_gauge_s prome_gauge_t;
+struct prome_gauge_s {
+    prome_notation_t notation;
+
+    double value;
+};
+
+int prome_gauge_init(prome_gauge_t * gauge, const char * metric_name);
+
+int prome_gauge_set(prome_gauge_t * gauge, double val);
+
+int prome_gauge_inc(prome_gauge_t * gauge);
+
+int prome_gauge_dec(prome_gauge_t * gauge);
+
+int prome_gauge_add(prome_gauge_t * gauge, double val);
+
+int prome_gauge_sub(prome_gauge_t * gauge, double val);
+
 #endif

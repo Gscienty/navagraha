@@ -2,11 +2,11 @@
 #include <string.h>
 #include <malloc.h>
 
-
-/* notify: TODO check params and result */
-
 int prome_label_init(prome_label_t * label, const char * name, const char * value)
 {
+    if (label == NULL) {
+        return -1;
+    }
     prome_collect_list_head_init(&label->node);
     label->name = name;
     label->value = value;
@@ -16,6 +16,9 @@ int prome_label_init(prome_label_t * label, const char * name, const char * valu
 
 int prome_notation_init(prome_notation_t * notation, const char * metric_name)
 {
+    if (notation == NULL) {
+        return -1;
+    }
     notation->metric_name = metric_name;
     prome_collect_list_head_init(&notation->head);
 
@@ -24,6 +27,9 @@ int prome_notation_init(prome_notation_t * notation, const char * metric_name)
 
 int prome_notation_labels_append(prome_notation_t * notation, prome_label_t * label)
 {
+    if (notation == NULL || label == NULL) {
+        return -1;
+    }
     prome_collect_list_insert_prev(&notation->head, &label->node);
 
     return 0;
@@ -36,11 +42,18 @@ int prome_notation_serialize(prome_notation_t * notation, prome_buf_t * buf)
     int is_first = 1;
     prome_collect_list_t * label_node = NULL;
 
+    if (notation == NULL || buf == NULL) {
+        return -1;
+    }
+
     len += strlen(notation->metric_name);
 
     if (prome_collect_list_is_empty(&notation->head)) {
         buf->len = len;
         buf->base = (char *) malloc(buf->len);
+        if (buf->base == NULL) {
+            return -2;
+        }
         memcpy(buf->base, notation->metric_name, buf->len);
         return 0;
     }
@@ -53,6 +66,9 @@ int prome_notation_serialize(prome_notation_t * notation, prome_buf_t * buf)
 
     buf->len = len;
     buf->base = (char *) malloc(buf->len);
+    if (buf->base == NULL) {
+        return -2;
+    }
 
     len = strlen(notation->metric_name);
     memcpy(buf->base, notation->metric_name, len);
@@ -86,3 +102,106 @@ int prome_notation_serialize(prome_notation_t * notation, prome_buf_t * buf)
     memcpy(buf->base + off, "}", 1);
     return 0;
 }
+
+int prome_counter_init(prome_counter_t * counter, const char * metric_name)
+{
+    if (counter == NULL) {
+        return -1;
+    }
+
+    counter->value = 0.0F;
+    prome_notation_init(&counter->notation, metric_name);
+
+    return 0;
+}
+
+int prome_counter_inc(prome_counter_t * counter)
+{
+    if (counter == NULL) {
+        return -1;
+    }
+    counter->value += 1.0F;
+
+    return 0;
+}
+
+int prome_counter_add(prome_counter_t * counter, double val)
+{
+    if (counter == NULL) {
+        return -1;
+    }
+    if (val < 0) {
+        return -2;
+    }
+    counter->value += val;
+
+    return 0;
+}
+
+int prome_gauge_init(prome_gauge_t * gauge, const char * metric_name)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value = 0.0F;
+    prome_notation_init(&gauge->notation, metric_name);
+
+    return 0;
+}
+
+int prome_gauge_set(prome_gauge_t * gauge, double val)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value = val;
+
+    return 0;
+}
+
+int prome_gauge_inc(prome_gauge_t * gauge)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value += 1.0F;
+
+    return 0;
+}
+
+int prome_gauge_dec(prome_gauge_t * gauge)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value -= 1.0F;
+
+    return 0;
+}
+
+int prome_gauge_add(prome_gauge_t * gauge, double val)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value += val;
+
+    return 0;
+}
+
+int prome_gauge_sub(prome_gauge_t * gauge, double val)
+{
+    if (gauge == NULL) {
+        return -1;
+    }
+
+    gauge->value -= val;
+
+    return 0;
+}
+
