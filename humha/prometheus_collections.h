@@ -30,7 +30,7 @@ struct prome_collect_list_s {
                                                (p)->next = (n); \
                                                })
 
-#define prome_collect_list_is_empty(p) ((p)->next == (p)->prev)
+#define prome_collect_list_is_empty(p) ((p)->next == (p))
 
 typedef struct prome_buf_s prome_buf_t;
 struct prome_buf_s {
