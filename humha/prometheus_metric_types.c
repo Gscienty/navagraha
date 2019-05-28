@@ -205,3 +205,34 @@ int prome_gauge_sub(prome_gauge_t * gauge, double val)
     return 0;
 }
 
+int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket)
+{
+    if (histogram == NULL || bucket == NULL) {
+        return -1;
+    }
+
+    prome_collect_list_insert_prev(&histogram->buckets, &bucket->node);
+
+    return 0;
+}
+
+int prome_histogram_observe(prome_histogram_t * histogram, double val)
+{
+    prome_collect_list_t * p = NULL;
+    prome_histogram_bucket_t * bucket = NULL;
+    if (histogram == NULL) {
+        return -1;
+    }
+
+    histogram->count_value += 1.0F;
+    histogram->sum_value += val;
+
+    for (p = histogram->buckets.next; p != &histogram->buckets; p = p->next) {
+        bucket = contain_of(p, prome_histogram_bucket_t, node);
+        if (val <= bucket->le) {
+            bucket->bucket += 1.0F;
+        }
+    }
+
+    return 0;
+}

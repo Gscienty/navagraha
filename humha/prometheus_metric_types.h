@@ -57,4 +57,49 @@ int prome_gauge_add(prome_gauge_t * gauge, double val);
 
 int prome_gauge_sub(prome_gauge_t * gauge, double val);
 
+typedef struct prome_histogram_bucket_s prome_histogram_bucket_t;
+struct prome_histogram_bucket_s {
+    prome_collect_list_t node;
+    prome_notation_t notation;
+    double le;
+    double bucket;
+};
+
+#define prome_histogram_buckets_init(b, n, l) \
+    ({ \
+     prome_label_t * label = (prome_label_t *) malloc(sizeof(prome_label_t)); \
+     if (label) { \
+     prome_label_init(label, "le", #l); \
+     prome_notation_init(&(b)->notation, n "_bucket"); \
+     prome_notation_labels_append(&(b)->notation, label); \
+     (b)->le = l; \
+     (b)->bucket = 0.0F; \
+     0; \
+     } \
+     -1; \
+     })
+
+typedef struct prome_histogram_s prome_histogram_t;
+struct prome_histogram_s {
+    prome_notation_t sum_notation;
+    prome_notation_t count_notation;
+    prome_collect_list_t buckets; /* stored prome_histogram_bucket_t */
+    double sum_value;
+    double count_value;
+};
+
+#define prome_histogram_init(h, n) \
+    ({ \
+     prome_notation_init(&(h)->sum_notation, n "_sum"); \
+     prome_notation_init(&(h)->count_notation, n "_count"); \
+     prome_collect_list_head_init(&(h)->buckets); \
+     (h)->sum_value = 0.0F; \
+     (h)->count_value = 0.0F; \
+     0; \
+     })
+
+int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket);
+
+int prome_histogram_observe(prome_histogram_t * histogram, double val);
+
 #endif
