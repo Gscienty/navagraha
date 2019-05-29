@@ -102,4 +102,61 @@ int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogra
 
 int prome_histogram_observe(prome_histogram_t * histogram, double val);
 
+typedef struct prome_summary_simple_s prome_summary_simple_t;
+struct prome_summary_simple_s {
+    prome_collect_list_t node;
+    double simple_value;
+};
+
+int prome_summary_simple_init(prome_summary_simple_t * simple, double val);
+
+typedef struct prome_summary_quantile_s prome_summary_quantile_t;
+struct prome_summary_quantile_s {
+    prome_collect_list_t node;
+    prome_notation_t notation;
+    double quantile;
+
+    double calculated_simple;
+};
+
+#define prome_summary_quantile_init(q, n, z) \
+    ({ \
+     prome_label_t * label = (prome_label_t *) malloc(sizeof(prome_label_t)); \
+     if (label) { \
+     prome_label_init(label, "quantile", #z); \
+     prome_collect_list_head_init(&(q)->node); \
+     prome_notation_init(&(q)->notation, n); \
+     prome_notation_labels_append(&(q)->notation, label); \
+     (q)->quantile = z; \
+     (q)->calculated_simple = 0.0F; \
+     0; \
+     } \
+     -1; \
+     })
+
+typedef struct prome_summary_s prome_summary_t;
+struct prome_summary_s {
+    prome_notation_t sum_notation;
+    prome_notation_t count_notation;
+
+    prome_collect_list_t quantiles; /* stored prome_summary_quantile_t */
+    prome_collect_list_t simples; /* stored prome_summary_simple_t */
+
+    double sum_value;
+    double count_value;
+};
+
+#define prome_summary_init(s, n) \
+    ({ \
+     prome_notation_init(&(s)->sum_notation, n); \
+     prome_notation_init(&(s)->count_notation, n); \
+     prome_collect_list_head_init(&(s)->simples); \
+     (s)->sum_value = 0.0F; \
+     (s)->count_value = 0.0F; \
+     })
+
+int prome_summary_observe(prome_summary_t * summary, double val);
+
+int prome_summary_calculate(prome_summary_t * summary);
+
 #endif

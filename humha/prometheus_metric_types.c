@@ -236,3 +236,82 @@ int prome_histogram_observe(prome_histogram_t * histogram, double val)
 
     return 0;
 }
+
+int prome_summary_simple_init(prome_summary_simple_t * simple, double val)
+{
+    if (simple == NULL) {
+        return -1;
+    }
+
+    prome_collect_list_head_init(&simple->node);
+    simple->simple_value = val;
+
+    return 0;
+}
+
+int prome_summary_observe(prome_summary_t * summary, double val)
+{
+    prome_summary_simple_t * simple = NULL;
+    prome_collect_list_t * p = NULL;
+    prome_summary_simple_t * refer_simple = NULL;
+    int inserted_flag = 0;
+    if (summary == NULL) {
+        return -1;
+    }
+
+    simple = (prome_summary_simple_t *) malloc(sizeof(prome_summary_simple_t));
+    if (simple == NULL) {
+        return -1;
+    }
+    prome_summary_simple_init(simple, val);
+
+    summary->count_value += 1.0F;
+    summary->sum_value += val;
+
+    for (p = summary->simples.next; p != &summary->simples; p = p->next) {
+        refer_simple = contain_of(p, prome_summary_simple_t, node);
+
+        if (simple->simple_value <= refer_simple->simple_value) {
+            inserted_flag = 1;
+            prome_collect_list_insert_prev(&refer_simple->node, &simple->node);
+        }
+    }
+
+    if (inserted_flag == 0) {
+        prome_collect_list_insert_prev(&summary->simples, &simple->node);
+    }
+
+    return 0;
+}
+
+int prome_summary_calculate(prome_summary_t * summary)
+{
+    prome_collect_list_t * quantile_p = NULL;
+    prome_summary_quantile_t * quantile = NULL;
+    prome_collect_list_t * simple_p = NULL;
+    prome_summary_simple_t * simple = NULL;
+    int target_nth = 0;
+    int cur_nth = 0;
+
+    if (summary == NULL) {
+        return -1;
+    }
+
+    for (quantile_p = summary->quantiles.next; quantile_p != &summary->quantiles; quantile_p = quantile_p->next) {
+        quantile = contain_of(quantile_p, prome_summary_quantile_t, node);
+        target_nth = summary->count_value * quantile->quantile;
+        cur_nth = 0;
+
+        quantile->calculated_simple = 0;
+        for (simple_p = summary->simples.next; simple_p != &summary->simples; simple_p = simple_p->next) {
+            cur_nth++;
+            if (cur_nth == target_nth) {
+                simple = contain_of(simple_p, prome_summary_simple_t, node);
+                quantile->calculated_simple = simple->simple_value;
+                break;
+            }
+        }
+    }
+
+    return 0;
+}
