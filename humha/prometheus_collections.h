@@ -11,24 +11,34 @@ struct prome_collect_list_s {
     prome_collect_list_t * prev;
 };
 
-#define prome_collect_list_head_init(p) ({\
-                                         (p)->next = (p); \
-                                         (p)->prev = (p); \
-                                         })
+#define prome_collect_list_head_init(p) \
+    ({ \
+     (p)->next = (p); \
+     (p)->prev = (p); \
+     })
 
-#define prome_collect_list_insert_prev(p, n) ({\
-                                              (n)->next = (p); \
-                                              (n)->prev = (p)->prev; \
-                                              if ((p)->prev) (p)->prev->next = (n); \
-                                              (p)->prev = (n); \
-                                              })
+#define prome_collect_list_insert_prev(p, n) \
+    ({ \
+     (n)->next = (p); \
+     (n)->prev = (p)->prev; \
+     if ((p)->prev) (p)->prev->next = (n); \
+     (p)->prev = (n); \
+     })
 
-#define prome_collect_list_insert_after(p, n) ({ \
-                                               (n)->prev = (p); \
-                                               (n)->next = (p)->next; \
-                                               if ((p)->next) (p)->next->prev = (n); \
-                                               (p)->next = (n); \
-                                               })
+#define prome_collect_list_insert_after(p, n) \
+    ({ \
+     (n)->prev = (p); \
+     (n)->next = (p)->next; \
+     if ((p)->next) (p)->next->prev = (n); \
+     (p)->next = (n); \
+     })
+
+#define prome_collect_list_remove(p) \
+    ({ \
+     (p)->prev->next = (p)->next; \
+     (p)->next->prev = (p)->prev; \
+     free((p)); \
+     })
 
 #define prome_collect_list_is_empty(p) ((p)->next == (p))
 

@@ -315,3 +315,21 @@ int prome_summary_calculate(prome_summary_t * summary)
 
     return 0;
 }
+
+int prome_summary_reset(prome_summary_t * summary)
+{
+    prome_summary_simple_t * simple;
+    if (summary == NULL) {
+        return -1;
+    }
+
+    while (!prome_collect_list_is_empty(&summary->simples)) {
+        simple = contain_of(summary->simples.next, prome_summary_simple_t, node);
+        prome_collect_list_remove(&simple->node);
+    }
+
+    summary->count_value = 0.0F;
+    summary->sum_value = 0.0F;
+
+    return 0;
+}

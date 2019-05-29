@@ -159,4 +159,6 @@ int prome_summary_observe(prome_summary_t * summary, double val);
 
 int prome_summary_calculate(prome_summary_t * summary);
 
+int prome_summary_reset(prome_summary_t * summary);
+
 #endif
