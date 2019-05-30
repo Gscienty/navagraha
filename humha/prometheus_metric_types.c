@@ -138,6 +138,39 @@ int prome_counter_add(prome_counter_t * counter, double val)
     return 0;
 }
 
+int prome_counter_serialize(prome_counter_t * counter, prome_collect_list_t * chain)
+{
+    prome_chain_t * notation_buf = NULL;
+    prome_chain_t * num_buf = NULL;
+    if (counter == NULL || chain == NULL) {
+        return -1;
+    }
+
+    notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (notation_buf == NULL) {
+        return -1;
+    }
+    num_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (num_buf == NULL) {
+        free(notation_buf);
+        return -1;
+    }
+    num_buf->buf.base = (char *) calloc(16, 1);
+    if (num_buf->buf.base == NULL) {
+        free(notation_buf);
+        free(num_buf);
+        return -1;
+    }
+
+    prome_notation_serialize(&counter->notation, &notation_buf->buf);
+    num_buf->buf.len = sprintf(num_buf->buf.base, "%lf", counter->value);
+
+    prome_collect_list_insert_prev(chain, &notation_buf->node);
+    prome_collect_list_insert_prev(chain, &num_buf->node);
+
+    return 0;
+}
+
 int prome_gauge_init(prome_gauge_t * gauge, const char * metric_name)
 {
     if (gauge == NULL) {
@@ -205,6 +238,60 @@ int prome_gauge_sub(prome_gauge_t * gauge, double val)
     return 0;
 }
 
+int prome_gauge_serialize(prome_gauge_t * gauge, prome_collect_list_t * chain)
+{
+    prome_chain_t * notation_buf = NULL;
+    prome_chain_t * num_buf = NULL;
+    if (gauge == NULL || chain == NULL) {
+        return -1;
+    }
+
+    notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (notation_buf == NULL) {
+        return -1;
+    }
+    prome_buf_init(&notation_buf->buf);
+
+    num_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (num_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&num_buf->buf);
+
+    num_buf->buf.base = (char *) calloc(16, 1);
+    if (num_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    if (prome_notation_serialize(&gauge->notation, &notation_buf->buf)) {
+        goto malloc_error;
+    }
+    if ((num_buf->buf.len = sprintf(num_buf->buf.base, "%lf", gauge->value)) <= 0) {
+        goto malloc_error;
+    }
+
+    prome_collect_list_insert_prev(chain, &notation_buf->node);
+    prome_collect_list_insert_prev(chain, &num_buf->node);
+
+    return 0;
+
+malloc_error:
+    if (notation_buf != NULL) {
+        if (notation_buf->buf.base != NULL) {
+            free(notation_buf->buf.base);
+        }
+        free(notation_buf);
+    }
+    if (num_buf != NULL) {
+        if (num_buf->buf.base != NULL) {
+            free(num_buf->buf.base);
+        }
+        free(num_buf);
+    }
+
+    return -1;
+}
+
 int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket)
 {
     if (histogram == NULL || bucket == NULL) {
@@ -235,6 +322,146 @@ int prome_histogram_observe(prome_histogram_t * histogram, double val)
     }
 
     return 0;
+}
+
+int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_t * chain)
+{
+    prome_collect_list_t buckets_serialized;
+    prome_collect_list_t * p = NULL;
+    prome_histogram_bucket_t * bucket = NULL;
+    prome_chain_t * pt = NULL;
+    prome_chain_t * sum_notation_buf = NULL;
+    prome_chain_t * sum_buf = NULL;
+    prome_chain_t * count_notation_buf = NULL;
+    prome_chain_t * count_buf = NULL;
+
+    if (histogram == NULL || chain == NULL) {
+        return -1;
+    }
+    prome_collect_list_head_init(&buckets_serialized);
+
+    sum_notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (sum_notation_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&sum_notation_buf->buf);
+
+    sum_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (sum_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&sum_buf->buf);
+    sum_buf->buf.base = (char *) calloc(16, 1);
+    if (sum_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    count_notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (count_notation_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&count_notation_buf->buf);
+
+    count_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (count_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&count_buf->buf);
+    count_buf->buf.base = (char *) calloc(16, 1);
+    if (count_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    if (prome_notation_serialize(&histogram->sum_notation, &sum_notation_buf->buf) < 0) {
+        goto malloc_error;
+    }
+    if (prome_notation_serialize(&histogram->count_notation, &count_notation_buf->buf) < 0) {
+        goto malloc_error;
+    }
+    if ((sum_buf->buf.len = sprintf(sum_buf->buf.base, "%lf", histogram->sum_value)) <= 0) {
+        goto malloc_error;
+    }
+    if ((count_buf->buf.len = sprintf(sum_buf->buf.base, "%lf", histogram->count_value)) <= 0) {
+        goto malloc_error;
+    }
+
+    prome_collect_list_insert_prev(chain, &count_notation_buf->node);
+    prome_collect_list_insert_prev(chain, &count_buf->node);
+    prome_collect_list_insert_prev(chain, &sum_notation_buf->node);
+    prome_collect_list_insert_prev(chain, &sum_buf->node);
+
+    for (p = histogram->buckets.next; p != &histogram->buckets; p = p->next) {
+        bucket = contain_of(p, prome_histogram_bucket_t, node);
+        pt = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+        if (pt == NULL) {
+            goto malloc_error;
+        }
+        prome_buf_init(&pt->buf);
+        if (prome_notation_serialize(&bucket->notation, &pt->buf) < 0) {
+            free(pt);
+            goto malloc_error;
+        }
+        prome_collect_list_insert_prev(chain, &pt->node);
+
+        pt = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+        if (pt == NULL) {
+            goto malloc_error;
+        }
+        prome_buf_init(&pt->buf);
+        pt->buf.base = (char *) calloc(16, 1);
+        if (pt->buf.base != NULL) {
+            free(pt);
+            goto malloc_error;
+        }
+        if ((pt->buf.len = sprintf(pt->buf.base, "%lf", bucket->bucket)) <= 0) {
+            free(pt->buf.base);
+            free(pt);
+            goto malloc_error;
+        }
+        prome_collect_list_insert_prev(chain, &pt->node);
+    }
+
+    chain->prev->next = buckets_serialized.next;
+    buckets_serialized.next->prev = chain->prev;
+    chain->prev = buckets_serialized.prev;
+    buckets_serialized.prev->next = chain;
+
+    return 0;
+
+malloc_error:
+    if (sum_notation_buf != NULL) {
+        if (sum_notation_buf->buf.base != NULL) {
+            free(sum_notation_buf->buf.base);
+        }
+        free(sum_notation_buf);
+    }
+    if (sum_buf != NULL) {
+        if (sum_buf->buf.base != NULL) {
+            free(sum_buf->buf.base);
+        }
+        free(sum_buf);
+    }
+    if (count_notation_buf != NULL) {
+        if (count_notation_buf->buf.base != NULL) {
+            free(count_notation_buf->buf.base);
+        }
+        free(count_notation_buf);
+    }
+    if (count_buf != NULL) {
+        if (count_buf->buf.base != NULL) {
+            free(count_buf->buf.base);
+        }
+        free(count_buf);
+    }
+    while (prome_collect_list_is_empty(&buckets_serialized)) {
+        pt = contain_of(buckets_serialized.next, prome_chain_t, node);
+        if (pt->buf.base != NULL) {
+            free(pt->buf.base);
+        }
+        prome_collect_list_remove(buckets_serialized.next);
+        free(pt);
+    }
+    return -1;
 }
 
 int prome_summary_simple_init(prome_summary_simple_t * simple, double val)
@@ -326,10 +553,150 @@ int prome_summary_reset(prome_summary_t * summary)
     while (!prome_collect_list_is_empty(&summary->simples)) {
         simple = contain_of(summary->simples.next, prome_summary_simple_t, node);
         prome_collect_list_remove(&simple->node);
+        free(simple);
     }
 
     summary->count_value = 0.0F;
     summary->sum_value = 0.0F;
 
     return 0;
+}
+
+int prome_summary_serialize(prome_summary_t * summary, prome_collect_list_t * chain)
+{
+    prome_collect_list_t quantiles_serialized;
+    prome_collect_list_t * p = NULL;
+    prome_summary_quantile_t * quantile = NULL;
+    prome_chain_t * sum_notation_buf = NULL;
+    prome_chain_t * count_notation_buf = NULL;
+    prome_chain_t * sum_num_buf = NULL;
+    prome_chain_t * count_num_buf = NULL;
+    prome_chain_t * pt = NULL;
+    if (summary == NULL || chain == NULL) {
+        return -1;
+    }
+    prome_collect_list_head_init(&quantiles_serialized);
+
+    sum_notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (sum_notation_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&sum_notation_buf->buf);
+
+    sum_num_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (sum_num_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&sum_num_buf->buf);
+    sum_num_buf->buf.base = (char *) calloc(16, 1);
+    if (sum_num_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    count_notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (count_notation_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&count_notation_buf->buf);
+
+    count_num_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (count_num_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&count_num_buf->buf);
+    count_num_buf->buf.base = (char *) calloc(16, 1);
+    if (count_num_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    if (prome_notation_serialize(&summary->count_notation, &count_notation_buf->buf) < 0) {
+        goto malloc_error;
+    }
+    if (prome_notation_serialize(&summary->sum_notation, &sum_notation_buf->buf) < 0) {
+        goto malloc_error;
+    }
+    if ((sum_num_buf->buf.len = sprintf(sum_num_buf->buf.base, "%lf", summary->sum_value)) <= 0) {
+        goto malloc_error;
+    }
+    if ((count_num_buf->buf.len = sprintf(count_num_buf->buf.base, "%lf", summary->count_value)) <= 0) {
+        goto malloc_error;
+    }
+
+    prome_collect_list_insert_prev(chain, &count_notation_buf->node);
+    prome_collect_list_insert_prev(chain, &count_num_buf->node);
+    prome_collect_list_insert_prev(chain, &sum_notation_buf->node);
+    prome_collect_list_insert_prev(chain, &sum_num_buf->node);
+
+    for (p = summary->quantiles.next; p != &summary->quantiles; p = p->next) {
+        quantile = contain_of(p, prome_summary_quantile_t, node);
+        pt = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+        if (pt == NULL) {
+            goto malloc_error;
+        }
+        prome_buf_init(&pt->buf);
+        if (prome_notation_serialize(&quantile->notation, &pt->buf) < 0) {
+            free(pt);
+            goto malloc_error;
+        }
+        prome_collect_list_insert_prev(chain, &pt->node);
+
+        pt = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+        if (pt == NULL) {
+            goto malloc_error;
+        }
+        prome_buf_init(&pt->buf);
+        pt->buf.base = (char *) calloc(16, 1);
+        if (pt->buf.base != NULL) {
+            free(pt);
+            goto malloc_error;
+        }
+        if ((pt->buf.len = sprintf(pt->buf.base, "%lf", quantile->calculated_simple)) <= 0) {
+            free(pt->buf.base);
+            free(pt);
+            goto malloc_error;
+        }
+        prome_collect_list_insert_prev(chain, &pt->node);
+    }
+
+    chain->prev->next = quantiles_serialized.next;
+    quantiles_serialized.next->prev = chain->prev;
+    chain->prev = quantiles_serialized.prev;
+    quantiles_serialized.prev->next = chain;
+
+    return 0;
+
+malloc_error:
+    if (sum_notation_buf != NULL) {
+        if (sum_notation_buf->buf.base != NULL) {
+            free(sum_notation_buf->buf.base);
+        }
+        free(sum_notation_buf);
+    }
+    if (count_notation_buf->buf.base != NULL) {
+        if (count_notation_buf->buf.base != NULL) {
+            free(count_notation_buf->buf.base);
+        }
+        free(count_notation_buf);
+    }
+    if (sum_num_buf != NULL) {
+        if (sum_num_buf->buf.base != NULL) {
+            free(sum_num_buf->buf.base);
+        }
+        free(sum_num_buf);
+    }
+    if (count_num_buf != NULL) {
+        if (count_num_buf->buf.base != NULL) {
+            free(count_num_buf->buf.base);
+        }
+        free(count_num_buf);
+    }
+    while (prome_collect_list_is_empty(&quantiles_serialized)) {
+        pt = contain_of(quantiles_serialized.next, prome_chain_t, node);
+        if (pt->buf.base != NULL) {
+            free(pt->buf.base);
+        }
+        prome_collect_list_remove(quantiles_serialized.next);
+        free(pt);
+    }
+    return -1;
 }

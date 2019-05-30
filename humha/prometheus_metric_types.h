@@ -38,6 +38,8 @@ int prome_counter_inc(prome_counter_t * counter);
 
 int prome_counter_add(prome_counter_t * counter, double val);
 
+int prome_counter_serialize(prome_counter_t * counter, prome_collect_list_t * chain);
+
 typedef struct prome_gauge_s prome_gauge_t;
 struct prome_gauge_s {
     prome_notation_t notation;
@@ -56,6 +58,8 @@ int prome_gauge_dec(prome_gauge_t * gauge);
 int prome_gauge_add(prome_gauge_t * gauge, double val);
 
 int prome_gauge_sub(prome_gauge_t * gauge, double val);
+
+int prome_gauge_serialize(prome_gauge_t * gauge, prome_collect_list_t * chain);
 
 typedef struct prome_histogram_bucket_s prome_histogram_bucket_t;
 struct prome_histogram_bucket_s {
@@ -101,6 +105,8 @@ struct prome_histogram_s {
 int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket);
 
 int prome_histogram_observe(prome_histogram_t * histogram, double val);
+
+int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_t * chain);
 
 typedef struct prome_summary_simple_s prome_summary_simple_t;
 struct prome_summary_simple_s {
@@ -160,5 +166,7 @@ int prome_summary_observe(prome_summary_t * summary, double val);
 int prome_summary_calculate(prome_summary_t * summary);
 
 int prome_summary_reset(prome_summary_t * summary);
+
+int prome_summary_serialize(prome_summary_t * summary, prome_collect_list_t * chain);
 
 #endif

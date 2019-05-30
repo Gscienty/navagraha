@@ -37,7 +37,6 @@ struct prome_collect_list_s {
     ({ \
      (p)->prev->next = (p)->next; \
      (p)->next->prev = (p)->prev; \
-     free((p)); \
      })
 
 #define prome_collect_list_is_empty(p) ((p)->next == (p))
@@ -46,6 +45,18 @@ typedef struct prome_buf_s prome_buf_t;
 struct prome_buf_s {
     char * base;
     size_t len;
+};
+
+#define prome_buf_init(b) \
+    ({ \
+     (b)->base = NULL; \
+     (b)->len = 0; \
+     })
+
+typedef struct prome_chain_s prome_chain_t;
+struct prome_chain_s {
+    prome_collect_list_t node;
+    prome_buf_t buf;
 };
 
 #endif
