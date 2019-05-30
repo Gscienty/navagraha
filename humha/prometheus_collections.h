@@ -59,4 +59,8 @@ struct prome_chain_s {
     prome_buf_t buf;
 };
 
+size_t prome_chain_size(prome_collect_list_t * chain);
+
+int prome_chain_clear(prome_collect_list_t * chain);
+
 #endif

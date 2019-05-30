@@ -453,7 +453,7 @@ malloc_error:
         }
         free(count_buf);
     }
-    while (prome_collect_list_is_empty(&buckets_serialized)) {
+    while (!prome_collect_list_is_empty(&buckets_serialized)) {
         pt = contain_of(buckets_serialized.next, prome_chain_t, node);
         if (pt->buf.base != NULL) {
             free(pt->buf.base);
@@ -690,7 +690,7 @@ malloc_error:
         }
         free(count_num_buf);
     }
-    while (prome_collect_list_is_empty(&quantiles_serialized)) {
+    while (!prome_collect_list_is_empty(&quantiles_serialized)) {
         pt = contain_of(quantiles_serialized.next, prome_chain_t, node);
         if (pt->buf.base != NULL) {
             free(pt->buf.base);
