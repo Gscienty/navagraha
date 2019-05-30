@@ -36,3 +36,15 @@ int prome_chain_clear(prome_collect_list_t * chain)
 
     return 0;
 }
+
+size_t prome_chain_count(prome_collect_list_t * chain)
+{
+    size_t ret = 0;
+    prome_collect_list_t * p = NULL;
+
+    for (p = chain->next; p != chain; p = p->next) {
+        ret++;
+    }
+
+    return ret;
+}

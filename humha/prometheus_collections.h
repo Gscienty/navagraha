@@ -61,6 +61,8 @@ struct prome_chain_s {
 
 size_t prome_chain_size(prome_collect_list_t * chain);
 
+size_t prome_chain_count(prome_collect_list_t * chain);
+
 int prome_chain_clear(prome_collect_list_t * chain);
 
 #endif
