@@ -1,20 +1,27 @@
 #include <ngx_config.h>
-#include <ngx_core.h>
 #include <ngx_http.h>
 #include "humha_process.h"
+#include "prometheus_metric_types.h"
 
 #define NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT 16
+
+typedef struct {
+    ngx_int_t active;
+} prome_conf;
 
 typedef struct {
     ngx_http_upstream_conf_t upstream;
     ngx_str_t call_namespace;
     ngx_str_t executor;
     ngx_str_t args[NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT];
+
+    prome_conf prome;
 } ngx_http_humha_loc_conf_t;
 
-static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
+
 static char * ngx_http_humha_recv(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
 static char * ngx_http_humha_call(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
+static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
 
 static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf);
 
@@ -35,11 +42,13 @@ static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ss
 
 static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb);
 
+static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r);
+
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
         ngx_string("humha_recv"),
         NGX_HTTP_LOC_CONF | NGX_CONF_TAKE3,
-        ngx_http_humha,
+        ngx_http_humha_recv,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
         NULL
@@ -48,7 +57,16 @@ static ngx_command_t ngx_http_humha_module_commands[] = {
     {
         ngx_string("humha_call"),
         NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-        ngx_http_humha,
+        ngx_http_humha_call,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+        NULL
+    },
+
+    {
+        ngx_string("humha_prometheus"),
+        NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_http_humha_prometheus,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
         NULL
@@ -92,6 +110,8 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
     if (conf == NULL) {
         return NULL;
     }
+    conf->prome.active = 0;
+
     conf->call_namespace.data = NULL;
     conf->call_namespace.len = 0;
     conf->executor.data = NULL;
@@ -100,6 +120,7 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
         conf->args->data = NULL;
         conf->args->len = 0;
     }
+
     conf->upstream.connect_timeout = 60000;
     conf->upstream.send_timeout = 60000;
     conf->upstream.read_timeout = 60000;
@@ -118,20 +139,6 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
     conf->upstream.pass_headers = NGX_CONF_UNSET_PTR;
 
     return conf;
-}
-
-static char * ngx_http_humha(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
-{
-    ngx_str_t * value = cf->args->elts;
-    if (ngx_strcmp("humha_recv", value[0].data) == 0) {
-        return ngx_http_humha_recv(cf, cmd, conf);
-    }
-    else if (ngx_strcmp("humha_call", value[0].data) == 0) {
-        return ngx_http_humha_call(cf, cmd, conf);
-    }
-    else {
-        return NGX_CONF_ERROR;
-    }
 }
 
 static char * ngx_http_humha_call(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
@@ -223,15 +230,18 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     struct hostent * host = NULL;
     char * peer_ip_str = NULL;
     ngx_int_t ret = 0;
+    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
 
     if (r->uri.len == 1) {
         ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
+    }
+    if (ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
+        ret = ngx_http_read_client_request_body(r, ngx_http_humha_prometheus_get_metrics);
     }
     else {
         if (ngx_http_upstream_create(r) != NGX_OK) {
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
         }
-        lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
 
         u = r->upstream;
         u->conf = &lcf->upstream;
@@ -905,5 +915,29 @@ static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ss
         u->keepalive = !u->headers_in.connection_close;
     }
 
+    return NGX_OK;
+}
+
+static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
+{
+    (void) cmd;
+    ngx_http_humha_loc_conf_t * humha_conf = conf;
+    ngx_str_t * value = cf->args->elts;
+    if (ngx_strcmp("on", value[0].data) == 0 || ngx_strcmp("off", value[0].data) == 0) {
+        if (ngx_strcmp("on", value[0].data) == 0) {
+            humha_conf->prome.active = 1;
+        }
+
+        return NGX_OK;
+    }
+    return NGX_CONF_ERROR;
+}
+
+static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
+{
+    ngx_http_humha_loc_conf_t * lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    prome_conf * cf = &lcf->prome;
+    // TODO
+    
     return NGX_OK;
 }
