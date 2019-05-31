@@ -42,7 +42,7 @@ static humha_caller_chain_t * humha_caller_chain_alloc(int size)
     return ret;
 }
 
-static humha_caller_chain_t * humha_caller_chain_set(humha_caller_chain_t * chain, char * seg)
+static humha_caller_chain_t * humha_caller_chain_set(humha_caller_chain_t * chain, const char * seg)
 {
     int seg_size = strlen(seg);
     int remain_size = chain->size - chain->used_size;

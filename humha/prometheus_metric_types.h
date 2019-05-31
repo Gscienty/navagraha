@@ -87,6 +87,7 @@ typedef struct prome_histogram_s prome_histogram_t;
 struct prome_histogram_s {
     prome_notation_t sum_notation;
     prome_notation_t count_notation;
+    prome_histogram_bucket_t inf_bucket;
     prome_collect_list_t buckets; /* stored prome_histogram_bucket_t */
     double sum_value;
     double count_value;
@@ -94,12 +95,20 @@ struct prome_histogram_s {
 
 #define prome_histogram_init(h, n) \
     ({ \
+     prome_label_t * label = (prome_label_t *) malloc(sizeof(prome_label_t)); \
+     if (label) { \
+     prome_label_init(label, "le", "+Inf"); \
+     prome_notation_init(&(h)->inf_bucket.notation, n "_bucket"); \
+     prome_notation_labels_append(&(h)->inf_bucket.notation, label); \
+     (h)->inf_bucket.bucket = 0.0F; \
      prome_notation_init(&(h)->sum_notation, n "_sum"); \
      prome_notation_init(&(h)->count_notation, n "_count"); \
      prome_collect_list_head_init(&(h)->buckets); \
      (h)->sum_value = 0.0F; \
      (h)->count_value = 0.0F; \
      0; \
+     } \
+     -1; \
      })
 
 int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket);
