@@ -109,7 +109,7 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
     ngx_http_humha_loc_conf_t * conf;
     ngx_uint_t args_idx;
 
-    conf = ngx_palloc(cf->pool, sizeof(ngx_http_humha_loc_conf_t));
+    conf = (ngx_http_humha_loc_conf_t *) ngx_palloc(cf->pool, sizeof(ngx_http_humha_loc_conf_t));
     if (conf == NULL) {
         return NULL;
     }
@@ -138,8 +138,8 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
     conf->upstream.max_temp_file_size = 1024 * 1024 * 1024;
     conf->upstream.temp_file_write_size = ngx_pagesize << 1;
 
-    conf->upstream.hide_headers = NGX_CONF_UNSET_PTR;
-    conf->upstream.pass_headers = NGX_CONF_UNSET_PTR;
+    conf->upstream.hide_headers = (ngx_array_t *) NGX_CONF_UNSET_PTR;
+    conf->upstream.pass_headers = (ngx_array_t *) NGX_CONF_UNSET_PTR;
 
     return conf;
 }
@@ -147,9 +147,9 @@ static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
 static char * ngx_http_humha_call(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 {
     (void) cmd;
-    ngx_http_core_loc_conf_t * ccf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    ngx_http_humha_loc_conf_t * humha_conf = conf;
-    ngx_str_t * value = cf->args->elts;
+    ngx_http_core_loc_conf_t * ccf = (ngx_http_core_loc_conf_t *) ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+    ngx_http_humha_loc_conf_t * humha_conf = (ngx_http_humha_loc_conf_t *) conf;
+    ngx_str_t * value = (ngx_str_t *) cf->args->elts;
     const char * call_namespace_base = getenv((char *) value[1].data);
 
     humha_conf->call_namespace.data = (u_char *) call_namespace_base;
@@ -166,9 +166,9 @@ static char * ngx_http_humha_call(ngx_conf_t * cf, ngx_command_t * cmd, void * c
 static char * ngx_http_humha_recv(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 {
     (void) cmd;
-    ngx_http_core_loc_conf_t * ccf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    ngx_http_humha_loc_conf_t * humha_conf = conf;
-    ngx_str_t * value = cf->args->elts;
+    ngx_http_core_loc_conf_t * ccf = (ngx_http_core_loc_conf_t *) ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+    ngx_http_humha_loc_conf_t * humha_conf = (ngx_http_humha_loc_conf_t *) conf;
+    ngx_str_t * value = (ngx_str_t *) cf->args->elts;
     const char * executor_executor_base  = getenv((char *) value[1].data);
     const char * executor_name_base = getenv((char *) value[2].data);
     const char * executor_args_base = getenv((char *) value[3].data);
@@ -176,12 +176,12 @@ static char * ngx_http_humha_recv(ngx_conf_t * cf, ngx_command_t * cmd, void * c
     ngx_uint_t args_idx;
 
     if (executor_executor_base == NULL) {
-        return NGX_CONF_ERROR;
+        return (char *) NGX_CONF_ERROR;
     }
     humha_conf->executor.data = (u_char *) executor_executor_base;
     humha_conf->executor.len = ngx_strlen(executor_executor_base);
     if (executor_name_base == NULL) {
-        return NGX_CONF_ERROR;
+        return (char *) NGX_CONF_ERROR;
     }
     humha_conf->args[0].data = (u_char *) executor_name_base;
     humha_conf->args[0].len = ngx_strlen(executor_name_base);
@@ -199,14 +199,14 @@ static char * ngx_http_humha_recv(ngx_conf_t * cf, ngx_command_t * cmd, void * c
                 args_delimiter = executor_args_base + ngx_strlen(executor_args_base);
             }
             humha_conf->args[args_idx].len = (size_t) (args_delimiter - executor_args_base);
-            humha_conf->args[args_idx].data = ngx_palloc(cf->pool, humha_conf->args[args_idx].len + 1);
+            humha_conf->args[args_idx].data = (u_char *) ngx_palloc(cf->pool, humha_conf->args[args_idx].len + 1);
             ngx_memzero(humha_conf->args[args_idx].data, humha_conf->args[args_idx].len + 1);
             ngx_memcpy(humha_conf->args[args_idx].data, executor_args_base, humha_conf->args[args_idx].len);
             executor_args_base = args_delimiter;
         }
 
         if (*executor_args_base != 0) {
-            return NGX_CONF_ERROR;
+            return (char *) NGX_CONF_ERROR;
         }
     }
 
@@ -233,12 +233,13 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     struct hostent * host = NULL;
     char * peer_ip_str = NULL;
     ngx_int_t ret = 0;
-    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
 
     if (r->uri.len == 1) {
+        prome_counter_inc(&lcf->prome.sync_exec_count);
         ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
     }
-    else if (ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
+    else if (ngx_strlen("/metrics") == r->uri.len && ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
         if (lcf->prome.active == 1) {
             ret = ngx_http_read_client_request_body(r, ngx_http_humha_prometheus_get_metrics);
         }
@@ -250,6 +251,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         }
     }
     else {
+        prome_counter_inc(&lcf->prome.async_exec_count);
         if (ngx_http_upstream_create(r) != NGX_OK) {
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
         }
@@ -258,7 +260,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         u->conf = &lcf->upstream;
         u->output.tag = (ngx_buf_tag_t) &ngx_http_humha_module;
 
-        url = ngx_palloc(r->pool, sizeof(ngx_url_t));
+        url = (ngx_str_t *) ngx_palloc(r->pool, sizeof(ngx_url_t));
         if (url == NULL) {
             return NGX_ERROR;
         }
@@ -266,7 +268,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 
         uri_len = r->uri_end - r->uri_start;
         url->len = lcf->call_namespace.len + uri_len;
-        url->data = ngx_palloc(r->pool, url->len + 1);
+        url->data = (u_char *) ngx_palloc(r->pool, url->len + 0);
         ngx_memzero(url->data, url->len + 1);
         ngx_memcpy(url->data, r->uri_start + 1, uri_len - 1);
         url->data[uri_len - 1] = '.';
@@ -277,11 +279,11 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         u->process_header = ngx_http_humha_call_process_status_line;
         u->finalize_request = ngx_http_humha_call_finalize_request;
 
-        u->resolved = ngx_palloc(r->pool, sizeof(ngx_http_upstream_resolved_t));
+        u->resolved = (ngx_http_upstream_resolved_t *) ngx_palloc(r->pool, sizeof(ngx_http_upstream_resolved_t));
         if (u->resolved == NULL) {
             return NGX_ERROR;
         }
-        peer_sock = ngx_palloc(r->pool, sizeof(struct sockaddr_in));
+        peer_sock = (struct sockaddr_in *) ngx_palloc(r->pool, sizeof(struct sockaddr_in));
         if (peer_sock == NULL) {
             return NGX_ERROR;
         }
@@ -300,7 +302,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 
         u->buffering = 0;
 
-        u->pipe = ngx_palloc(r->pool, sizeof(ngx_event_pipe_t));
+        u->pipe = (ngx_event_pipe_t *) ngx_palloc(r->pool, sizeof(ngx_event_pipe_t));
         if (u->pipe == NULL) {
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
         }
@@ -327,7 +329,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb)
 {
     ngx_list_part_t * part = &headers->part;
-    ngx_table_elt_t * header = part->elts;
+    ngx_table_elt_t * header = (ngx_table_elt_t *) part->elts;
     ngx_uint_t idx = 0;
 
     for (idx = 0; ; idx++) {
@@ -336,7 +338,7 @@ static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t
                 break;
             }
             part = part->next;
-            header = part->elts;
+            header = (ngx_table_elt_t *) part->elts;
             idx = 0;
         }
         if (ngx_strcmp(header[idx].lowcase_key, "async-callback") == 0) {
@@ -360,7 +362,7 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     ngx_str_t async_cb = { 0, NULL };
     ngx_chain_t async_out = { NULL, NULL };
 
-    lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     if (lcf == NULL || lcf->executor.data == NULL) {
         return;
     }
@@ -491,7 +493,7 @@ static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r)
     size_t len = 0;
     ngx_uint_t idx;
 
-    url = ngx_http_get_module_ctx(r, ngx_http_humha_module);
+    url = (ngx_str_t *) ngx_http_get_module_ctx(r, ngx_http_humha_module);
 
     if (u->method.len) {
         method = u->method;
@@ -506,14 +508,14 @@ static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r)
         + sizeof(CRLF) - 1;
 
     part = &r->headers_in.headers.part;
-    header = part->elts;
+    header = (ngx_table_elt_t *) part->elts;
     for (idx = 0; ; idx++) {
         if (idx >= part->nelts) {
             if (part->next == NULL) {
                 break;
             }
             part = part->next;
-            header = part->elts;
+            header = (ngx_table_elt_t *) part->elts;
             idx = 0;
         }
         len += header[idx].key.len + sizeof(": ") - 1
@@ -540,14 +542,14 @@ static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r)
     b->last = ngx_copy(b->last, ngx_http_humha_call_http_version, sizeof(ngx_http_humha_call_http_version) - 1);
 
     part = &r->headers_in.headers.part;
-    header = part->elts;
+    header = (ngx_table_elt_t *) part->elts;
     for (idx = 0; ; idx++) {
         if (idx >= part->nelts) {
             if (part->next == NULL) {
                 break;
             }
             part = part->next;
-            header = part->elts;
+            header = (ngx_table_elt_t *) part->elts;
             idx = 0;
         }
         
@@ -581,7 +583,7 @@ static ngx_int_t ngx_http_humha_call_create_request(ngx_http_request_t * r)
         u->request_bufs = cl;
 
         while (body) {
-            b = ngx_alloc_buf(r->pool);
+            b = (ngx_buf_t *) ngx_alloc_buf(r->pool);
             if (b == NULL) {
                 return NGX_ERROR;
             }
@@ -633,7 +635,7 @@ static ngx_int_t ngx_http_humha_call_process_status_line(ngx_http_request_t * r)
     u->headers_in.status_n = status.code;
     len = status.end - status.start;
     u->headers_in.status_line.len = len;
-    u->headers_in.status_line.data = ngx_palloc(r->pool, len);
+    u->headers_in.status_line.data = (u_char *) ngx_palloc(r->pool, len);
     if (u->headers_in.status_line.data == NULL) {
         return NGX_ERROR;
     }
@@ -657,7 +659,7 @@ static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r)
 
         switch (ret) {
         case NGX_OK:
-            h = ngx_list_push(&r->upstream->headers_in.headers);
+            h = (ngx_table_elt_t *) ngx_list_push(&r->upstream->headers_in.headers);
             if (h == NULL) {
                 return NGX_ERROR;
             }
@@ -667,8 +669,8 @@ static ngx_int_t ngx_http_humha_call_process_header(ngx_http_request_t * r)
             h->key.len = r->header_name_end - r->header_name_start;
             h->value.len = r->header_end - r->header_start;
 
-            h->key.data = ngx_palloc(r->pool,
-                                     h->key.len + 1 + h->value.len + 1 + h->key.len);
+            h->key.data = (u_char *) ngx_palloc(r->pool,
+                                                h->key.len + 1 + h->value.len + 1 + h->key.len);
             if (h->key.data == NULL) {
                 h->hash = 0;
                 return NGX_ERROR;
@@ -751,12 +753,12 @@ static ngx_int_t ngx_http_humha_call_copy_filter(ngx_event_pipe_t * p, ngx_buf_t
     p->length -= b->last - b->pos;
 
     if (p->length == 0) {
-        r = p->input_ctx;
+        r = (ngx_http_request_t *) p->input_ctx;
         p->upstream_done = 1;
         r->upstream->keepalive = !r->upstream->headers_in.connection_close;
     }
     else if (p->length < 0) {
-        r = p->input_ctx;
+        r = (ngx_http_request_t *) p->input_ctx;
         p->upstream_done = 1;
     }
 
@@ -765,7 +767,7 @@ static ngx_int_t ngx_http_humha_call_copy_filter(ngx_event_pipe_t * p, ngx_buf_t
 
 static ngx_int_t ngx_http_humha_call_input_filter_init(void * data)
 {
-    ngx_http_request_t * r = data;
+    ngx_http_request_t * r = (ngx_http_request_t *) data;
     ngx_http_upstream_t * u;
 
     u = r->upstream;
@@ -808,7 +810,7 @@ static ngx_int_t ngx_http_humha_call_chunked_filter(ngx_event_pipe_t * p, ngx_bu
         return NGX_OK;
     }
 
-    r = p->input_ctx;
+    r = (ngx_http_request_t *) p->input_ctx;
 
     b = NULL;
     prev = &b->shadow;
@@ -889,7 +891,7 @@ out_loop:
 
 static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ssize_t bytes)
 {
-    ngx_http_request_t * r = data;
+    ngx_http_request_t * r = (ngx_http_request_t *) data;
     ngx_buf_t * b;
     ngx_chain_t * cl;
     ngx_chain_t ** ll;
@@ -934,8 +936,8 @@ static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ss
 static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 {
     (void) cmd;
-    ngx_http_humha_loc_conf_t * humha_conf = conf;
-    ngx_str_t * value = cf->args->elts;
+    ngx_http_humha_loc_conf_t * humha_conf = (ngx_http_humha_loc_conf_t *) conf;
+    ngx_str_t * value = (ngx_str_t *) cf->args->elts;
     if (ngx_strcmp("on", value[1].data) == 0 || ngx_strcmp("off", value[1].data) == 0) {
         if (ngx_strcmp("on", value[1].data) == 0) {
             humha_conf->prome.active = 1;
@@ -945,12 +947,12 @@ static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, vo
 
         return NGX_OK;
     }
-    return NGX_CONF_ERROR;
+    return (char *) NGX_CONF_ERROR;
 }
 
 static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
 {
-    ngx_http_humha_loc_conf_t * lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
+    ngx_http_humha_loc_conf_t * lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     prome_conf * cf = &lcf->prome;
     prome_collect_list_t chain;
     prome_chain_t * pt = NULL;
