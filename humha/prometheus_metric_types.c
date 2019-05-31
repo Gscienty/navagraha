@@ -320,6 +320,7 @@ int prome_histogram_observe(prome_histogram_t * histogram, double val)
             bucket->bucket += 1.0F;
         }
     }
+    histogram->inf_bucket.bucket += 1.0F;
 
     return 0;
 }
@@ -334,6 +335,8 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
     prome_chain_t * sum_buf = NULL;
     prome_chain_t * count_notation_buf = NULL;
     prome_chain_t * count_buf = NULL;
+    prome_chain_t * inf_notation_buf = NULL;
+    prome_chain_t * inf_buf = NULL;
 
     if (histogram == NULL || chain == NULL) {
         return -1;
@@ -369,6 +372,22 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
     prome_buf_init(&count_buf->buf);
     count_buf->buf.base = (char *) calloc(16, 1);
     if (count_buf->buf.base == NULL) {
+        goto malloc_error;
+    }
+
+    inf_notation_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (inf_notation_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&inf_notation_buf->buf);
+
+    inf_buf = (prome_chain_t *) malloc(sizeof(prome_chain_t));
+    if (inf_buf == NULL) {
+        goto malloc_error;
+    }
+    prome_buf_init(&inf_buf->buf);
+    inf_buf->buf.base = (char *) calloc(16, 1);
+    if (inf_buf->buf.base == NULL) {
         goto malloc_error;
     }
 
@@ -452,6 +471,18 @@ malloc_error:
             free(count_buf->buf.base);
         }
         free(count_buf);
+    }
+    if (inf_notation_buf != NULL) {
+        if (inf_notation_buf->buf.base != NULL) {
+            free(inf_notation_buf->buf.base);
+        }
+        free(inf_notation_buf);
+    }
+    if (inf_buf != NULL) {
+        if (inf_buf->buf.base != NULL) {
+            free(inf_buf->buf.base);
+        }
+        free(inf_buf);
     }
     while (!prome_collect_list_is_empty(&buckets_serialized)) {
         pt = contain_of(buckets_serialized.next, prome_chain_t, node);
