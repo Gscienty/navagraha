@@ -238,7 +238,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     if (r->uri.len == 1) {
         ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
     }
-    if (ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
+    else if (ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
         if (lcf->prome.active == 1) {
             ret = ngx_http_read_client_request_body(r, ngx_http_humha_prometheus_get_metrics);
         }
@@ -953,11 +953,12 @@ static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
     ngx_http_humha_loc_conf_t * lcf = ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     prome_conf * cf = &lcf->prome;
     prome_collect_list_t chain;
-    prome_collect_list_head_init(&chain);
     prome_chain_t * pt = NULL;
     ngx_uint_t size = 0;
-    ngx_chain_t out = { NULL, NULL };
+    ngx_int_t odd_flag = 0;
+    ngx_chain_t * out = ngx_alloc_chain_link(r->pool);
 
+    prome_collect_list_head_init(&chain);
     prome_counter_serialize(&cf->sync_exec_count, &chain);
     prome_counter_serialize(&cf->async_exec_count, &chain);
 
@@ -967,22 +968,25 @@ static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
     r->headers_out.content_length_n = size;
     ngx_str_set(&r->headers_out.content_type, "text/plain");
     ngx_http_set_content_type(r);
+
     ngx_http_send_header(r);
 
-    out.buf = ngx_create_temp_buf(r->pool, size);
-    out.buf->last_buf = 1;
+    out->buf = ngx_create_temp_buf(r->pool, size);
+    out->buf->last = out->buf->pos;
+    out->buf->last_buf = 1;
 
     while (!prome_collect_list_is_empty(&chain)) {
         pt = contain_of(chain.next, prome_chain_t, node);
 
-        ngx_memcpy(out.buf->last, pt->buf.base, pt->buf.len);
-        out.buf->last += pt->buf.len;
-        *out.buf->last++ = '\n';
-
+        ngx_memcpy(out->buf->last, pt->buf.base, pt->buf.len);
+        out->buf->last += pt->buf.len;
+        *out->buf->last++ = (odd_flag ^= 1) ? ' ' : '\n';
         free(pt->buf.base);
         prome_collect_list_remove(chain.next);
         free(pt);
     }
 
-    ngx_http_output_filter(r, &out);
+    ngx_http_output_filter(r, out);
+
+    while ((out = ngx_chain_free_link(r->pool, out)) != NULL);
 }

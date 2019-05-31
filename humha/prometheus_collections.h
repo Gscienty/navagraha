@@ -19,9 +19,9 @@ struct prome_collect_list_s {
 
 #define prome_collect_list_insert_prev(p, n) \
     ({ \
-     (n)->next = (p); \
+     (p)->prev->next = (n); \
      (n)->prev = (p)->prev; \
-     if ((p)->prev) (p)->prev->next = (n); \
+     (n)->next = (p); \
      (p)->prev = (n); \
      })
 
@@ -35,8 +35,8 @@ struct prome_collect_list_s {
 
 #define prome_collect_list_remove(p) \
     ({ \
-     (p)->prev->next = (p)->next; \
      (p)->next->prev = (p)->prev; \
+     (p)->prev->next = (p)->next; \
      })
 
 #define prome_collect_list_is_empty(p) ((p)->next == (p))

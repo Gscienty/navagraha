@@ -163,7 +163,7 @@ int prome_counter_serialize(prome_counter_t * counter, prome_collect_list_t * ch
     }
 
     prome_notation_serialize(&counter->notation, &notation_buf->buf);
-    num_buf->buf.len = sprintf(num_buf->buf.base, "%lf", counter->value);
+    num_buf->buf.len = sprintf(num_buf->buf.base, "%g", counter->value);
 
     prome_collect_list_insert_prev(chain, &notation_buf->node);
     prome_collect_list_insert_prev(chain, &num_buf->node);
@@ -266,7 +266,7 @@ int prome_gauge_serialize(prome_gauge_t * gauge, prome_collect_list_t * chain)
     if (prome_notation_serialize(&gauge->notation, &notation_buf->buf)) {
         goto malloc_error;
     }
-    if ((num_buf->buf.len = sprintf(num_buf->buf.base, "%lf", gauge->value)) <= 0) {
+    if ((num_buf->buf.len = sprintf(num_buf->buf.base, "%g", gauge->value)) <= 0) {
         goto malloc_error;
     }
 
@@ -378,10 +378,10 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
     if (prome_notation_serialize(&histogram->count_notation, &count_notation_buf->buf) < 0) {
         goto malloc_error;
     }
-    if ((sum_buf->buf.len = sprintf(sum_buf->buf.base, "%lf", histogram->sum_value)) <= 0) {
+    if ((sum_buf->buf.len = sprintf(sum_buf->buf.base, "%g", histogram->sum_value)) <= 0) {
         goto malloc_error;
     }
-    if ((count_buf->buf.len = sprintf(sum_buf->buf.base, "%lf", histogram->count_value)) <= 0) {
+    if ((count_buf->buf.len = sprintf(sum_buf->buf.base, "%g", histogram->count_value)) <= 0) {
         goto malloc_error;
     }
 
@@ -413,7 +413,7 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
             free(pt);
             goto malloc_error;
         }
-        if ((pt->buf.len = sprintf(pt->buf.base, "%lf", bucket->bucket)) <= 0) {
+        if ((pt->buf.len = sprintf(pt->buf.base, "%g", bucket->bucket)) <= 0) {
             free(pt->buf.base);
             free(pt);
             goto malloc_error;
@@ -615,10 +615,10 @@ int prome_summary_serialize(prome_summary_t * summary, prome_collect_list_t * ch
     if (prome_notation_serialize(&summary->sum_notation, &sum_notation_buf->buf) < 0) {
         goto malloc_error;
     }
-    if ((sum_num_buf->buf.len = sprintf(sum_num_buf->buf.base, "%lf", summary->sum_value)) <= 0) {
+    if ((sum_num_buf->buf.len = sprintf(sum_num_buf->buf.base, "%g", summary->sum_value)) <= 0) {
         goto malloc_error;
     }
-    if ((count_num_buf->buf.len = sprintf(count_num_buf->buf.base, "%lf", summary->count_value)) <= 0) {
+    if ((count_num_buf->buf.len = sprintf(count_num_buf->buf.base, "%g", summary->count_value)) <= 0) {
         goto malloc_error;
     }
 
@@ -650,7 +650,7 @@ int prome_summary_serialize(prome_summary_t * summary, prome_collect_list_t * ch
             free(pt);
             goto malloc_error;
         }
-        if ((pt->buf.len = sprintf(pt->buf.base, "%lf", quantile->calculated_simple)) <= 0) {
+        if ((pt->buf.len = sprintf(pt->buf.base, "%g", quantile->calculated_simple)) <= 0) {
             free(pt->buf.base);
             free(pt);
             goto malloc_error;
