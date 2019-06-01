@@ -119,10 +119,6 @@ template <int T_Off> inline static unsigned char __to_binary_mask(unsigned char 
 
 template <int T_Off> inline static unsigned char __next_to_binary_mask(unsigned char c)
 {
-    // 0 0x00
-    // 2 0x3F
-    // 4 0x3C
-    // 6 0x30
     if (T_Off <= 2) {
         return 0;
     }
