@@ -8,6 +8,8 @@ namespace extensions {
 
 std::string base64_encode(std::string val);
 
+std::string base64_decode(std::string val);
+
 }
 }
 

@@ -85,5 +85,69 @@ std::string base64_encode(std::string val)
     return str.str();
 }
 
+inline static unsigned char __to_binary(unsigned char c)
+{
+    if ('A' <= c && c <= 'Z') {
+        return c - 'A';
+    }
+    else if ('a' <= c && c <= 'z') {
+        return 'a' - c + 26;
+    }
+    else if ('0' <= c && c <= '9') {
+        return '0' - c + 26 * 2;
+    }
+    else if (c == '+') {
+        return 26 * 2 + 10;
+    }
+    else if (c == '/') {
+        return 26 * 2 + 11;
+    }
+    else {
+        return 0;
+    }
+}
+
+template <int T_Off> inline static unsigned char __to_binary_mask(unsigned char c)
+{
+    return (__to_binary(c) & ((1 << (8 - T_Off)) - 1)) << T_Off;
+}
+
+template <int T_Off> inline static unsigned char __next_to_binary_mask(unsigned char c)
+{
+    return (__to_binary(c) & (~((1 << (8 - T_Off)) - 1) & 0x3F)) >> (8 - T_Off);
+}
+
+#define BASE64_DECODE_OFF_CASE(_str, _val, _i, _b, _off, _off_val) \
+    case (_off_val): \
+        if ((_off_val) == 0) { \
+            (_b) = __to_binary_mask<(_off_val)>((_val)[(_i)]); \
+        } \
+        else { \
+            (_b) |= __to_binary_mask<(_off_val)>((_val)[(_i)]); \
+            (_str).put((_b)); \
+            (_b) = __next_to_binary_mask<(_off_val)>((_val)[(_i)]); \
+        } \
+        (_off) = next_off<(_off_val)>::value; \
+        break
+
+std::string base64_decode(std::string val)
+{
+    std::ostringstream str;
+    size_t size = val.size();
+    unsigned char b = 0;
+    int off = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        switch (off) {
+            BASE64_DECODE_OFF_CASE(str, val, i, b, off, 0);
+            BASE64_DECODE_OFF_CASE(str, val, i, b, off, 2);
+            BASE64_DECODE_OFF_CASE(str, val, i, b, off, 4);
+            BASE64_DECODE_OFF_CASE(str, val, i, b, off, 6);
+        }
+    }
+
+    return str.str();
+}
+
 }
 }
