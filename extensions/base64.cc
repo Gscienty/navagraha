@@ -109,12 +109,26 @@ inline static unsigned char __to_binary(unsigned char c)
 
 template <int T_Off> inline static unsigned char __to_binary_mask(unsigned char c)
 {
-    return (__to_binary(c) & ((1 << (8 - T_Off)) - 1)) << T_Off;
+    if (T_Off == 0) {
+        return __to_binary(c) << 2;
+    }
+    else {
+        return (__to_binary(c) & (~((1 << (T_Off - 2)) - 1) & 0x3F)) >> (T_Off - 2);
+    }
 }
 
 template <int T_Off> inline static unsigned char __next_to_binary_mask(unsigned char c)
 {
-    return (__to_binary(c) & (~((1 << (8 - T_Off)) - 1) & 0x3F)) >> (8 - T_Off);
+    // 0 0x00
+    // 2 0x3F
+    // 4 0x3C
+    // 6 0x30
+    if (T_Off <= 2) {
+        return 0;
+    }
+    else {
+        return (__to_binary(c) & ((1 << (T_Off - 2)) - 1)) << (10 - T_Off);
+    }
 }
 
 #define BASE64_DECODE_OFF_CASE(_str, _val, _i, _b, _off, _off_val) \
@@ -137,7 +151,7 @@ std::string base64_decode(std::string val)
     unsigned char b = 0;
     int off = 0;
 
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size && val[i] != '='; i++) {
         switch (off) {
             BASE64_DECODE_OFF_CASE(str, val, i, b, off, 0);
             BASE64_DECODE_OFF_CASE(str, val, i, b, off, 2);
