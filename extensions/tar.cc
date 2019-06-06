@@ -12,6 +12,7 @@ namespace extensions {
 tar::tar(std::string tar_name, std::string dir)
     : tar_name(tar_name)
     , dir(dir)
+    , ignore_filename(".navaignore")
 {
     if (access(tar_name.c_str(), F_OK) == 0) {
         remove(tar_name.c_str());
@@ -32,7 +33,7 @@ tar::~tar()
 
 void tar::fill_ignored()
 {
-    std::string navaignore = this->dir + ".navaignore";
+    std::string navaignore = this->dir + this->ignore_filename;
     if (access(navaignore.c_str(), F_OK) != 0) {
         return;
     }

@@ -15,6 +15,7 @@ private:
     TAR * tar_handler;
     std::string tar_name;
     std::string dir;
+    const std::string ignore_filename;
     std::list<file_wildcards> ignored;
 
     void fill_ignored();
