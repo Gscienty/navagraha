@@ -14,6 +14,7 @@ private:
     std::list<std::string> folder;
     std::string name;
 
+    bool item_match(const std::string & wild, const std::string & item) const;
 public:
     file_wildcards(std::string wildcard);
 
