@@ -44,7 +44,7 @@ void func_deploy::create_deployment(std::string namespace_, http_client::curl_he
 
     req_obj.api_version = std::string("apps/v1");
     req_obj.kind = std::string("Deployment");
-    req_obj.metadata.get().name = std::string(this->name_arg[0]) + "-navagraha-deployment";
+    req_obj.metadata.get().name = std::string(this->name_arg[0]);
     req_obj.metadata.get().labels.get().values()["app"] = std::string(this->name_arg[0]);
     req_obj.spec.get().replicas = 1;
     req_obj.spec.get().selector.get().match_labels.get()
@@ -71,7 +71,7 @@ void func_deploy::create_service(std::string namespace_, http_client::curl_helpe
 
     req_obj.api_version = std::string("v1");
     req_obj.kind = std::string("Service");
-    req_obj.metadata.get().name = this->name_arg[0] + "-navagraha-service";
+    req_obj.metadata.get().name = std::string(this->name_arg[0]);
     req_obj.spec.get().selector.get().values()["app"] = std::string(this->name_arg[0]);
     req_obj.spec.get().ports.get().values().push_back(kubeent::service_port());
     req_obj.spec.get().ports.get().values().front().port = 80;
