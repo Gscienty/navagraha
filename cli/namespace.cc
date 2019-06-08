@@ -24,9 +24,9 @@ int namespace_::execute()
 {
     return navagraha::cli_arg::process_collection(this->name_flag.argc(),
                                                   this->name_flag.argv())
-        .add(navagraha::cli::namespace_list())
-        .add(navagraha::cli::namespace_add())
-        .add(navagraha::cli::namespace_remove())
+        .add(namespace_list())
+        .add(namespace_add())
+        .add(namespace_remove())
         .result();
 }
 
