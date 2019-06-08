@@ -6,10 +6,11 @@ MAINTAINER gaoxiaochuan@hotmail.com
 
 ADD ./ /var/tmp/humha
 
-RUN apk add --no-cache gcc make curl musl-dev \
-    && curl -o /var/tmp/nginx.tar.gz -L http://nginx.org/download/nginx-1.15.12.tar.gz \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
+    && apk add --no-cache gcc make curl musl-dev \
+    && curl -o /var/tmp/nginx.tar.gz -L http://nginx.org/download/nginx-1.17.0.tar.gz \
     && mkdir -p /var/tmp/nginx && tar zxvf /var/tmp/nginx.tar.gz -C /var/tmp \
-    && cd /var/tmp/nginx-1.15.12 \
+    && cd /var/tmp/nginx-1.17.0 \
     && ./configure --prefix=/var/lib/nginx \
                    --without-http-cache \
                    --without-http_charset_module \
