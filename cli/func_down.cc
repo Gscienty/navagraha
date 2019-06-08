@@ -8,7 +8,7 @@
 namespace navagraha {
 namespace cli {
 
-char CLI_FUNC_OFFLINE_NAME[] = "offline";
+char CLI_FUNC_OFFLINE_NAME[] = "down";
 char CLI_FUNC_OFFLINE_NAMESPACE[] = "--namespace";
 
 void func_down::bind(cli_arg::process_helper<func_down> & helper) 
