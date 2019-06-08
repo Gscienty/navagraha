@@ -236,7 +236,6 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
 
     if (r->uri.len == 1) {
-        prome_counter_inc(&lcf->prome.sync_exec_count);
         ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
     }
     else if (ngx_strlen("/metrics") == r->uri.len && ngx_strncmp(r->uri.data, "/metrics", r->uri.len) == 0) {
@@ -251,7 +250,6 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         }
     }
     else {
-        prome_counter_inc(&lcf->prome.async_exec_count);
         if (ngx_http_upstream_create(r) != NGX_OK) {
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
         }
@@ -372,6 +370,10 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     }
 
     p.is_async = ngx_http_humha_request_is_async(&r->headers_in.headers, &async_cb);
+
+    prome_counter_inc(p.is_async
+                      ? &lcf->prome.async_exec_count
+                      : &lcf->prome.sync_exec_count);
 
     if (humha_process(lcf->executor.data, (const u_char **) args, &p, &async_cb) < 0) {
         goto output;
