@@ -3,7 +3,7 @@
 
 #include "extensions/serializer_helper.hpp"
 #include "extensions/field.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/job_spec.hpp"
 
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char JOB_TEMPLATE_SPEC_METADATA[];
 extern char JOB_TEMPLATE_SPEC_SPEC[];
 
-class job_template_spec : public serializable<job_template_spec> {
+class job_template_spec : public extensions::serializable<job_template_spec> {
 public:
     extensions::field<object_meta, JOB_TEMPLATE_SPEC_METADATA> metadata;
     extensions::field<job_spec, JOB_TEMPLATE_SPEC_SPEC> spec;

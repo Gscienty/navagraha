@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include "kubeent/job_condition.hpp"
 
@@ -18,7 +18,7 @@ extern char JOB_STATUS_FAILED[];
 extern char JOB_STATUS_START_TIME[];
 extern char JOB_STATUS_SUCCEEDED[];
 
-class job_status : public serializable<job_status> {
+class job_status : public extensions::serializable<job_status> {
 public:
     extensions::field<int, JOB_STATUS_ACTIVE> active;
     extensions::field<time, JOB_STATUS_COMPLETION_TIME> completion_time;

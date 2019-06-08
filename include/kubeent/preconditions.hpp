@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char PRECONDITIONS_UID[];
 
-class preconditions : public serializable<preconditions> {
+class preconditions : public extensions::serializable<preconditions> {
 public:
     extensions::field<std::string, PRECONDITIONS_UID> uid;
 

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/replication_controller_spec.hpp"
 #include "kubeent/replication_controller_status.hpp"
@@ -19,7 +19,7 @@ extern char REPLCIATION_CONTROLLER_SPEC[];
 extern char REPLCIATION_CONTROLLER_STATUS[];
 
 
-class replication_controller : public serializable<replication_controller> { 
+class replication_controller : public extensions::serializable<replication_controller> { 
 public:
     extensions::field<std::string, REPLICATION_CONTROLLER_API_VERSION> api_version;
     extensions::field<std::string, REPLICATION_CONTROLLER_KIND> kind;

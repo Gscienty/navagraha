@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/status_cause.hpp"
 
 namespace navagraha {
@@ -17,7 +17,7 @@ extern char STATUS_DETAILS_NAME[];
 extern char STATUS_DETAILS_RETRY_AFTER_SECONDS[];
 extern char STATUS_DETAILS_UID[];
 
-class status_details : public serializable<status_details> {
+class status_details : public extensions::serializable<status_details> {
 public:
     extensions::field<
         extensions::special_list<status_cause>, STATUS_DETAILS_CAUSES> causes;

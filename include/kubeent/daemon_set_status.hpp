@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/daemon_set_condition.hpp"
 
 namespace navagraha {
@@ -21,7 +21,7 @@ extern char DAEMON_SET_STATUS_NUMBER_UNAVAILABLE[];
 extern char DAEMON_SET_STATUS_OBSERVED_GENERATION[];
 extern char DAEMON_SET_STATUS_UPDATED_NUMBER_SCHEDULED[];
 
-class daemon_set_status : public serializable<daemon_set_status> {
+class daemon_set_status : public extensions::serializable<daemon_set_status> {
 public:
     extensions::field<int, DAEMON_SET_STATUS_COLLISION_COUNT> collision_count;
     extensions::field<

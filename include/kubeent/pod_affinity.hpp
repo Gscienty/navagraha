@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/weighted_pod_affinity_term.hpp"
 #include "kubeent/pod_affinity_term.hpp"
 
@@ -14,7 +14,7 @@ namespace kubeent {
 extern char POD_AFFINITY_PREFERRED_DURING_SCHEDULING_IGNORED_DURING_EXECUTION[];
 extern char POD_AFFINITY_REQUIRED_DURING_SCHEDULING_IGNORED_DURING_EXECUTION[];
 
-class pod_affinity : public serializable<pod_affinity> {
+class pod_affinity : public extensions::serializable<pod_affinity> {
 public:
     extensions::field<
         extensions::special_list<weighted_pod_affinity_term>,

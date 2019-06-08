@@ -3,14 +3,14 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
 extern char ROLLING_UPDATE_STATEFUL_SET_STRATEGY_PARTITION[];
 
-class rolling_update_stateful_set_strategy : public serializable<rolling_update_stateful_set_strategy> {
+class rolling_update_stateful_set_strategy : public extensions::serializable<rolling_update_stateful_set_strategy> {
 public:
     extensions::field<int, ROLLING_UPDATE_STATEFUL_SET_STRATEGY_PARTITION> partition;
 

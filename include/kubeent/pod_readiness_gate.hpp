@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char POD_READINESS_GATE_CONDITION_TYPE[];
 
-class pod_readiness_gate : public serializable<pod_readiness_gate> {
+class pod_readiness_gate : public extensions::serializable<pod_readiness_gate> {
 public:
     extensions::field<std::string, POD_READINESS_GATE_CONDITION_TYPE> condition_type;
 

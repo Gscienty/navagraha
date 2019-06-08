@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/namespace_spec.hpp"
 #include "kubeent/namespace_status.hpp"
@@ -18,7 +18,7 @@ extern char NAMESPACE_METADATA[];
 extern char NAMESPACE_SPEC[];
 extern char NAMESPACE_STATUS[];
 
-class namespace_ : public serializable<namespace_> {
+class namespace_ : public extensions::serializable<namespace_> {
 public:
     extensions::field<std::string, NAMESPACE_API_VERSION> api_version;
     extensions::field<std::string, NAMESPACE_KIND> kind;

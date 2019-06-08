@@ -3,7 +3,7 @@
 
 #include "extensions/serializer_helper.hpp"
 #include "extensions/field.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/container_state.hpp"
 #include <string>
 
@@ -19,7 +19,7 @@ extern char CONTAINER_STATUS_READY[];
 extern char CONTAINER_STATUS_RESTART_COUNT[];
 extern char CONTAINER_STATUS_STATE[];
 
-class container_status : public serializable<container_status> {
+class container_status : public extensions::serializable<container_status> {
 public:
     extensions::field<std::string, CONTAINER_STATUS_CONTAINER_ID> container_id;
     extensions::field<std::string, CONTAINER_STATUS_IMAGE> image;

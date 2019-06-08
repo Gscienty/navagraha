@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include "kubeent/pod_template_spec.hpp"
 #include "kubeent/stateful_set_update_strategy.hpp"
@@ -23,7 +23,7 @@ extern char STATEFUL_SET_SPEC_TEMPLATE[];
 extern char STATEFUL_SET_SPEC_UPDATE_STRATEGY[];
 extern char STATEFUL_SET_SPEC_VOLUME_CLAIM_TEMPLATES[];
 
-class stateful_set_spec : public serializable<stateful_set_spec> {
+class stateful_set_spec : public extensions::serializable<stateful_set_spec> {
 public:
     extensions::field<std::string, STATEFUL_SET_SPEC_POD_MANAGEMENT_POLICY> pod_management_policy;
     extensions::field<int, STATEFUL_SET_SPEC_REPLICAS> replicas;

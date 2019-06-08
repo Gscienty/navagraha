@@ -5,7 +5,7 @@
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
 #include "kubeent/local_object_reference.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -18,7 +18,7 @@ extern char CEPH_FS_VOLUME_SOURCE_SECRET_FILE[];
 extern char CEPH_FS_VOLUME_SOURCE_SECRET_REF[];
 extern char CEPH_FS_VOLUME_SOURCE_USER[];
 
-class ceph_fs_volume_source : public serializable<ceph_fs_volume_source> {
+class ceph_fs_volume_source : public extensions::serializable<ceph_fs_volume_source> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

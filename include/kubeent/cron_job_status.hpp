@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_reference.hpp"
 #include "kubeent/time.hpp"
 
@@ -14,7 +14,7 @@ namespace kubeent {
 extern char CRON_JOB_SPEC_ACTIVE[];
 extern char CRON_JOB_SPEC_LAST_SCHEDULE_TIME[];
 
-class cron_job_status : public serializable<cron_job_status> {
+class cron_job_status : public extensions::serializable<cron_job_status> {
 public:
     extensions::field<
         extensions::special_list<object_reference>,

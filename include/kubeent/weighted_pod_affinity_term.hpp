@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/pod_affinity_term.hpp"
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 extern char WEIGHTED_POD_AFFINITY_TERM_POD_AFFINITY_TERM[];
 extern char WEIGHTED_POD_AFFINITY_TERM_WEIGHT[];
 
-class weighted_pod_affinity_term : public serializable<weighted_pod_affinity_term> {
+class weighted_pod_affinity_term : public extensions::serializable<weighted_pod_affinity_term> {
 public:
     extensions::field<
         pod_affinity_term,

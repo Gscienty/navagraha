@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/namespace.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -17,7 +17,7 @@ extern char NAMESPACE_LIST_ITEMS[];
 extern char NAMESPACE_LIST_KIND[];
 extern char NAMESPACE_LIST_METADATA[];
 
-class namespace_list : public serializable<namespace_list> {
+class namespace_list : public extensions::serializable<namespace_list> {
 public:
     extensions::field<std::string, NAMESPACE_LIST_API_VERSION> api_version;
     extensions::field<

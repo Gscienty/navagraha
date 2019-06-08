@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 
 extern char EXEC_ACTION_COMMAND[];
 
-class exec_action : public serializable<exec_action> {
+class exec_action : public extensions::serializable<exec_action> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

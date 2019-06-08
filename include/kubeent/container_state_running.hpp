@@ -3,7 +3,7 @@
 
 #include "extensions/serializer_helper.hpp"
 #include "extensions/field.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char CONTAINER_STATE_RUNNING_STARTED_AT[];
 
-class container_state_running : public serializable<container_state_running> {
+class container_state_running : public extensions::serializable<container_state_running> {
 public:
     extensions::field<time, CONTAINER_STATE_RUNNING_STARTED_AT> started_at;
 

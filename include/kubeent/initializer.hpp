@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char INITIALIZERS_NAME[];
 
-class initializer : public serializable<initializer> {
+class initializer : public extensions::serializable<initializer> {
 public:
     extensions::field<std::string, INITIALIZERS_NAME> name;
 

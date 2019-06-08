@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -16,7 +16,7 @@ extern char REPLICATION_CONTROLLER_CONDITION_REASON[];
 extern char REPLICATION_CONTROLLER_CONDITION_STATUS[];
 extern char REPLICATION_CONTROLLER_CONDITION_TYPE[];
 
-class replication_controller_condition : public serializable<replication_controller_condition> {
+class replication_controller_condition : public extensions::serializable<replication_controller_condition> {
 public:
     extensions::field<time, REPLICATION_CONTROLLER_CONDITION_LAST_TRANSITION_TIME> last_transition_time;
     extensions::field<std::string, REPLICATION_CONTROLLER_CONDITION_MESSAGE> message;

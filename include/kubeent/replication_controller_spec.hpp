@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/pod_template_spec.hpp"
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char REPLICATION_CONTROLLER_SPEC_REPLICAS[];
 extern char REPLICATION_CONTROLLER_SPEC_SELECTOR[];
 extern char REPLCIATION_CONTROLLER_SPEC_TEMPLATE[];
 
-class replication_controller_spec : public serializable<replication_controller_spec> {
+class replication_controller_spec : public extensions::serializable<replication_controller_spec> {
 public:
     extensions::field<int, REPLICATION_CONTROLLER_SPEC_MIN_READY_SECONDS> min_ready_seconds;
     extensions::field<int, REPLICATION_CONTROLLER_SPEC_REPLICAS> replicas;

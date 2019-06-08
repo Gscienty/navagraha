@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/daemon_set_spec.hpp"
 #include "kubeent/daemon_set_status.hpp"
@@ -18,7 +18,7 @@ extern char DAEMON_SET_METADATA[];
 extern char DAEMON_SET_SPEC[];
 extern char DAEMON_SET_STATUS[];
 
-class daemon_set : public serializable<daemon_set> {
+class daemon_set : public extensions::serializable<daemon_set> {
 public:
     extensions::field<std::string, DAEMON_SET_API_VERSION> api_version;
     extensions::field<std::string, DAEMON_SET_KIND> kind;

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include "kubeent/pod_template_spec.hpp"
 #include "kubeent/daemon_set_update_strategy.hpp"
@@ -17,7 +17,7 @@ extern char DAEMON_SET_SPEC_SELECTOR[];
 extern char DAEMON_SET_SPEC_TEMPLATE[];
 extern char DAEMON_SET_SPEC_UPDATE_STRATEGY[];
 
-class daemon_set_spec : public serializable<daemon_set_spec> {
+class daemon_set_spec : public extensions::serializable<daemon_set_spec> {
 public:
     extensions::field<int, DAEMON_SET_SPEC_MIN_READY_SECONDS> min_ready_seconds;
     extensions::field<int, DAEMON_SET_SPEC_REVISION_HISTORY_LIMIT> revision_history_limit;

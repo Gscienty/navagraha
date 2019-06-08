@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/key_to_path.hpp"
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char KEY_TO_PATH_ITEMS[];
 extern char KEY_TO_PATH_NAME[];
 extern char KEY_TO_PATH_OPTIONAL[];
 
-class config_map_volume_source : public serializable<config_map_volume_source> {
+class config_map_volume_source : public extensions::serializable<config_map_volume_source> {
 public:
     extensions::field<int, KEY_TO_PATH_DEFAULT_MODE> default_mode;
     extensions::field<

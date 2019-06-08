@@ -5,7 +5,7 @@
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/object_field_selector.hpp"
 #include "kubeent/resource_field_selector.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -16,7 +16,7 @@ extern char DOWNWARD_API_VOLUME_FILE_MODE[];
 extern char DOWNWARD_API_VOLUME_FILE_PATH[];
 extern char DOWNWARD_API_VOLUME_FILE_RESOURCE_FIELD_REF[];
 
-class downward_api_volume_file : public serializable<downward_api_volume_file> {
+class downward_api_volume_file : public extensions::serializable<downward_api_volume_file> {
 public:
     extensions::field<
         object_field_selector,

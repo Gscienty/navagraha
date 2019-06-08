@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/rolling_update_daemon_set.hpp"
 #include <string>
 
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char DAEMON_SET_UPDATE_STRATEGY_ROLLING_UPDATE[];
 extern char DAEMON_SET_UPDATE_STRATEGY_TYPE[];
 
-class daemon_set_update_strategy : public serializable<daemon_set_update_strategy> {
+class daemon_set_update_strategy : public extensions::serializable<daemon_set_update_strategy> {
 public:
     extensions::field<
         rolling_update_daemon_set,

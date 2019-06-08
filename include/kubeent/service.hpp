@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/service_spec.hpp"
 #include "kubeent/service_status.hpp"
@@ -18,7 +18,7 @@ extern char SERVICE_METADATA[];
 extern char SERVICE_SPEC[];
 extern char SERVICE_STATUS[];
 
-class service : public serializable<service> {
+class service : public extensions::serializable<service> {
 public:
     extensions::field<std::string, SERVICE_API_VERSION> api_version;
     extensions::field<std::string, SERVICE_KIND> kind;

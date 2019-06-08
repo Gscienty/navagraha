@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -18,7 +18,7 @@ extern char NODE_SYSTEM_INFO_OPERATING_SYSTEM[];
 extern char NODE_SYSTEM_INFO_OS_IMAGE[];
 extern char NODE_SYSTEM_INFO_SYSTEM_UUID[];
 
-class node_system_info : public serializable<node_system_info> {
+class node_system_info : public extensions::serializable<node_system_info> {
 public:
     extensions::field<std::string, NODE_SYSTEM_INFO_ARCHITECTURE> architecture;
     extensions::field<std::string, NODE_SYSTEM_INFO_BOOT_ID> boot_id;

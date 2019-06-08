@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/client_ip_config.hpp"
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char SESSION_AFFINITY_CONFIG_CLIENT_IP[];
 
-class session_affinity_config : public serializable<session_affinity_config> {
+class session_affinity_config : public extensions::serializable<session_affinity_config> {
 public:
     extensions::field<client_ip_config, SESSION_AFFINITY_CONFIG_CLIENT_IP> client_ip;
 

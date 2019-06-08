@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -11,7 +11,7 @@ namespace kubeent {
 extern char ROLLING_UPDATE_DEPLOYMENT_MAX_SURGE[];
 extern char ROLLING_UPDATE_DEPLOYMENT_MAX_UNAVAILABLE[];
 
-class rolling_update_deployment : public serializable<rolling_update_deployment> {
+class rolling_update_deployment : public extensions::serializable<rolling_update_deployment> {
 public:
     extensions::field<
         int,

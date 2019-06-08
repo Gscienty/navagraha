@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/replica_set_condition.hpp"
 
 namespace navagraha {
@@ -17,7 +17,7 @@ extern char REPLICA_SET_STATUS_OBSERVED_GENERATION[];
 extern char REPLICA_SET_STATUS_READY_REPLICAS[];
 extern char REPLICA_SET_STATUS_REPLICAS[];
 
-class replica_set_status : public serializable<replica_set_status> {
+class replica_set_status : public extensions::serializable<replica_set_status> {
 public:
     extensions::field<int, REPLICA_SET_STATUS_AVAILABLE_REPLICAS> available_replicas;
     extensions::field<

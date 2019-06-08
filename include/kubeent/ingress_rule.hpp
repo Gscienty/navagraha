@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/http_ingress_rule_value.hpp"
 #include <string>
 
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char INGRESS_RULE_HOST[];
 extern char INGRESS_RULE_HTTP[];
 
-class ingress_rule : public serializable<ingress_rule> {
+class ingress_rule : public extensions::serializable<ingress_rule> {
 public:
     extensions::field<std::string, INGRESS_RULE_HOST> host;
     extensions::field<http_ingress_rule_value, INGRESS_RULE_HTTP> http;

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char QUOBYTE_VOLUME_SOURCE_REGISTRY[];
 extern char QUOBYTE_VOLUME_SOURCE_USER[];
 extern char QUOBYTE_VOLUME_SOURCE_VOLUME[];
 
-class quobyte_volume_source : public serializable<quobyte_volume_source> {
+class quobyte_volume_source : public extensions::serializable<quobyte_volume_source> {
 public:
     extensions::field<
         std::string,

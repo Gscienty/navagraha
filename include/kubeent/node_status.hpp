@@ -5,7 +5,7 @@
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/node_address.hpp"
 #include "kubeent/node_condition.hpp"
 #include "kubeent/node_config_status.hpp"
@@ -30,7 +30,7 @@ extern char NODE_STATUS_PHASE[];
 extern char NODE_STATUS_VOLUMES_ATTACHED[];
 extern char NODE_STATUS_VOLUMES_IN_USE[];
 
-class node_status : public serializable<node_status> {
+class node_status : public extensions::serializable<node_status> {
 public:
     extensions::field<
         extensions::special_list<node_address>, NODE_STATUS_ADDRESSES> addresses;

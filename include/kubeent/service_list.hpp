@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/service.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -17,7 +17,7 @@ extern char SERVICE_LIST_ITEMS[];
 extern char SERVICE_LIST_KIND[];
 extern char SERVICE_LIST_METADATA[];
 
-class service_list : public serializable<service_list> {
+class service_list : public extensions::serializable<service_list> {
 public:
     extensions::field<std::string, SERVICE_LIST_API_VERSION> api_version;
     extensions::field<

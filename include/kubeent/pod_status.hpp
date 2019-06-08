@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include "kubeent/pod_condition.hpp"
 #include "kubeent/container_status.hpp"
@@ -25,7 +25,7 @@ extern char POD_STATUS_QOS_CLASS[];
 extern char POD_STATUS_REASON[];
 extern char POD_STATUS_START_TIME[];
 
-class pod_status : public serializable<pod_status> {
+class pod_status : public extensions::serializable<pod_status> {
 public:
     extensions::field<
         extensions::special_list<pod_condition>,

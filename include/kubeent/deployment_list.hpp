@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/deployment.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -17,7 +17,7 @@ extern char DEPLOYMENT_LIST_ITEMS[];
 extern char DEPLOYMENT_LIST_KIND[];
 extern char DEPLOYMENT_LIST_METADATA[];
 
-class deployment_list : public serializable<deployment_list> {
+class deployment_list : public extensions::serializable<deployment_list> {
 public:
     extensions::field<std::string, DEPLOYMENT_LIST_API_VERSION> api_version;
     extensions::field<

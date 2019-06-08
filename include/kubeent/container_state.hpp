@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/container_state_running.hpp"
 #include "kubeent/container_state_terminated.hpp"
 #include "kubeent/container_state_waiting.hpp"
@@ -15,7 +15,7 @@ extern char CONTAINER_STATE_RUNNING[];
 extern char CONTAINER_STATE_TERMINATED[];
 extern char CONTAINER_STATE_WAITING[];
 
-class container_state : public serializable<container_state> {
+class container_state : public extensions::serializable<container_state> {
 public:
     extensions::field<container_state_running, CONTAINER_STATE_RUNNING> running;
     extensions::field<container_state_terminated, CONTAINER_STATE_TERMINATED> terminated;

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/persistent_volume_claim_spec.hpp"
 #include "kubeent/persistent_volume_claim_status.hpp"
@@ -18,7 +18,7 @@ extern char PERSISTENT_VOLUME_CLAIM_METADATA[];
 extern char PERSISTENT_VOLUME_CLAIM_SPEC[];
 extern char PERSISTENT_VOLUME_CLAIM_STATUS[];
 
-class persistent_volume_claim : public serializable<persistent_volume_claim> {
+class persistent_volume_claim : public extensions::serializable<persistent_volume_claim> {
 public:
     extensions::field<std::string, PERSISTENT_VOLUME_CLAIM_API_VERSION> api_version;
     extensions::field<std::string, PERSISTENT_VOLUME_CLAIM_KIND> kind;

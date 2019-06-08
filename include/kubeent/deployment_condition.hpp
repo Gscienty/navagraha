@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/time.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -16,7 +16,7 @@ extern char DEPLOYMENT_CONDITION_MESSAGE[];
 extern char DEPLOYMENT_CONDITION_STATUS[];
 extern char DEPLOYMENT_CONDITION_TYPE[];
 
-class deployment_condition : public serializable<deployment_condition> {
+class deployment_condition : public extensions::serializable<deployment_condition> {
 public:
     extensions::field<time, DEPLOYMENT_CONDITION_LAST_TRANSITION_TIME> last_transition_time;
     extensions::field<time, DEPLOYMENT_CONDITION_LAST_UPDATE_TIME> last_update_time;

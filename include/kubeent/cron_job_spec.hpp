@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/job_template_spec.hpp"
 #include <string>
 
@@ -18,7 +18,7 @@ extern char CRON_JOB_SPEC_STARTING_DEADLINE_SECONDS[];
 extern char CRON_JOB_SPEC_SUCCESSFUL_JOBS_HISTORY_LIMIT[];
 extern char CRON_JOB_SPEC_SUSPEND[];
 
-class cron_job_spec : public serializable<cron_job_spec> {
+class cron_job_spec : public extensions::serializable<cron_job_spec> {
 public:
     extensions::field<std::string, CRON_JOB_SPEC_CONCURRENCY_POLICY> concurrency_policy;
     extensions::field<int, CRON_JOB_SPEC_FAILED_JOBS_HISTORY_LIMIT> failed_jobs_history_limit;

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -17,7 +17,7 @@ extern char PERSISTENT_VOLUME_CLAIM_CONDITION_REASON[];
 extern char PERSISTENT_VOLUME_CLAIM_CONDITION_STATUS[];
 extern char PERSISTENT_VOLUME_CLAIM_CONDITION_TYPE[];
 
-class persistent_volume_claim_condition : public serializable<persistent_volume_claim_condition> {
+class persistent_volume_claim_condition : public extensions::serializable<persistent_volume_claim_condition> {
 public:
     extensions::field<time, PERSISTENT_VOLUME_CLAIM_CONDITION_LAST_PROBE_TIME> last_probe_time;
     extensions::field<time, PERSISTENT_VOLUME_CLAIM_CONDITION_LAST_TRANSITION_TIME> last_transition_time;

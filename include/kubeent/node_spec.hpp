@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/node_config_source.hpp"
 #include "kubeent/taint.hpp"
 #include <string>
@@ -19,7 +19,7 @@ extern char NODE_SPEC_PROVIDER_ID[];
 extern char NODE_SPEC_TAINTS[];
 extern char NODE_SPEC_UNSCHEDULABLE[];
 
-class node_spec : public serializable<node_spec> {
+class node_spec : public extensions::serializable<node_spec> {
 public:
     extensions::field<node_config_source, NODE_SPEC_CONFIG_SOURCE> config_source;
     extensions::field<std::string, NODE_SPEC_EXTERNAL_ID> external_id;

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/exec_action.hpp"
 #include "kubeent/http_get_action.hpp"
 #include "kubeent/tcp_socket_action.hpp"
@@ -20,7 +20,7 @@ extern char PROBE_SUCCESS_THRESHOLD[];
 extern char PROBE_TCP_SOCKET[];
 extern char PROBE_TIMEOUT_SECONDS[];
 
-class probe : public serializable<probe> {
+class probe : public extensions::serializable<probe> {
 public:
     extensions::field<exec_action, PROBE_EXEC> exec;
     extensions::field<int, PROBE_FAILURE_THRESHOLD> failure_threshold;

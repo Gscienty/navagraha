@@ -4,6 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/daemon_set.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -16,7 +17,7 @@ extern char DAEMON_SET_LIST_ITEMS[];
 extern char DAEMON_SET_LIST_KIND[];
 extern char DAEMON_SET_LIST_METADATA[];
 
-class daemon_set_list : public serializable<daemon_set_list> {
+class daemon_set_list : public extensions::serializable<daemon_set_list> {
 public:
     extensions::field<std::string, DAEMON_SET_LIST_API_VERSION> api_version;
     extensions::field<

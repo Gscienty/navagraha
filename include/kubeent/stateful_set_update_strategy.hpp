@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/rolling_update_stateful_set_strategy.hpp"
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 extern char STATEFUL_SET_UPDATE_STRATEGY_ROLLING_UPDATE[];
 extern char STATEFUL_SET_UPDATE_STRATEGY_TYPE[];
 
-class stateful_set_update_strategy : public serializable<stateful_set_update_strategy> {
+class stateful_set_update_strategy : public extensions::serializable<stateful_set_update_strategy> {
 public:
     extensions::field<
         rolling_update_stateful_set_strategy,

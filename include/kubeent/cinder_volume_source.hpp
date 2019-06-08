@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/local_object_reference.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char CINDER_VOLUME_SOURCE_READ_ONLY[];
 extern char CINDER_VOLUME_SOURCE_SECRET_REF[];
 extern char CINDER_VOLUME_SOURCE_VOLUME_ID[];
 
-class cinder_volume_source : public serializable<cinder_volume_source> {
+class cinder_volume_source : public extensions::serializable<cinder_volume_source> {
 public:
     extensions::field<std::string, CINDER_VOLUME_SOURCE_FS_TYPE> fs_type;
     extensions::field<bool, CINDER_VOLUME_SOURCE_READ_ONLY> read_only;

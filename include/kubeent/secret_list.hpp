@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/secret.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -17,7 +17,7 @@ extern char SECRET_LIST_ITEMS[];
 extern char SECRET_LIST_KIND[];
 extern char SECRET_LIST_METADATA[];
 
-class secret_list : public serializable<secret_list> {
+class secret_list : public extensions::serializable<secret_list> {
 public:
     extensions::field<std::string, SECRET_API_VERSION> api_version;
     extensions::field<extensions::special_list<secret>, SECRET_LIST_ITEMS> items;

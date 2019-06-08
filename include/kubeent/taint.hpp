@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -15,7 +15,7 @@ extern char TAINT_KEY[];
 extern char TAINT_TIME_ADDED[];
 extern char TAINT_VALUE[];
 
-class taint : public serializable<taint> {
+class taint : public extensions::serializable<taint> {
 public:
     extensions::field<std::string, TAINT_EFFECT> effect;
     extensions::field<std::string, TAINT_KEY> key;

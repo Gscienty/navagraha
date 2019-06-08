@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -17,7 +17,7 @@ extern char JOB_CONDITION_REASON[];
 extern char JOB_CONDITION_STATUS[];
 extern char JOB_CONDITION_TYPE[];
 
-class job_condition : public serializable<job_condition> {
+class job_condition : public extensions::serializable<job_condition> {
 public:
     extensions::field<time, JOB_CONDITION_LAST_PROBE_TIME> last_probe_time;
     extensions::field<time, JOB_CONDITION_LAST_TRANSITION_TIME> last_transition_time;

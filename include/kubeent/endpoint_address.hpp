@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_reference.hpp"
 #include <string>
 
@@ -15,7 +15,7 @@ extern char ENDPOINT_ADDRESS_IP[];
 extern char ENDPOINT_ADDRESS_NODE_NAME[];
 extern char ENDPOINT_ADDRESS_TARGET_REF[];
 
-class endpoint_address : public serializable<endpoint_address> {
+class endpoint_address : public extensions::serializable<endpoint_address> {
 public:
     extensions::field<std::string, ENDPOINT_ADDRESS_HOSTNAME> hostname;
     extensions::field<std::string, ENDPOINT_ADDRESS_IP> ip;

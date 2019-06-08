@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include <string>
 
@@ -18,7 +18,7 @@ extern char SECRET_METADATA[];
 extern char SECRET_STRING_DATA[];
 extern char SECRET_TYPE[];
 
-class secret : public serializable<secret> {
+class secret : public extensions::serializable<secret> {
 public:
     extensions::field<std::string, SECRET_API_VERSION> api_version;
     extensions::field<extensions::common_object, SECRET_DATA> data;

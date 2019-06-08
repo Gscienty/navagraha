@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -17,7 +17,7 @@ extern char OBJECT_REFERENCE_NAMESPACE[];
 extern char OBJECT_REFERENCE_RESOURCE_VERSION[];
 extern char OBJECT_REFERENCE_UID[];
 
-class object_reference : public serializable<object_reference> {
+class object_reference : public extensions::serializable<object_reference> {
 public:
     extensions::field<std::string, OBJECT_REFERENCE_API_VERSION> api_version;
     extensions::field<std::string, OBJECT_REFERENCE_FIELD_PATH> field_path;

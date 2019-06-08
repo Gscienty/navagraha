@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char SERVICE_PORT_PORT[];
 extern char SERVICE_PORT_PROTOCOL[];
 extern char SERVICE_PORT_TARGET_PORT[];
 
-class service_port : public serializable<service_port> {
+class service_port : public extensions::serializable<service_port> {
 public:
     extensions::field<std::string, SERVICE_PORT_NAME> name;
     extensions::field<int, SERVICE_PORT_NODE_PORT> node_port;

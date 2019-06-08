@@ -5,7 +5,7 @@
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/persistent_volume_claim_condition.hpp"
 #include <string>
 
@@ -17,7 +17,7 @@ extern char PERSISTENT_VOLUME_CLAIM_STATUS_CAPACITY[];
 extern char PERSISTENT_VOLUME_CLAIM_CONDITIONS[];
 extern char PERSISTENT_VOLUME_CLAIM_PHASE[];
 
-class persistent_volume_claim_status : public serializable<persistent_volume_claim_status> {
+class persistent_volume_claim_status : public extensions::serializable<persistent_volume_claim_status> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

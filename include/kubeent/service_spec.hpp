@@ -5,7 +5,7 @@
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/service_port.hpp"
 #include "kubeent/session_affinity_config.hpp"
 #include <string>
@@ -27,7 +27,7 @@ extern char SERVICE_SPEC_SESSION_AFFINITY[];
 extern char SERVICE_SPEC_SESSION_AFFINITY_CONFIG[];
 extern char SERVICE_SPEC_TYPE[];
 
-class service_spec : public serializable<service_spec> {
+class service_spec : public extensions::serializable<service_spec> {
 public:
     extensions::field<std::string, SERVICE_SPEC_CLUSTER_IP> cluster_ip;
     extensions::field<

@@ -3,14 +3,14 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
 extern char DAEMON_ENDPOINT_PORT[];
 
-class daemon_endpoint : public serializable<daemon_endpoint> {
+class daemon_endpoint : public extensions::serializable<daemon_endpoint> {
 public:
     extensions::field<int, DAEMON_ENDPOINT_PORT> port;
 

@@ -5,7 +5,7 @@
 #include "extensions/common_object.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/affinity.hpp"
 #include "kubeent/container.hpp"
 #include "kubeent/pod_dns_config.hpp"
@@ -51,7 +51,7 @@ extern char POD_SPEC_TERMINATION_GRACE_PERIOD_SECONDS[];
 extern char POD_SPEC_TOLERATIONS[];
 extern char POD_SPEC_VOLUMES[];
 
-class pod_spec : public serializable<pod_spec> {
+class pod_spec : public extensions::serializable<pod_spec> {
 public:
     extensions::field<int, POD_SPEC_ACTIVE_DEADLINE_SECONDS> active_deadline_seconds;
     extensions::field<affinity, POD_SPEC_AFFINITY> affinity_;

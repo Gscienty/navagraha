@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "kubeent/rolling_update_deployment.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char DEPLOYMENT_STRATEGY_ROLLING_UPDATE[];
 extern char DEPLOYMENT_STRATEGY_TYPE[];
 
-class deployment_strategy : public serializable<deployment_strategy> {
+class deployment_strategy : public extensions::serializable<deployment_strategy> {
 public:
     extensions::field<
         rolling_update_deployment,

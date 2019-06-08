@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/stateful_set_condition.hpp"
 
 namespace navagraha {
@@ -20,7 +20,7 @@ extern char STATEFUL_SET_STATUS_REPLICAS[];
 extern char STATEFUL_SET_STATUS_UPDATE_REVISION[];
 extern char STATEFUL_SET_STATUS_UPDATE_REPLICAS[];
 
-class stateful_set_status : public serializable<stateful_set_status> {
+class stateful_set_status : public extensions::serializable<stateful_set_status> {
 public:
     extensions::field<int, STATEFUL_SET_STATUS_COLLISION_COUNT> collision_count;
     extensions::field<

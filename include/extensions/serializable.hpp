@@ -1,5 +1,5 @@
-#ifndef _NAVAGRAHA_KUBEENT_SERIALIZABLE_H
-#define _NAVAGRAHA_KUBEENT_SERIALIZABLE_H
+#ifndef _NAVAGRAHA_EXTENSIONS_SERIALIZABLE_H
+#define _NAVAGRAHA_EXTENSIONS_SERIALIZABLE_H
 
 #include "extensions/serializer_helper.hpp"
 #include "extensions/field.hpp"

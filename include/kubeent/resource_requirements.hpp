@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/common_object.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -12,7 +12,7 @@ namespace kubeent {
 extern char RESOURCE_REQUIREMENTS_LIMITS[];
 extern char RESOURCE_REQUIREMENTS_REQUESTS[];
 
-class resource_requirements : public serializable<resource_requirements> {
+class resource_requirements : public extensions::serializable<resource_requirements> {
 public:
     extensions::field<
         extensions::common_object,

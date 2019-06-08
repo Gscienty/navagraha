@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/pod_dns_config_option.hpp"
 
 namespace navagraha {
@@ -14,7 +14,7 @@ extern char POD_DNS_CONFIG_NAMESERVERS[];
 extern char POD_DNS_CONFIG_OPTIONS[];
 extern char POD_DNS_CONFIG_SEARCHES[];
 
-class pod_dns_config : public serializable<pod_dns_config> {
+class pod_dns_config : public extensions::serializable<pod_dns_config> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

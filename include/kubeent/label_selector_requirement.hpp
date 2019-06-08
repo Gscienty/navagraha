@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 #include <sstream>
 
@@ -15,7 +15,7 @@ extern char LABEL_SELECTOR_REQUIREMENT_KEY[];
 extern char LABEL_SELECTOR_REQUIREMENT_OPERATOR[];
 extern char LABEL_SELECTOR_REQUIREMENT_VALUES[];
 
-class label_selector_requirement : public serializable<label_selector_requirement> {
+class label_selector_requirement : public extensions::serializable<label_selector_requirement> {
 public:
     extensions::field<
         std::string,

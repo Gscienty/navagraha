@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ extern char LIST_META_CONTINUE[];
 extern char LIST_META_RESOURCE_VERSION[];
 extern char LIST_META_SELF_LINK[];
 
-class list_meta : public serializable<list_meta> {
+class list_meta : public extensions::serializable<list_meta> {
 public:
     extensions::field<std::string, LIST_META_CONTINUE> continue_;
     extensions::field<std::string, LIST_META_RESOURCE_VERSION> resource_version;

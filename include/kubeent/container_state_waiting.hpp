@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 extern char CONTAINER_STATE_WAITING_MESSAGE[];
 extern char CONTAINER_STATE_WAITING_REASON[];
 
-class container_state_waiting : public serializable<container_state_waiting> {
+class container_state_waiting : public extensions::serializable<container_state_waiting> {
 public:
     extensions::field<std::string, CONTAINER_STATE_WAITING_MESSAGE> message;
     extensions::field<std::string, CONTAINER_STATE_WAITING_REASON> reason;

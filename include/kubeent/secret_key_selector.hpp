@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ extern char SECRET_KEY_SELECTOR_KEY[];
 extern char SECRET_KEY_SELECTOR_NAME[];
 extern char SECRET_KEY_SELECTOR_OPTIONAL[];
 
-class secret_key_selector : public serializable<secret_key_selector> {
+class secret_key_selector : public extensions::serializable<secret_key_selector> {
 public:
     extensions::field<
         std::string,

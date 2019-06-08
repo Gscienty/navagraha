@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char CONTAINER_IMAGE_NAMES[];
 extern char CONTAINER_IMAGE_SIZE_BYTES[];
 
-class container_image : public serializable<container_image> {
+class container_image : public extensions::serializable<container_image> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

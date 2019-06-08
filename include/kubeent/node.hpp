@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/node_spec.hpp"
 #include "kubeent/node_status.hpp"
@@ -18,7 +18,7 @@ extern char NODE_METADATA[];
 extern char NODE_SPEC[];
 extern char NODE_STATUS[];
 
-class node : public serializable<node> {
+class node : public extensions::serializable<node> {
 public:
     extensions::field<std::string, NODE_API_VERSION> api_version;
     extensions::field<std::string, NODE_KIND> kind;

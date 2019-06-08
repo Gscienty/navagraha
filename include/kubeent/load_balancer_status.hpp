@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/load_balancer_ingress.hpp"
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 
 extern char LOAD_BALANCER_STATUS_INGRESS[];
 
-class load_balancer_status : public serializable<load_balancer_status> {
+class load_balancer_status : public extensions::serializable<load_balancer_status> {
 public:
     extensions::field<
         extensions::special_list<load_balancer_ingress>,

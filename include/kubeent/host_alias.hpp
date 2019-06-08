@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ namespace kubeent {
 extern char HOST_ALIAS_HOSTNAMES[];
 extern char HOST_ALIAS_IP[];
 
-class host_alias : public serializable<host_alias> {
+class host_alias : public extensions::serializable<host_alias> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

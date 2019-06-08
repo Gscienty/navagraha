@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/replication_controller_condition.hpp"
 
 namespace navagraha {
@@ -17,7 +17,7 @@ extern char REPLICATION_CONTROLLER_STATUS_OBSERVED_GENERATION[];
 extern char REPLICATION_CONTROLLER_STATUS_READY_REPLICAS[];
 extern char REPLICATION_CONTROLLER_STATUS_REPLICAS[];
 
-class replication_controller_status : public serializable<replication_controller_status> {
+class replication_controller_status : public extensions::serializable<replication_controller_status> {
 public:
     extensions::field<int, REPLICATION_CONTROLLER_STATUS_AVAILABLE_REPLICAS> available_replicas;
     extensions::field<

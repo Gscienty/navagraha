@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char VOLUME_MOUNT_NAME[];
 extern char VOLUME_MOUNT_READ_ONLY[];
 extern char VOLUME_MOUNT_SUB_PATH[];
 
-class volume_mount : public serializable<volume_mount> {
+class volume_mount : public extensions::serializable<volume_mount> {
 public:
     extensions::field<std::string, VOLUME_MOUNT_MOUNT_PATH> mount_path;
     extensions::field<std::string, VOLUME_MOUNT_MOUNT_PROPAGATION> mount_propagation;

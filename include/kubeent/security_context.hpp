@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/capabilities.hpp"
 #include "kubeent/selinux_options.hpp"
 
@@ -20,7 +20,7 @@ extern char SECURITY_CONTEXT_RUN_AS_NON_ROOT[];
 extern char SECURITY_CONTEXT_RUN_AS_USER[];
 extern char SECURITY_CONTEXT_SELINUX_OPTIONS[];
 
-class security_context : public serializable<security_context> {
+class security_context : public extensions::serializable<security_context> {
 public:
     extensions::field<
         bool,

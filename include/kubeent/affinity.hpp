@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/pod_affinity.hpp"
 #include "kubeent/node_affinity.hpp"
 
@@ -14,7 +14,7 @@ extern char AFFINITY_NODE_AFFINITY[];
 extern char AFFINITY_POD_AFFINITY[];
 extern char AFFINITY_POD_ANTI_AFFINITY[];
 
-class affinity : public serializable<affinity> {
+class affinity : public extensions::serializable<affinity> {
 public:
     extensions::field<
         node_affinity,

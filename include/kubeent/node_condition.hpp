@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 
 namespace navagraha {
@@ -16,7 +16,7 @@ extern char NODE_CONDITION_REASON[];
 extern char NODE_CONDITION_STATUS[];
 extern char NODE_CONDITION_TYPE[];
 
-class node_condition : public serializable<node_condition> {
+class node_condition : public extensions::serializable<node_condition> {
 public:
     extensions::field<time, NODE_CONDITION_LAST_HEARTBEAT_TIME> last_heartbeat_time;
     extensions::field<time, NODE_CONDITION_LAST_TRANSITION_TIME> last_transition_time;

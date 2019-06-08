@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -16,7 +16,7 @@ extern char REPLICA_SET_CONDITION_REASON[];
 extern char REPLICA_SET_CONDITION_STATUS[];
 extern char REPLICA_SET_CONDITION_TYPE[];
 
-class replica_set_condition : public serializable<replica_set_condition> {
+class replica_set_condition : public extensions::serializable<replica_set_condition> {
 public:
     extensions::field<time, REPLICA_SET_CONDITION_LAST_TRANSITION_TIME> last_transition_time;
     extensions::field<std::string, REPLICA_SET_CONDITION_MESSAGE> message;

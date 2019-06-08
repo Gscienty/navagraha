@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/preconditions.hpp"
 
 namespace navagraha {
@@ -18,7 +18,7 @@ extern char DELETE_OPTIONS_ORPHAN_DEPENDENTS[];
 extern char DELETE_OPTIONS_PRECONDITIONS[];
 extern char DELETE_OPTIONS_PROPAGATION_POLICY[];
 
-class delete_options : public serializable<delete_options> {
+class delete_options : public extensions::serializable<delete_options> {
 public:
     extensions::field<std::string, DELETE_OPTIONS_API_VERSION> api_version;
     extensions::field<

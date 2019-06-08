@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/deployment_spec.hpp"
 #include "kubeent/deployment_status.hpp"
@@ -18,7 +18,7 @@ extern char DEPLOYMENT_METADATA[];
 extern char DEPLOYMENT_SPEC[];
 extern char DEPLOYMENT_STATUS[];
 
-class deployment : public serializable<deployment> {
+class deployment : public extensions::serializable<deployment> {
 public:
     extensions::field<std::string, DEPLOYMENT_API_VERSION> api_version;
     extensions::field<std::string, DEPLOYMENT_KIND> kind;

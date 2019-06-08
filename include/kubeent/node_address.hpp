@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -12,7 +12,7 @@ namespace kubeent {
 extern char NODE_ADDRESS_ADDRESS[];
 extern char NODE_ADDRESS_TYPE[];
 
-class node_address : public serializable<node_address> {
+class node_address : public extensions::serializable<node_address> {
 public:
     extensions::field<std::string, NODE_ADDRESS_ADDRESS> address;
     extensions::field<std::string, NODE_ADDRESS_TYPE> type;

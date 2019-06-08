@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include <string>
 
@@ -17,7 +17,7 @@ extern char POD_CONDITION_REASON[];
 extern char POD_CONDITION_STATUS[];
 extern char POD_CONDITION_TYPE[];
 
-class pod_condition : public serializable<pod_condition> {
+class pod_condition : public extensions::serializable<pod_condition> {
 public:
     extensions::field<time, POD_CONDITION_LAST_PROBE_TIME> last_probe_time;
     extensions::field<time, POD_CONDITION_LAST_TRANSITION_TIME> last_transition_time;

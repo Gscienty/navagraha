@@ -6,7 +6,7 @@
 #include "extensions/special_list.hpp"
 #include "kubeent/job.hpp"
 #include "kubeent/list_meta.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -17,7 +17,7 @@ extern char JOB_LIST_ITEMS[];
 extern char JOB_LIST_KIND[];
 extern char JOB_LIST_METADATA[];
 
-class job_list : public serializable<job_list> {
+class job_list : public extensions::serializable<job_list> {
 public:
     extensions::field<std::string, JOB_LIST_API_VERSION> api_version;
     extensions::field<

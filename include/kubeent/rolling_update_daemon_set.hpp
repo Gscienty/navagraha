@@ -3,14 +3,14 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
 extern char ROLLING_UPDATE_DAEMON_SET_MAX_UNAVAILABLE[];
 
-class rolling_update_daemon_set : public serializable<rolling_update_daemon_set> {
+class rolling_update_daemon_set : public extensions::serializable<rolling_update_daemon_set> {
 public:
     extensions::field<int, ROLLING_UPDATE_DAEMON_SET_MAX_UNAVAILABLE> max_unavailable;
 

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/config_map_node_config_source.hpp"
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char NODE_CONFIG_SOURCE_CONFIG_MAP[];
 
-class node_config_source : public serializable<node_config_source> {
+class node_config_source : public extensions::serializable<node_config_source> {
 public:
     extensions::field<
         config_map_node_config_source,

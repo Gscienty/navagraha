@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -14,7 +14,7 @@ extern char SELINUX_OPTIONS_ROLE[];
 extern char SELINUX_OPTIONS_TYPE[];
 extern char SELINUX_OPTIONS_USER[];
 
-class selinux_options : public serializable<selinux_options> {
+class selinux_options : public extensions::serializable<selinux_options> {
 public:
     extensions::field<std::string, SELINUX_OPTIONS_LEVEL> level;
     extensions::field<std::string, SELINUX_OPTIONS_ROLE> role;

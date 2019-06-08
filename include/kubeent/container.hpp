@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/env_var.hpp"
 #include "kubeent/env_var_source.hpp"
 #include "kubeent/lifecycle.hpp"
@@ -41,7 +41,7 @@ extern char CONTAINER_VOLUME_DEVICES[];
 extern char CONTAINER_VOLUME_MOUNTS[];
 extern char CONTAINER_WORKING_DIR[];
 
-class container : public serializable<container> {
+class container : public extensions::serializable<container> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

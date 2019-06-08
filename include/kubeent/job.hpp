@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/job_spec.hpp"
 #include "kubeent/job_status.hpp"
@@ -18,7 +18,7 @@ extern char JOB_METADATA[];
 extern char JOB_SPEC[];
 extern char JOB_STATUS[];
 
-class job : public serializable<job> {
+class job : public extensions::serializable<job> {
 public:
     extensions::field<std::string, JOB_API_VERSION> api_version;
     extensions::field<std::string, JOB_KIND> kind;

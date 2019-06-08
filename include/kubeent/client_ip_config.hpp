@@ -3,14 +3,14 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
 
 extern char CLIENT_IP_CONFIG_TIMEOUT_SECONDS[];
 
-class client_ip_config : public serializable<client_ip_config> {
+class client_ip_config : public extensions::serializable<client_ip_config> {
 public:
     extensions::field<int, CLIENT_IP_CONFIG_TIMEOUT_SECONDS> timeout_seconds;
 

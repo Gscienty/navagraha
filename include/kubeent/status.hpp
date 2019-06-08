@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/status_details.hpp"
 #include "kubeent/list_meta.hpp"
 #include <string>
@@ -20,7 +20,7 @@ extern char STATUS_METADATA[];
 extern char STATUS_REASON[];
 extern char STATUS_STATUS[];
 
-class status : public serializable<status> {
+class status : public extensions::serializable<status> {
 public:
     extensions::field<std::string, STATUS_API_VERSION> api_version;
     extensions::field<int, STATUS_CODE> code;

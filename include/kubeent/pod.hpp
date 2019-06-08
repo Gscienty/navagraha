@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/pod_spec.hpp"
 #include "kubeent/pod_status.hpp"
@@ -18,7 +18,7 @@ extern char POD_METADATA[];
 extern char POD_SPEC[];
 extern char POD_STATUS[];
 
-class pod : public serializable<pod> {
+class pod : public extensions::serializable<pod> {
 public:
     extensions::field<std::string, POD_API_VERSION> api_version;
     extensions::field<std::string, POD_KIND> kind;

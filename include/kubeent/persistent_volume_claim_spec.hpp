@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/typed_local_object_reference.hpp"
 #include "kubeent/resource_requirements.hpp"
 #include "kubeent/label_selector.hpp"
@@ -20,7 +20,7 @@ extern char PERSISTENT_VOLUME_CLAIM_SPEC_STORAGE_CLASS_NAME[];
 extern char PERSISTENT_VOLUME_CLAIM_SPEC_VOLUME_MODE[];
 extern char PERSISTENT_VOLUME_CLAIM_SPEC_VOLUME_NAME[];
 
-class persistent_volume_claim_spec : public serializable<persistent_volume_claim_spec> {
+class persistent_volume_claim_spec : public extensions::serializable<persistent_volume_claim_spec> {
 public:
     extensions::field<
         extensions::special_list<std::string>,

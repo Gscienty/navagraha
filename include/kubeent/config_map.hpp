@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/common_object.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 
 namespace navagraha {
@@ -16,7 +16,7 @@ extern char CONFIG_MAP_DATA[];
 extern char CONFIG_MAP_KIND[];
 extern char CONFIG_MAP_METADATA[];
 
-class config_map : public serializable<config_map> {
+class config_map : public extensions::serializable<config_map> {
 public:
     extensions::field<std::string, CONFIG_MAP_API_VERSION> api_version;
     extensions::field<extensions::common_object, CONFIG_MAP_BINARY_DATA> binary_data;

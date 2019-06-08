@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -13,7 +13,7 @@ extern char STATUS_CAUSE_FIELD[];
 extern char STATUS_CAUSE_MESSAGE[];
 extern char STATUS_CAUSE_REASON[];
 
-class status_cause : public serializable<status_cause> {
+class status_cause : public extensions::serializable<status_cause> {
 public:
     extensions::field<std::string, STATUS_CAUSE_FIELD> field;
     extensions::field<std::string, STATUS_CAUSE_MESSAGE> message;

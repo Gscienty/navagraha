@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
 #include "extensions/special_list.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/endpoint_subset.hpp"
 #include <string>
@@ -17,7 +17,7 @@ extern char ENDPOINTS_KIND[];
 extern char ENDPOINTS_METADATA[];
 extern char ENDPOINTS_SUBSETS[];
 
-class endpoints : public serializable<endpoints> {
+class endpoints : public extensions::serializable<endpoints> {
 public:
     extensions::field<std::string, ENDPOINTS_API_VERSION> api_version;
     extensions::field<std::string, ENDPOINTS_KIND> kind;

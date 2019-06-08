@@ -4,7 +4,7 @@
 #include "extensions/field.hpp"
 #include "extensions/special_list.hpp"
 #include "kubeent/deployment_condition.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 
 namespace navagraha {
 namespace kubeent {
@@ -18,7 +18,7 @@ extern char DEPLOYMENT_STATUS_REPLICAS[];
 extern char DEPLOYMENT_STATUS_UNAVAILABLE_REPLICAS[];
 extern char DEPLOYMENT_STATUS_UPDATED_REPLICAS[];
 
-class deployment_status : public serializable<deployment_status> {
+class deployment_status : public extensions::serializable<deployment_status> {
 public:
     extensions::field<int, DEPLOYMENT_STATUS_AVAILABLE_REPLICAS> available_replicas;
     extensions::field<int, DEPLOYMENT_STATUS_COLLISION_COUNT> collision_count;

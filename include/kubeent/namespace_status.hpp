@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -11,7 +11,7 @@ namespace kubeent {
 
 extern char NAMESPACE_STATUS_PHASE[];
 
-class namespace_status : public serializable<namespace_status> {
+class namespace_status : public extensions::serializable<namespace_status> {
 public:
     extensions::field<std::string, NAMESPACE_STATUS_PHASE> phase;
 

@@ -5,7 +5,7 @@
 #include "extensions/common_object.hpp"
 #include "extensions/common_list.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/time.hpp"
 #include "kubeent/initializers.hpp"
 
@@ -29,7 +29,7 @@ extern char OBJECT_META_RESOURCE_VERSION[];
 extern char OBJECT_META_SELF_LINK[];
 extern char OBJECT_META_UID[];
 
-class object_meta : public serializable<object_meta> {
+class object_meta : public extensions::serializable<object_meta> {
 public:
     extensions::field<extensions::common_object, OBJECT_META_ANNOTATIONS> annotations;
     extensions::field<std::string, OBJECT_META_CLUSTER_NAME> cluster_name;

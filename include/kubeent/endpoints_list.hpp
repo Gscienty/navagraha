@@ -15,7 +15,7 @@ extern char ENDPOINTS_LIST_ITEMS[];
 extern char ENDPOINTS_LIST_KIND[];
 extern char ENDPOINTS_LIST_METADATA[];
 
-class endpoints_list : public serializable<endpoints_list> {
+class endpoints_list : public extensions::serializable<endpoints_list> {
 public:
     extensions::field<std::string, ENDPOINTS_API_VERSION> api_version;
     extensions::field<

@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/ceph_fs_volume_source.hpp"
 #include "kubeent/cinder_volume_source.hpp"
 #include "kubeent/config_map_volume_source.hpp"
@@ -21,7 +21,7 @@ extern char VOLUME_DOWNWARD_API[];
 extern char VOLUME_EMPTY_DIR[];
 extern char VOLUME_NAME[];
 
-class volume : public serializable<volume> {
+class volume : public extensions::serializable<volume> {
 public:
     extensions::field<ceph_fs_volume_source, VOLUME_CEPHFS> cephfs;
     extensions::field<cinder_volume_source, VOLUME_CINDER> cinder;

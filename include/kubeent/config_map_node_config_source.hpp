@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include <string>
 
 namespace navagraha {
@@ -15,7 +15,7 @@ extern char CONFIG_MAP_NODE_CONFIG_SOURCE_NAMESPACE[];
 extern char CONFIG_MAP_NODE_CONFIG_SOURCE_RESOURCE_VERSION[];
 extern char CONFIG_MAP_NODE_CONFIG_SOURCE_UID[];
 
-class config_map_node_config_source : public serializable<config_map_node_config_source> {
+class config_map_node_config_source : public extensions::serializable<config_map_node_config_source> {
 public:
     extensions::field<
         std::string,

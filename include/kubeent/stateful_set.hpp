@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/stateful_set_spec.hpp"
 #include "kubeent/stateful_set_status.hpp"
@@ -18,7 +18,7 @@ extern char STATEFUL_SET_METADATA[];
 extern char STATEFUL_SET_SPEC[];
 extern char STATEFUL_SET_STATUS[];
 
-class stateful_set : public serializable<stateful_set> {
+class stateful_set : public extensions::serializable<stateful_set> {
 public:
     extensions::field<std::string, STATEFUL_SET_API_VERSION> api_version;
     extensions::field<std::string, STATEFUL_SET_KIND> kind;

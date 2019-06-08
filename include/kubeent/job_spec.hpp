@@ -3,7 +3,7 @@
 
 #include "extensions/serializer_helper.hpp"
 #include "extensions/field.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include "kubeent/pod_template_spec.hpp"
 
@@ -19,7 +19,7 @@ extern char JOB_SPEC_SELECTOR[];
 extern char JOB_SPEC_TEMPLATE[];
 extern char JOB_SPEC_TTL_SECONDS_AFTER_FINISHED[];
 
-class job_spec : public serializable<job_spec> {
+class job_spec : public extensions::serializable<job_spec> {
 public:
     extensions::field<int, JOB_SPEC_ACTIVE_DEADLINE_SECONDS> active_deadline_seconds;
     extensions::field<int, JOB_SPEC_BACKOFF_LIMIT> backoff_limit;

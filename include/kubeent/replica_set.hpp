@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/object_meta.hpp"
 #include "kubeent/replica_set_spec.hpp"
 #include "kubeent/replica_set_status.hpp"
@@ -18,7 +18,7 @@ extern char REPLICA_SET_METADATA[];
 extern char REPLCIA_SET_SPEC[];
 extern char REPLCIA_SET_STATUS[];
 
-class replica_set : public serializable<replica_set> {
+class replica_set : public extensions::serializable<replica_set> {
 public:
     extensions::field<std::string, REPLICA_SET_API_VERSION> api_version;
     extensions::field<std::string, REPLICA_SET_KIND> kind;

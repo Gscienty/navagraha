@@ -3,7 +3,7 @@
 
 #include "extensions/field.hpp"
 #include "extensions/serializer_helper.hpp"
-#include "kubeent/serializable.hpp"
+#include "extensions/serializable.hpp"
 #include "kubeent/label_selector.hpp"
 #include "kubeent/pod_template_spec.hpp"
 
@@ -15,7 +15,7 @@ extern char REPLICA_SET_SPEC_REPLICAS[];
 extern char REPLICA_SET_SPEC_SELECTOR[];
 extern char REPLICA_SET_SPEC_TEMPLATE[];
 
-class replica_set_spec : public serializable<replica_set_spec> {
+class replica_set_spec : public extensions::serializable<replica_set_spec> {
 public:
     extensions::field<int, REPLICA_SET_SPEC_MIN_READY_SECONDS> min_ready_seconds;
     extensions::field<int, REPLICA_SET_SPEC_REPLICAS> replicas;
