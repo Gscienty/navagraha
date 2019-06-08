@@ -13,7 +13,7 @@ extern char CLI_FUNC_DEPLOY_POLICY[];
 extern char CLI_FUNC_DEPLOY_IMAGE[];
 extern char CLI_FUNC_DEPLOY_NAMESPACE[];
 
-class func_deploy : public cli_arg::abstract_process<func_deploy> {
+class func_up : public cli_arg::abstract_process<func_up> {
 private:
     cli_arg::arg<CLI_FUNC_DEPLOY_NAME, 1> name_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_POLICY, 1> policy_arg;
@@ -24,7 +24,7 @@ private:
     void create_service(std::string namespace_, http_client::curl_helper & helper);
 
 public:
-    virtual void bind(cli_arg::process_helper<func_deploy> & helper) override;
+    virtual void bind(cli_arg::process_helper<func_up> & helper) override;
     virtual int execute() override;
     virtual bool satisfy() const override;
 

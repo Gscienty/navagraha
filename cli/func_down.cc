@@ -1,4 +1,4 @@
-#include "cli/func_offline.hpp"
+#include "cli/func_down.hpp"
 #include "cli/config.hpp"
 #include "http_client/curl_helper.hpp"
 #include "kube_api/deployment.hpp"
@@ -11,7 +11,7 @@ namespace cli {
 char CLI_FUNC_OFFLINE_NAME[] = "offline";
 char CLI_FUNC_OFFLINE_NAMESPACE[] = "--namespace";
 
-void func_offline::bind(cli_arg::process_helper<func_offline> & helper) 
+void func_down::bind(cli_arg::process_helper<func_down> & helper) 
 {
     this->namespace_arg.require(this->name_arg);
     helper
@@ -19,7 +19,7 @@ void func_offline::bind(cli_arg::process_helper<func_offline> & helper)
         .add(this->namespace_arg);
 }
 
-bool func_offline::satisfy() const
+bool func_down::satisfy() const
 {
     if (!this->name_arg.used()) {
         return false;
@@ -27,7 +27,7 @@ bool func_offline::satisfy() const
     return true;
 }
 
-int func_offline::execute()
+int func_down::execute()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,
