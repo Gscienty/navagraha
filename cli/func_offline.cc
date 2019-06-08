@@ -42,10 +42,10 @@ int func_offline::execute()
     }
 
     helper.build<kube_api::deployment>().delete_(namespace_,
-                                                 this->name_arg[0] + "-navagraha-deployment",
+                                                 this->name_arg[0],
                                                  deploy_del_ops);
     helper.build<kube_api::service>().delete_(namespace_,
-                                              this->name_arg[0] + "-navagraha-service",
+                                              this->name_arg[0],
                                               service_del_ops);
 
     return 0;
