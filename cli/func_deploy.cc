@@ -61,6 +61,10 @@ void func_deploy::create_deployment(std::string namespace_, http_client::curl_he
         .values().push_back(kubeent::container_port());
     req_obj.spec.get().template_.get().spec.get().containers.get().values().front().ports.get()
         .values().front().container_port_ = 80;
+    if (this->policy_arg.used()) {
+        req_obj.spec.get().template_.get().spec.get().containers.get().values().front()
+            .image_pull_policy = std::string(this->policy_arg[0]);
+    }
 
     helper.build<kube_api::deployment>().create(namespace_, req_obj);
 }
