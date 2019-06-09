@@ -3,6 +3,7 @@
 
 #include "cli_arg/abstract_process.hpp"
 #include "cli_arg/arg.hpp"
+#include "cli_arg/multi_arg.hpp"
 #include "http_client/curl_helper.hpp"
 
 namespace navagraha {
@@ -12,6 +13,7 @@ extern char CLI_FUNC_DEPLOY_NAME[];
 extern char CLI_FUNC_DEPLOY_POLICY[];
 extern char CLI_FUNC_DEPLOY_IMAGE[];
 extern char CLI_FUNC_DEPLOY_NAMESPACE[];
+extern char CLI_FUNC_DEPLOY_CONFIG_VOLUME[];
 
 class func_up : public cli_arg::abstract_process<func_up> {
 private:
@@ -19,6 +21,7 @@ private:
     cli_arg::arg<CLI_FUNC_DEPLOY_POLICY, 1> policy_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_IMAGE, 1> image_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_NAMESPACE, 1> namespace_arg;
+    cli_arg::multi_arg<CLI_FUNC_DEPLOY_CONFIG_VOLUME, 3> config_volume_arg;
 
     void create_deployment(std::string namespace_, http_client::curl_helper & helper);
     void create_service(std::string namespace_, http_client::curl_helper & helper);
