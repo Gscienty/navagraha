@@ -55,6 +55,12 @@ void func_up::create_deployment(std::string namespace_, http_client::curl_helper
         .values()["app"] = std::string(this->name_arg[0]);
     req_obj.spec.get().template_.get().metadata.get().labels.get()
         .values()["app"] = std::string(this->name_arg[0]);
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/path"] = std::string("/metrics");
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/port"] = std::string("80");
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/scrape"] = std::string("true");
     req_obj.spec.get().template_.get().spec.get().containers.get()
         .values().push_back(kubeent::container());
     req_obj.spec.get().template_.get().spec.get().containers.get()
