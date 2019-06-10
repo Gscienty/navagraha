@@ -89,6 +89,10 @@ std::string config_map_add::base64_filecontent(const std::string filename) const
             str.put('\\');
             str.put('"');
             break;
+        case '\\':
+            str.put('\\');
+            str.put('\\');
+            break;
 
         default:
             str.put(c);
