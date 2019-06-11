@@ -17,6 +17,7 @@ private:
     void init_monitor_namespace(http_client::curl_helper & helper);
     void create_config_map(http_client::curl_helper & helper);
     void deployment_prometheus(http_client::curl_helper & helper);
+    void create_rbac_service_account(http_client::curl_helper & helper);
 public:
     virtual void bind(cli_arg::process_helper<monitor_init> & helper) override;
     virtual bool satisfy() const override;
