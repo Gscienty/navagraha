@@ -3,9 +3,15 @@
 #include "kubeent/namespace.hpp"
 #include "kubeent/config_map.hpp"
 #include "kubeent/deployment.hpp"
+#include "kubeent/service_account.hpp"
+#include "kubeent/cluster_role.hpp"
+#include "kubeent/cluster_role_binding.hpp"
 #include "kube_api/namespace.hpp"
 #include "kube_api/config_map.hpp"
 #include "kube_api/deployment.hpp"
+#include "kube_api/service_account.hpp"
+#include "kube_api/cluster_role.hpp"
+#include "kube_api/cluster_role_binding.hpp"
 #include "extensions/base64.hpp"
 #include <string>
 #include <iostream>
@@ -33,9 +39,14 @@ int monitor_init::execute()
                                     config::get_instance().kube_ca,
                                     config::get_instance().kube_api_server);
 
+    this->create_cluster_role(helper);
+    this->create_service_account(helper);
+    this->cluster_role_binding(helper);
+
     this->init_monitor_namespace(helper);
     this->create_config_map(helper);
     this->deployment_prometheus(helper);
+
     return 0;
 }
 
@@ -143,6 +154,7 @@ void monitor_init::deployment_prometheus(http_client::curl_helper & helper)
         .values().back().name = std::string("prometheus-storage-volume");
     dep.spec.get().template_.get().spec.get().containers.get().values().back().volume_mounts.get()
         .values().back().mount_path = std::string("/prometheus/");
+    dep.spec.get().template_.get().spec.get().service_account_name = std::string("prometheus-sa");
     dep.spec.get().template_.get().spec.get().volumes.get()
         .values().push_back(kubeent::volume());
     dep.spec.get().template_.get().spec.get().volumes.get()
@@ -159,6 +171,60 @@ void monitor_init::deployment_prometheus(http_client::curl_helper & helper)
         .values().back().empty_dir.get();
 
     helper.build<kube_api::deployment>().create("nava-monitor", dep);
+}
+
+void monitor_init::create_service_account(http_client::curl_helper & helper)
+{
+    kubeent::service_account sa;
+
+    sa.api_version = "v1";
+    sa.kind = "ServiceAccount";
+    sa.metadata.get().name = std::string("prometheus-sa");
+
+    helper.build<kube_api::service_account>().create("nava-monitor", sa);
+}
+
+void monitor_init::create_cluster_role(http_client::curl_helper & helper)
+{
+    kubeent::cluster_role cr;
+
+    cr.api_version = std::string("rbac.authorization.k8s.io/v1");
+    cr.metadata.get().name = std::string("prometheus-cr");
+    cr.rules.get().values().push_back(kubeent::policy_rule());
+    cr.rules.get().values().back().api_groups.get().values().push_back("");
+    cr.rules.get().values().back().resources.get().values().push_back("nodes");
+    cr.rules.get().values().back().resources.get().values().push_back("nodes/proxy");
+    cr.rules.get().values().back().resources.get().values().push_back("services");
+    cr.rules.get().values().back().resources.get().values().push_back("endpoints");
+    cr.rules.get().values().back().resources.get().values().push_back("pods");
+    cr.rules.get().values().back().verbs.get().values().push_back("get");
+    cr.rules.get().values().back().verbs.get().values().push_back("list");
+    cr.rules.get().values().back().verbs.get().values().push_back("watch");
+
+    cr.rules.get().values().push_back(kubeent::policy_rule());
+    cr.rules.get().values().back().non_resource_urls.get().values().push_back("/metrics");
+    cr.rules.get().values().back().verbs.get().values().push_back("get");
+
+
+    helper.build<kube_api::cluster_role>().create(cr);
+}
+
+void monitor_init::cluster_role_binding(http_client::curl_helper & helper)
+{
+    kubeent::cluster_role_binding binding;
+
+    binding.api_version = std::string("rbac.authorization.k8s.io/v1");
+    binding.kind = "ClusterRoleBinding";
+    binding.metadata.get().name = std::string("prometheus-crb");
+    binding.role_ref_.get().api_group = std::string("rbac.authorization.k8s.io");
+    binding.role_ref_.get().kind = std::string("ClusterRole");
+    binding.role_ref_.get().name = std::string("prometheus-cr");
+    binding.subjects.get().values().push_back(kubeent::subject());
+    binding.subjects.get().values().back().kind = std::string("ServiceAccount");
+    binding.subjects.get().values().back().name = std::string("prometheus-sa");
+    binding.subjects.get().values().back().namespace_ = std::string("nava-monitor");
+
+    helper.build<kube_api::cluster_role_binding>().create(binding);
 }
 
 }

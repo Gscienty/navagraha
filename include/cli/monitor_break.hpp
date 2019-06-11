@@ -14,6 +14,8 @@ class monitor_break : public cli_arg::abstract_process<monitor_break> {
 private:
     cli_arg::arg<CLI_MONITOR_BREAK_FLAG, 0> break_flag;
 
+    void delete_cluster_role(http_client::curl_helper & helper);
+    void delete_namespace(http_client::curl_helper & helper);
 public:
     virtual void bind(cli_arg::process_helper<monitor_break> & helper) override;
     virtual bool satisfy() const override;
