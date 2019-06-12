@@ -139,7 +139,6 @@ clean:
 
 void repo_init::merge()
 {
-    int ret;
     git_reference * ref = nullptr;
     git_annotated_commit * nava_template_comm = nullptr;
     git_merge_options merge_opts;
@@ -157,12 +156,12 @@ void repo_init::merge()
     git_merge_init_options(&merge_opts, GIT_MERGE_OPTIONS_VERSION);
     git_checkout_init_options(&checkout_opts, GIT_CHECKOUT_OPTIONS_VERSION);
     git_reference_lookup(&ref, this->repo_handler, "refs/remotes/nava_template/master");
-    ret = git_annotated_commit_from_ref(&nava_template_comm, this->repo_handler, ref);
+    git_annotated_commit_from_ref(&nava_template_comm, this->repo_handler, ref);
 
-    ret = git_merge_analysis(&merge_analysis, &merge_perference,
-                             this->repo_handler,
-                             const_cast<const git_annotated_commit **>(&nava_template_comm),
-                             1UL);
+    git_merge_analysis(&merge_analysis, &merge_perference,
+                       this->repo_handler,
+                       const_cast<const git_annotated_commit **>(&nava_template_comm),
+                       1UL);
 
     if (merge_analysis & GIT_MERGE_ANALYSIS_UP_TO_DATE) {
         printf("Already up-to-date\n");
@@ -186,11 +185,11 @@ void repo_init::merge()
 
         checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE | GIT_CHECKOUT_ALLOW_CONFLICTS;
 
-        ret = git_merge(this->repo_handler,
-                        const_cast<const git_annotated_commit **>(&nava_template_comm),
-                        1UL,
-                        &merge_opts,
-                        &checkout_opts);
+        git_merge(this->repo_handler,
+                  const_cast<const git_annotated_commit **>(&nava_template_comm),
+                  1UL,
+                  &merge_opts,
+                  &checkout_opts);
     }
 }
 
