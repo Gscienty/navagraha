@@ -39,13 +39,16 @@ int monitor_init::execute()
                                     config::get_instance().kube_ca,
                                     config::get_instance().kube_api_server);
 
-    this->create_cluster_role(helper);
-    this->create_service_account(helper);
-    this->cluster_role_binding(helper);
-
     this->init_monitor_namespace(helper);
+
+    this->create_service_account(helper);
+    this->create_cluster_role(helper);
+
     this->create_config_map(helper);
+
     this->deployment_prometheus(helper);
+
+    this->cluster_role_binding(helper);
 
     return 0;
 }
