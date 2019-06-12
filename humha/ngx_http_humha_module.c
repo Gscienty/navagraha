@@ -5,11 +5,15 @@
 
 #define NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT 16
 
-typedef struct {
-    ngx_int_t active;
+static ngx_shm_t ngx_http_humha_prome_shm;
 
+typedef struct {
     prome_counter_t sync_exec_count;
     prome_counter_t async_exec_count;
+} ngx_http_humha_prome_var_shm_t;
+
+typedef struct {
+    ngx_int_t active;
 } prome_conf;
 
 typedef struct {
@@ -46,6 +50,7 @@ static ngx_int_t ngx_http_humha_call_non_buffered_chunked_filter(void * data, ss
 static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb);
 
 static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r);
+static ngx_int_t ngx_http_humha_prometheus_init_variables(ngx_conf_t * cf);
 
 static ngx_command_t ngx_http_humha_module_commands[] = {
     {
@@ -78,8 +83,9 @@ static ngx_command_t ngx_http_humha_module_commands[] = {
     ngx_null_command
 };
 
+
 static ngx_http_module_t ngx_http_humha_module_ctx = {
-    NULL, // preconfiguration
+    ngx_http_humha_prometheus_init_variables, // preconfiguration
     NULL, // postconfiguration
     NULL, // create main configuration
     NULL, // init main configuration
@@ -103,6 +109,27 @@ ngx_module_t ngx_http_humha_module = {
     NULL,
     NGX_MODULE_V1_PADDING
 };
+
+static ngx_int_t ngx_http_humha_prometheus_init_variables(ngx_conf_t * cf)
+{
+    (void) cf;
+    /*ngx_http_humha_loc_conf_t * lcf = (ngx_http_humha_loc_conf_t *) ngx_http_conf_get_module_loc_conf(cf, ngx_http_humha_module);*/
+    ngx_int_t ret = 0;
+    ngx_http_humha_prome_var_shm_t * var_p = NULL;
+
+    ngx_http_humha_prome_shm.size = sizeof(ngx_http_humha_prome_var_shm_t);
+    ret = ngx_shm_alloc(&ngx_http_humha_prome_shm);
+    if (ret != NGX_OK) {
+        return ret;
+    }
+
+    var_p = (ngx_http_humha_prome_var_shm_t *) ngx_http_humha_prome_shm.addr;
+
+    prome_counter_init(&var_p->sync_exec_count, "sync_exec_count");
+    prome_counter_init(&var_p->async_exec_count, "async_exec_count");
+
+    return NGX_OK;
+}
 
 static void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
 {
@@ -359,11 +386,13 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     ngx_uint_t args_idx;
     ngx_str_t async_cb = { 0, NULL };
     ngx_chain_t async_out = { NULL, NULL };
+    ngx_http_humha_prome_var_shm_t * var_p = NULL;
 
     lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
     if (lcf == NULL || lcf->executor.data == NULL) {
         return;
     }
+    var_p = (ngx_http_humha_prome_var_shm_t *) ngx_http_humha_prome_shm.addr;
 
     for (args_idx = 0; args_idx < NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT && lcf->args[args_idx].data != NULL; args_idx++) {
         args[args_idx] = lcf->args[args_idx].data;
@@ -372,8 +401,8 @@ static void ngx_http_humha_readed_body_handler(ngx_http_request_t * r)
     p.is_async = ngx_http_humha_request_is_async(&r->headers_in.headers, &async_cb);
 
     prome_counter_inc(p.is_async
-                      ? &lcf->prome.async_exec_count
-                      : &lcf->prome.sync_exec_count);
+                      ? &var_p->async_exec_count
+                      : &var_p->sync_exec_count);
 
     if (humha_process(lcf->executor.data, (const u_char **) args, &p, &async_cb) < 0) {
         goto output;
@@ -943,8 +972,6 @@ static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, vo
     if (ngx_strcmp("on", value[1].data) == 0 || ngx_strcmp("off", value[1].data) == 0) {
         if (ngx_strcmp("on", value[1].data) == 0) {
             humha_conf->prome.active = 1;
-            prome_counter_init(&humha_conf->prome.sync_exec_count, "sync_exec_count");
-            prome_counter_init(&humha_conf->prome.async_exec_count, "async_exec_count");
         }
 
         return NGX_OK;
@@ -954,17 +981,17 @@ static char * ngx_http_humha_prometheus(ngx_conf_t * cf, ngx_command_t * cmd, vo
 
 static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
 {
-    ngx_http_humha_loc_conf_t * lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);
-    prome_conf * cf = &lcf->prome;
+    /*ngx_http_humha_loc_conf_t * lcf = (ngx_http_humha_loc_conf_t *) ngx_http_get_module_loc_conf(r, ngx_http_humha_module);*/
     prome_collect_list_t chain;
     prome_chain_t * pt = NULL;
     ngx_uint_t size = 0;
     ngx_int_t odd_flag = 0;
     ngx_chain_t * out = ngx_alloc_chain_link(r->pool);
+    ngx_http_humha_prome_var_shm_t * var_p = (ngx_http_humha_prome_var_shm_t *) ngx_http_humha_prome_shm.addr;
 
     prome_collect_list_head_init(&chain);
-    prome_counter_serialize(&cf->sync_exec_count, &chain);
-    prome_counter_serialize(&cf->async_exec_count, &chain);
+    prome_counter_serialize(&var_p->sync_exec_count, &chain);
+    prome_counter_serialize(&var_p->async_exec_count, &chain);
 
     size = prome_chain_size(&chain) + prome_chain_count(&chain);
 
