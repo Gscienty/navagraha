@@ -1,7 +1,7 @@
 #include "cli/monitor.hpp"
 #include "cli_arg/process_collection.hpp"
-#include "cli/monitor_init.hpp"
-#include "cli/monitor_break.hpp"
+#include "cli/monitor_start.hpp"
+#include "cli/monitor_stop.hpp"
 
 namespace navagraha {
 namespace cli {
@@ -23,8 +23,8 @@ int monitor::execute()
 {
     return navagraha::cli_arg::process_collection(this->name_flag.argc(),
                                                   this->name_flag.argv())
-        .add(monitor_init())
-        .add(monitor_break())
+        .add(monitor_start())
+        .add(monitor_stop())
         .result();
 }
 

@@ -1,4 +1,4 @@
-#include "cli/monitor_init.hpp"
+#include "cli/monitor_start.hpp"
 #include "cli/config.hpp"
 #include "kubeent/namespace.hpp"
 #include "kubeent/config_map.hpp"
@@ -19,20 +19,20 @@
 namespace navagraha {
 namespace cli {
 
-char CLI_MONITOR_INIT_FLAG[] = "init";
+char CLI_MONITOR_START_FLAG[] = "start";
 
-void monitor_init::bind(cli_arg::process_helper<monitor_init> & helper)
+void monitor_start::bind(cli_arg::process_helper<monitor_start> & helper)
 {
     helper
         .add(this->init_flag);
 }
 
-bool monitor_init::satisfy() const
+bool monitor_start::satisfy() const
 {
     return this->init_flag.used();
 }
 
-int monitor_init::execute()
+int monitor_start::execute()
 {
     http_client::curl_helper helper(config::get_instance().kube_cert,
                                     config::get_instance().kube_key,
@@ -53,7 +53,7 @@ int monitor_init::execute()
     return 0;
 }
 
-void monitor_init::init_monitor_namespace(http_client::curl_helper & helper)
+void monitor_start::init_monitor_namespace(http_client::curl_helper & helper)
 {
     kubeent::namespace_ ns;
 
@@ -64,7 +64,7 @@ void monitor_init::init_monitor_namespace(http_client::curl_helper & helper)
     helper.build<kube_api::namespace_>().create(ns);
 }
 
-void monitor_init::create_config_map(http_client::curl_helper & helper)
+void monitor_start::create_config_map(http_client::curl_helper & helper)
 {
     kubeent::config_map cm;
 
@@ -119,7 +119,7 @@ void monitor_init::create_config_map(http_client::curl_helper & helper)
     helper.build<kube_api::config_map>().create("nava-monitor", cm);
 }
 
-void monitor_init::deployment_prometheus(http_client::curl_helper & helper)
+void monitor_start::deployment_prometheus(http_client::curl_helper & helper)
 {
     kubeent::deployment dep;
 
@@ -176,7 +176,7 @@ void monitor_init::deployment_prometheus(http_client::curl_helper & helper)
     helper.build<kube_api::deployment>().create("nava-monitor", dep);
 }
 
-void monitor_init::create_service_account(http_client::curl_helper & helper)
+void monitor_start::create_service_account(http_client::curl_helper & helper)
 {
     kubeent::service_account sa;
 
@@ -187,7 +187,7 @@ void monitor_init::create_service_account(http_client::curl_helper & helper)
     helper.build<kube_api::service_account>().create("nava-monitor", sa);
 }
 
-void monitor_init::create_cluster_role(http_client::curl_helper & helper)
+void monitor_start::create_cluster_role(http_client::curl_helper & helper)
 {
     kubeent::cluster_role cr;
 
@@ -212,7 +212,7 @@ void monitor_init::create_cluster_role(http_client::curl_helper & helper)
     helper.build<kube_api::cluster_role>().create(cr);
 }
 
-void monitor_init::cluster_role_binding(http_client::curl_helper & helper)
+void monitor_start::cluster_role_binding(http_client::curl_helper & helper)
 {
     kubeent::cluster_role_binding binding;
 

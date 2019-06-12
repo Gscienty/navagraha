@@ -1,5 +1,5 @@
-#ifndef _NAVAGRAHA_CLI_MONITOR_BREAK_H
-#define _NAVAGRAHA_CLI_MONITOR_BREAK_H
+#ifndef _NAVAGRAHA_CLI_MONITOR_STOP_H
+#define _NAVAGRAHA_CLI_MONITOR_STOP_H
 
 #include "cli_arg/abstract_process.hpp"
 #include "cli_arg/arg.hpp"
@@ -8,16 +8,16 @@
 namespace navagraha {
 namespace cli {
 
-extern char CLI_MONITOR_BREAK_FLAG[];
+extern char CLI_MONITOR_STOP_FLAG[];
 
-class monitor_break : public cli_arg::abstract_process<monitor_break> {
+class monitor_stop : public cli_arg::abstract_process<monitor_stop> {
 private:
-    cli_arg::arg<CLI_MONITOR_BREAK_FLAG, 0> break_flag;
+    cli_arg::arg<CLI_MONITOR_STOP_FLAG, 0> break_flag;
 
     void delete_cluster_role(http_client::curl_helper & helper);
     void delete_namespace(http_client::curl_helper & helper);
 public:
-    virtual void bind(cli_arg::process_helper<monitor_break> & helper) override;
+    virtual void bind(cli_arg::process_helper<monitor_stop> & helper) override;
     virtual bool satisfy() const override;
     virtual int execute() override;
 

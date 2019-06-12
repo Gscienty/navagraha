@@ -1,4 +1,4 @@
-#include "cli/monitor_break.hpp"
+#include "cli/monitor_stop.hpp"
 #include "cli/config.hpp"
 #include "kubeent/delete_options.hpp"
 #include "kube_api/namespace.hpp"
@@ -7,20 +7,20 @@
 namespace navagraha {
 namespace cli {
 
-char CLI_MONITOR_BREAK_FLAG[] = "break";
+char CLI_MONITOR_STOP_FLAG[] = "stop";
 
-void monitor_break::bind(cli_arg::process_helper<monitor_break> & helper)
+void monitor_stop::bind(cli_arg::process_helper<monitor_stop> & helper)
 {
     helper
         .add(this->break_flag);
 }
 
-bool monitor_break::satisfy() const
+bool monitor_stop::satisfy() const
 {
     return this->break_flag.used();
 }
 
-int monitor_break::execute()
+int monitor_stop::execute()
 {
     http_client::curl_helper helper(config::get_instance().kube_cert,
                                     config::get_instance().kube_key,
@@ -30,14 +30,14 @@ int monitor_break::execute()
     this->delete_cluster_role(helper);
     return 0;
 }
-void monitor_break::delete_cluster_role(http_client::curl_helper & helper)
+void monitor_stop::delete_cluster_role(http_client::curl_helper & helper)
 {
     kubeent::delete_options opt;
 
     helper.build<kube_api::cluster_role>().delete_("prometheus-cr", opt);
 }
 
-void monitor_break::delete_namespace(http_client::curl_helper & helper)
+void monitor_stop::delete_namespace(http_client::curl_helper & helper)
 {
     kubeent::delete_options opt;
 

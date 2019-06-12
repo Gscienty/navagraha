@@ -8,11 +8,11 @@
 namespace navagraha {
 namespace cli {
 
-extern char CLI_MONITOR_INIT_FLAG[];
+extern char CLI_MONITOR_START_FLAG[];
 
-class monitor_init : public cli_arg::abstract_process<monitor_init> {
+class monitor_start : public cli_arg::abstract_process<monitor_start> {
 private:
-    cli_arg::arg<CLI_MONITOR_INIT_FLAG, 0> init_flag;
+    cli_arg::arg<CLI_MONITOR_START_FLAG, 0> init_flag;
 
     void init_monitor_namespace(http_client::curl_helper & helper);
     void create_config_map(http_client::curl_helper & helper);
@@ -21,7 +21,7 @@ private:
     void create_cluster_role(http_client::curl_helper & helper);
     void cluster_role_binding(http_client::curl_helper & helper);
 public:
-    virtual void bind(cli_arg::process_helper<monitor_init> & helper) override;
+    virtual void bind(cli_arg::process_helper<monitor_start> & helper) override;
     virtual bool satisfy() const override;
     virtual int execute() override;
 
