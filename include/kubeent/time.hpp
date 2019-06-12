@@ -21,6 +21,8 @@ public:
     extensions::field<std::string, TIME_FIELD_VALUE> value;
 
     void bind(extensions::serializer_helper & helper);
+
+    time & deserialize(std::istringstream & str);
 };
 
 }
