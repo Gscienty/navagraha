@@ -1,4 +1,4 @@
-#include "extensions/yaml2json.h"
+#include "extensions/yaml2json.hpp"
 #include <sstream>
 
 #include <iostream>
