@@ -4,16 +4,12 @@
 #include <string>
 
 namespace navagraha {
-namespace extensions {
-class yaml2json{
-private:
-	static std::string strTrimF(std::string a);
-	static bool IsNumber(std::string str);
-	static std::string checkNumm(std::string str,std::string tar);
-public:
-	static std::string getJson(std::string yamlstr);
-}
-}
+	namespace extensions {
+		std::string strTrimF(std::string a);
+		bool IsNumber(std::string str);
+		std::string checkNumm(std::string str,std::string tar);
+		std::string getJson(std::string yamlstr);
+	}
 }
 
 #endif

@@ -1,21 +1,18 @@
-#include "extensions/yaml2json.hpp"
+#include "extensions/yaml2json.h"
 #include <sstream>
 
 #include <iostream>
 
 namespace navagraha{
 	namespace extensions{
-class yaml2json
-{
-	private:
-		static std::string strTrimF(std::string a)
+		std::string strTrimF(std::string a)
 		{
 			int i = 0;
 			while (a[i]==' ') i++;
 			a = a.substr(i);
 			return a;
 		}
-		static bool IsNumber(std::string str)
+		bool IsNumber(std::string str)
 		{
 			std::stringstream sin(str);  
 			double d;  
@@ -26,14 +23,13 @@ class yaml2json
 				return false;  
 			return true;  
 		}
-		static std::string checkNull(std::string str,std::string tar)
+		std::string checkNull(std::string str,std::string tar)
 		{
 			int len = tar.length();
-			if (str.find(tar)!=-1) str = str.replace(str.find(tar), len, ": null" + tar.substr(len-1));
+			if (str.find(tar)!=str.npos) str = str.replace(str.find(tar), len, ": null" + tar.substr(len-1));
 			return str;
 		}
-	public:
-		static std::string getJson(std::string yamlstr)
+		std::string getJson(std::string yamlstr)
 		{
 			std::string jsonstr, linestr, keystr, valuestr;char markstr[] = "";
 			int i,nowkey,lastkey,top;
@@ -41,7 +37,7 @@ class yaml2json
 			while (yamlstr != "")
 			{
 				linestr = yamlstr.substr(0,yamlstr.find('\n')); 
-				if (yamlstr.find('\n') != -1)
+				if (yamlstr.find('\n') != yamlstr.npos)
 				{
 					yamlstr = yamlstr.substr(yamlstr.find('\n') + 1);
 				}
@@ -60,7 +56,7 @@ class yaml2json
 					if (keystr[i] == '-')
 					{
 						i = i + 2;
-						if (linestr.find(':')!=-1) jsonstr.append("{");
+						if (linestr.find(':')!=linestr.npos) jsonstr.append("{");
 					}
 				}
 				else
@@ -74,7 +70,7 @@ class yaml2json
 							markstr[top] = ']';
 							jsonstr.append("["); 
 						}
-						if (linestr.find(':')!=-1)
+						if (linestr.find(':')!=linestr.npos)
 						{
 							if (keystr[i-2] != '-') 
 							{
@@ -93,7 +89,7 @@ class yaml2json
 				}
 				jsonstr.append("\"" + keystr.substr(i) + "\"");
 				lastkey = nowkey;
-				if (linestr.find(':') != -1)
+				if (linestr.find(':') != linestr.npos)
 				{
 					jsonstr.append(":");
 					valuestr = linestr.substr(linestr.find(':') + 1);
@@ -110,7 +106,7 @@ class yaml2json
 					else
 						jsonstr.append(" " + valuestr);
 				}
-				if ((linestr.find('-')!=-1)&&(linestr.find(':')!=-1)) jsonstr.append(1,'}');
+				if ((linestr.find('-')!=linestr.npos)&&(linestr.find(':')!=linestr.npos)) jsonstr.append(1,'}');
 			}
 			while (top > -1)
 			{
@@ -121,6 +117,5 @@ class yaml2json
 			jsonstr = checkNull(jsonstr, ":,");
 			return jsonstr;
 		}
-};
 }
 }
