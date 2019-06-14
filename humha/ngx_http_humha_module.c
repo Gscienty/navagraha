@@ -967,6 +967,8 @@ static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
     prome_collect_list_head_init(&chain);
     prome_counter_serialize(&var_p->sync_exec_count, &chain);
     prome_counter_serialize(&var_p->async_exec_count, &chain);
+    prome_histogram_serialize(&var_p->sync_exec_histogram, &chain);
+    prome_histogram_serialize(&var_p->async_exec_histogram, &chain);
 
     size = prome_chain_size(&chain) + prome_chain_count(&chain);
 

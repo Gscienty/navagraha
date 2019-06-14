@@ -78,9 +78,7 @@ struct prome_histogram_bucket_s {
      prome_notation_labels_append(&(b)->notation, label); \
      (b)->le = l; \
      (b)->bucket = 0.0F; \
-     0; \
      } \
-     -1; \
      })
 
 typedef struct prome_histogram_s prome_histogram_t;
@@ -106,9 +104,7 @@ struct prome_histogram_s {
      prome_collect_list_head_init(&(h)->buckets); \
      (h)->sum_value = 0.0F; \
      (h)->count_value = 0.0F; \
-     0; \
      } \
-     -1; \
      })
 
 int prome_histogram_buckets_append(prome_histogram_t * histogram, prome_histogram_bucket_t * bucket);
