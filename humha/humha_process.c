@@ -1,5 +1,6 @@
 #include "humha_process.h"
 #include "humha_caller.h"
+#include "ngx_http_humha_prometheus.h"
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <fcntl.h>
@@ -69,6 +70,7 @@ int humha_process(const u_char * executor,
         }
         if (p->pid == 0) { // async process (postman)
             humha_init_pipe(p);
+            ftime(&p->begin_time);
             p->pid = fork();
             if (p->pid < 0) {
                 return NGX_ERROR;
@@ -84,6 +86,7 @@ int humha_process(const u_char * executor,
     }
     else {
         humha_init_pipe(p);
+        ftime(&p->begin_time);
         p->pid = fork();
         if (p->pid < 0) {
             return p->pid;
@@ -100,11 +103,18 @@ int humha_process(const u_char * executor,
 int humha_process_wait(humha_process_t * p)
 {
     int status = 0;
+    struct timeb end_time;
     pid_t pid;
 
     do {
         pid = waitpid(p->pid, &status, 0);
     } while(pid == -1);
+
+    ftime(&end_time);
+
+    double a = p->begin_time.time + (p->begin_time.millitm / 1000.0F);
+    double b = end_time.time + (end_time.millitm / 1000.0F);
+    ngx_http_humha_prome_exec_histogram_observer(p->is_async, b - a);
 
     return status;
 }

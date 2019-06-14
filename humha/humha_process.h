@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <ngx_core.h>
+#include <sys/timeb.h>
 
 typedef struct {
     pid_t pid;
@@ -14,6 +15,8 @@ typedef struct {
     int out_opened;
     int out;
     int peer_out;
+
+    struct timeb begin_time;
 } humha_process_t;
 
 int humha_process(const u_char * executor,
