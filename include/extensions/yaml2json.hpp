@@ -4,12 +4,17 @@
 #include <string>
 
 namespace navagraha {
-	namespace extensions {
-		std::string strTrimF(std::string a);
-		bool IsNumber(std::string str);
-		std::string checkNumm(std::string str,std::string tar);
-		std::string getJson(std::string yamlstr);
-	}
+namespace extensions {
+	
+std::string str_trim_f(std::string a);
+
+bool is_number(std::string str);
+
+std::string check_null(std::string str,std::string tar);
+
+std::string get_json(std::string yamlstr);
+
+}
 }
 
 #endif
