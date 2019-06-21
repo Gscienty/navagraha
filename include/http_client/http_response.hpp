@@ -12,11 +12,12 @@ namespace http_client {
 
 class http_response {
 private:
+    long response_code;
     std::ostringstream result_stream;
     std::function<void (std::string)> receive_cb;
     int result_status_code;
 public:
-    http_response(std::function<void (http_response &)> caller);
+    http_response(std::function<long (http_response &)> caller);
 
     void set_write_func(CURL * curl);
 

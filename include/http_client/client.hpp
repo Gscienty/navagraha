@@ -23,7 +23,7 @@ private:
     std::string uri(const std::string path) const;
 
 protected:
-    void curl_abstract_process(const std::string path, const char * method, http_response & response);
+    long curl_abstract_process(const std::string path, const char * method, http_response & response);
 
     http_response && get_request(const std::string path);
 

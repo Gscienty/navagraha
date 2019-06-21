@@ -23,10 +23,11 @@ std::string client::uri(const std::string path) const
     return this->host + path;
 }
 
-void client::curl_abstract_process(const std::string path, const char * method, http_response & response)
+long client::curl_abstract_process(const std::string path, const char * method, http_response & response)
 {
     curl_slist * headers = NULL;
     const std::string uri = this->uri(path);
+    long response_code;
     curl_easy_setopt(this->curl, CURLOPT_URL, uri.c_str());
     response.set_write_func(this->curl);
     curl_easy_setopt(this->curl, CURLOPT_CUSTOMREQUEST, method);
@@ -55,6 +56,9 @@ void client::curl_abstract_process(const std::string path, const char * method, 
     if (headers != NULL) {
         curl_slist_free_all(headers);
     }
+
+    curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &response_code);
+    return response_code;
 }
 
 client & client::set_content_type(std::string content_type)
