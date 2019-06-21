@@ -1,6 +1,7 @@
 #ifndef _NAVAGRAHA_HTTP_CLIENT_CLIENT_H
 #define _NAVAGRAHA_HTTP_CLIENT_CLIENT_H
 
+#include "http_client//http_response.hpp"
 #include <curl/curl.h>
 #include <sstream>
 #include <string>
@@ -14,7 +15,6 @@ private:
     CURL * curl;
     const std::string host;
     std::string payload;
-    std::string result;
     std::string content_type;
     const char * binary_payload;
     size_t binary_payload_length;
@@ -23,32 +23,17 @@ private:
     std::string uri(const std::string path) const;
 
 protected:
-    std::string & curl_abstract_process(const std::string path, const char * method);
+    void curl_abstract_process(const std::string path, const char * method, http_response & response);
 
-    template <typename T> T get_call(const std::string path)
-    {
-        return T::deserialize(this->curl_abstract_process(path, "GET"));
-    }
+    http_response && get_request(const std::string path);
 
-    template <typename T> T put_call(const std::string path)
-    {
-        return T::deserialize(this->curl_abstract_process(path, "PUT"));
-    }
+    http_response && put_request(const std::string path);
 
-    template <typename T> T delete_call(const std::string path)
-    {
-        return T::deserialize(this->curl_abstract_process(path, "DELETE"));
-    }
+    http_response && delete_request(const std::string path);
 
-    template <typename T> T post_call(const std::string path)
-    {
-        return T::deserialize(this->curl_abstract_process(path, "POST"));
-    }
+    http_response && post_request(const std::string path);
 
-    template <typename T> T patch_call(const std::string path)
-    {
-        return T::deserialize(this->curl_abstract_process(path, "PATCH"));
-    }
+    http_response && patch_request(const std::string path);
 
     template <typename T> void set_payload(T && obj)
     {
@@ -63,8 +48,6 @@ public:
     client(CURL * curl, const std::string host);
 
     virtual ~client();
-
-    size_t write(const char * ptr, size_t size);
 
     client & set_content_type(std::string content_type);
 
