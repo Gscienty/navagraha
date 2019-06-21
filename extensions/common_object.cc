@@ -28,14 +28,16 @@ common_object & common_object::deserialize(std::istringstream & str)
     return *this;
 }
 
-common_object common_object::deserialize(std::string & payload)
+common_object common_object::deserialize(const std::string & payload)
 {
-    if (payload.length() == 0) {
-        payload = "{}";
-    }
-    std::istringstream str(payload);
     common_object obj;
-
+    std::istringstream str;
+    if (payload.length() == 0) {
+        str.str("{}");
+    }
+    else {
+        str.str(payload);
+    }
     obj.deserialize(str);
     return obj;
 }

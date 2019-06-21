@@ -20,7 +20,7 @@ public:
 
     static common_list to_special(abstract_object & obj);
 
-    static common_list deserialize(std::string & payload);
+    static common_list deserialize(const std::string & payload);
 };
 
 }

@@ -37,13 +37,16 @@ public:
         return *this;
     }
 
-    static special_list deserialize(std::string & payload)
+    static special_list deserialize(const std::string & payload)
     {
-        if (payload.length() == 0) {
-            payload = "[]";
-        }
-        std::istringstream str(payload);
         special_list obj;
+        std::istringstream str;
+        if (payload.length() == 0) {
+            str.str("[]");
+        }
+        else {
+            str.str(payload);
+        }
 
         obj.deserialize(str);
         return obj;

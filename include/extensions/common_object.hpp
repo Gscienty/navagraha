@@ -27,7 +27,7 @@ public:
 
     static common_object to_special(abstract_object & obj);
 
-    static common_object deserialize(std::string & payload);
+    static common_object deserialize(const std::string & payload);
 };
 
 }
