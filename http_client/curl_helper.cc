@@ -2,8 +2,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include <iostream>
-
 namespace navagraha {
 namespace http_client {
 

@@ -1,17 +1,8 @@
 #include "http_client/client.hpp"
+#include <iostream>
 
 namespace navagraha {
 namespace http_client {
-
-static size_t __write_cb(void * ptr, size_t size, size_t nitems, void * stream)
-{
-    client * c = reinterpret_cast<client *>(stream);
-    size_t readed_len = size;
-    if (readed_len < size * nitems) {
-        readed_len = size * nitems;
-    }
-    return c->write(reinterpret_cast<const char *>(ptr), readed_len);
-}
 
 client::client(CURL * curl, const std::string host)
     : curl(curl)
@@ -32,23 +23,12 @@ std::string client::uri(const std::string path) const
     return this->host + path;
 }
 
-size_t client::write(const char * ptr, size_t size)
-{
-    std::string block = std::string(ptr, size);
-    if (this->receive_cb) {
-        this->receive_cb(block);
-    }
-    this->result += block;
-    return size;
-}
-
-std::string & client::curl_abstract_process(const std::string path, const char * method)
+void client::curl_abstract_process(const std::string path, const char * method, http_response & response)
 {
     curl_slist * headers = NULL;
     const std::string uri = this->uri(path);
     curl_easy_setopt(this->curl, CURLOPT_URL, uri.c_str());
-    curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, __write_cb);
+    response.set_write_func(this->curl);
     curl_easy_setopt(this->curl, CURLOPT_CUSTOMREQUEST, method);
 
     if (this->payload.size() != 0 || this->binary_payload_length != 0)
@@ -75,7 +55,6 @@ std::string & client::curl_abstract_process(const std::string path, const char *
     if (headers != NULL) {
         curl_slist_free_all(headers);
     }
-    return this->result;
 }
 
 client & client::set_content_type(std::string content_type)
@@ -95,6 +74,41 @@ client & client::set_receive_cb(std::function<void (std::string &)> cb)
     this->receive_cb = cb;
 
     return *this;
+}
+
+http_response && client::get_request(const std::string path)
+{
+    http_response ret;
+    this->curl_abstract_process(path, "GET", ret);
+    return std::move(ret);
+}
+
+http_response && client::put_request(const std::string path)
+{
+    http_response ret;
+    this->curl_abstract_process(path, "PUT", ret);
+    return std::move(ret);
+}
+
+http_response && client::delete_request(const std::string path)
+{
+    http_response ret;
+    this->curl_abstract_process(path, "DELETE", ret);
+    return std::move(ret);
+}
+
+http_response && client::post_request(const std::string path)
+{
+    http_response ret;
+    this->curl_abstract_process(path, "POST", ret);
+    return std::move(ret);
+}
+
+http_response && client::patch_request(const std::string path)
+{
+    http_response ret;
+    this->curl_abstract_process(path, "PATCH", ret);
+    return std::move(ret);
 }
 
 }
