@@ -16,6 +16,8 @@ private:
     std::function<void (std::string)> receive_cb;
     int result_status_code;
 public:
+    http_response(std::function<void (http_response &)> caller);
+
     void set_write_func(CURL * curl);
 
     size_t write(const char * ptr, size_t size);

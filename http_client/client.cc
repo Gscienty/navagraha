@@ -78,37 +78,47 @@ client & client::set_receive_cb(std::function<void (std::string &)> cb)
 
 http_response && client::get_request(const std::string path)
 {
-    http_response ret;
-    this->curl_abstract_process(path, "GET", ret);
-    return std::move(ret);
+    return std::move(http_response(std::bind(&client::curl_abstract_process,
+                                   this,
+                                   path,
+                                   "GET",
+                                   std::placeholders::_1)));
 }
 
 http_response && client::put_request(const std::string path)
 {
-    http_response ret;
-    this->curl_abstract_process(path, "PUT", ret);
-    return std::move(ret);
+    return std::move(http_response(std::bind(&client::curl_abstract_process,
+                                   this,
+                                   path,
+                                   "PUT",
+                                   std::placeholders::_1)));
 }
 
 http_response && client::delete_request(const std::string path)
 {
-    http_response ret;
-    this->curl_abstract_process(path, "DELETE", ret);
-    return std::move(ret);
+    return std::move(http_response(std::bind(&client::curl_abstract_process,
+                                   this,
+                                   path,
+                                   "DELETE",
+                                   std::placeholders::_1)));
 }
 
 http_response && client::post_request(const std::string path)
 {
-    http_response ret;
-    this->curl_abstract_process(path, "POST", ret);
-    return std::move(ret);
+    return std::move(http_response(std::bind(&client::curl_abstract_process,
+                                   this,
+                                   path,
+                                   "POST",
+                                   std::placeholders::_1)));
 }
 
 http_response && client::patch_request(const std::string path)
 {
-    http_response ret;
-    this->curl_abstract_process(path, "PATCH", ret);
-    return std::move(ret);
+    return std::move(http_response(std::bind(&client::curl_abstract_process,
+                                   this,
+                                   path,
+                                   "PATCH",
+                                   std::placeholders::_1)));
 }
 
 }

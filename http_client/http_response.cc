@@ -13,6 +13,11 @@ static size_t __write_cb(void * ptr, size_t size, size_t nitems, void * stream)
     return c->write(reinterpret_cast<const char *>(ptr), readed_len);
 }
 
+http_response::http_response(std::function<void (http_response &)> caller)
+{
+    caller(*this);
+}
+
 size_t http_response::write(const char * ptr, size_t size)
 {
     this->result_stream.write(ptr, size);
