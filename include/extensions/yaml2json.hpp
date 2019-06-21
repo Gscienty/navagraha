@@ -5,14 +5,15 @@
 
 namespace navagraha {
 namespace extensions {
-class yaml2json{
-private:
-	static std::string strTrimF(std::string a);
-	static bool IsNumber(std::string str);
-	static std::string checkNumm(std::string str,std::string tar);
-public:
-	static std::string getJson(std::string yamlstr);
-}
+	
+std::string str_trim_f(std::string a);
+
+bool is_number(std::string str);
+
+std::string check_null(std::string str,std::string tar);
+
+std::string get_json(std::string yamlstr);
+
 }
 }
 
