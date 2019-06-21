@@ -16,7 +16,8 @@ images::images(CURL * curl)
 
 extensions::special_list<dockerent::image> images::list()
 {
-    return this->get_call<extensions::special_list<dockerent::image>>("/images/json");
+    return this->get_request("/images/json")
+        .get<extensions::special_list<dockerent::image>>();
 }
 
 extensions::common_object images::create(std::string path, std::string tag)
@@ -31,9 +32,10 @@ extensions::common_object images::create(std::string path, std::string tag)
     tar();
     tar.extract(binary_payload);
     this->set_binary_content(binary_payload);
-    extensions::common_object obj = this->post_call<extensions::common_object>("/build?dockerfile=.%2FDockerfile"
-                                                                               "&t="
-                                                                               + tag);
+    extensions::common_object obj = this->post_request("/build?dockerfile=.%2FDockerfile"
+                                                       "&t="
+                                                       + tag)
+        .get<extensions::common_object>();
     remove(tar_name.c_str());
 
     return obj;
