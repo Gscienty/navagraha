@@ -93,3 +93,37 @@ void ngx_http_humha_prome_exec_histogram_observer(ngx_int_t is_async, double val
         prome_histogram_observe(&var_p->sync_exec_histogram, val);
     }
 }
+
+size_t ngx_http_humha_prome_serialize(ngx_pool_t * pool, ngx_chain_t * out)
+{
+    size_t size = 0;
+    prome_collect_list_t chain;
+    ngx_http_humha_prome_var_shm_t * var_p = ngx_http_humha_prome_get_shm();
+    prome_chain_t * pt = NULL;
+    ngx_int_t odd_flag = 0;
+
+    prome_collect_list_head_init(&chain);
+    prome_counter_serialize(&var_p->sync_exec_count, &chain);
+    prome_counter_serialize(&var_p->async_exec_count, &chain);
+    prome_histogram_serialize(&var_p->sync_exec_histogram, &chain);
+    prome_histogram_serialize(&var_p->async_exec_histogram, &chain);
+
+    size = prome_chain_size(&chain) + prome_chain_count(&chain);
+
+    out->buf = ngx_create_temp_buf(pool, size);
+    out->buf->last = out->buf->pos;
+    out->buf->last_buf = 1;
+
+    while (!prome_collect_list_is_empty(&chain)) {
+        pt = contain_of(chain.next, prome_chain_t, node);
+
+        ngx_memcpy(out->buf->last, pt->buf.base, pt->buf.len);
+        out->buf->last += pt->buf.len;
+        *out->buf->last++ = (odd_flag ^= 1) ? ' ' : '\n';
+        free(pt->buf.base);
+        prome_collect_list_remove(chain.next);
+        free(pt);
+    }
+
+    return size;
+}

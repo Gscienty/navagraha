@@ -958,19 +958,7 @@ static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
 {
     ngx_chain_t * out = ngx_alloc_chain_link(r->pool);
 
-    prome_collect_list_t chain;
-    prome_chain_t * pt = NULL;
-    ngx_uint_t size = 0;
-    ngx_int_t odd_flag = 0;
-    ngx_http_humha_prome_var_shm_t * var_p = ngx_http_humha_prome_get_shm();
-
-    prome_collect_list_head_init(&chain);
-    prome_counter_serialize(&var_p->sync_exec_count, &chain);
-    prome_counter_serialize(&var_p->async_exec_count, &chain);
-    prome_histogram_serialize(&var_p->sync_exec_histogram, &chain);
-    prome_histogram_serialize(&var_p->async_exec_histogram, &chain);
-
-    size = prome_chain_size(&chain) + prome_chain_count(&chain);
+    size_t size = ngx_http_humha_prome_serialize(r->pool, out);
 
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = size;
@@ -978,22 +966,6 @@ static void ngx_http_humha_prometheus_get_metrics(ngx_http_request_t * r)
     ngx_http_set_content_type(r);
 
     ngx_http_send_header(r);
-
-    out->buf = ngx_create_temp_buf(r->pool, size);
-    out->buf->last = out->buf->pos;
-    out->buf->last_buf = 1;
-
-    while (!prome_collect_list_is_empty(&chain)) {
-        pt = contain_of(chain.next, prome_chain_t, node);
-
-        ngx_memcpy(out->buf->last, pt->buf.base, pt->buf.len);
-        out->buf->last += pt->buf.len;
-        *out->buf->last++ = (odd_flag ^= 1) ? ' ' : '\n';
-        free(pt->buf.base);
-        prome_collect_list_remove(chain.next);
-        free(pt);
-    }
-
     ngx_http_output_filter(r, out);
 
     while ((out = ngx_chain_free_link(r->pool, out)) != NULL);

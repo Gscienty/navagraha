@@ -24,4 +24,6 @@ void ngx_http_humha_prome_exec_count_inc(ngx_int_t is_async);
 
 void ngx_http_humha_prome_exec_histogram_observer(ngx_int_t is_async, double val);
 
+size_t ngx_http_humha_prome_serialize(ngx_pool_t * pool, ngx_chain_t * out);
+
 #endif
