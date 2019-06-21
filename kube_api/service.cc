@@ -13,9 +13,10 @@ kubeent::service service::create(const std::string namespace_,
                                  kubeent::service & service_)
 {
     this->set_payload(service_);
-    return this->post_call<kubeent::service>("/api/v1/namespaces/"
-                                             + namespace_
-                                             + "/services");
+    return this->post_request("/api/v1/namespaces/"
+                              + namespace_
+                              + "/services")
+        .get<kubeent::service>();
 }
 
 
@@ -24,10 +25,11 @@ kubeent::service service::replace(const std::string namespace_,
                                   kubeent::service & service_)
 {
     this->set_payload(service_);
-    return this->post_call<kubeent::service>("/api/v1/namespaces/"
-                                             + namespace_
-                                             + "/services/"
-                                             + name);
+    return this->post_request("/api/v1/namespaces/"
+                              + namespace_
+                              + "/services/"
+                              + name)
+        .get<kubeent::service>();
 }
 
 kubeent::status service::delete_(const std::string namespace_,
@@ -35,31 +37,35 @@ kubeent::status service::delete_(const std::string namespace_,
                                  kubeent::delete_options & opt)
 {
     this->set_payload(opt);
-    return this->delete_call<kubeent::status>("/api/v1/namespaces/"
-                                               + namespace_
-                                               + "/services/"
-                                               + name);
+    return this->delete_request("/api/v1/namespaces/"
+                                + namespace_
+                                + "/services/"
+                                + name)
+        .get<kubeent::status>();
 }
 
 kubeent::service service::read(const std::string namespace_,
                                const std::string name)
 {
-    return this->get_call<kubeent::service>("/api/v1/namespaces/"
-                                            + namespace_
-                                            + "/services/"
-                                            + name);
+    return this->get_request("/api/v1/namespaces/"
+                             + namespace_
+                             + "/services/"
+                             + name)
+        .get<kubeent::service>();
 }
 
 kubeent::service_list service::list(const std::string namespace_)
 {
-    return this->get_call<kubeent::service_list>("/api/v1/namespaces/"
-                                                 + namespace_
-                                                 + "/services");
+    return this->get_request("/api/v1/namespaces/"
+                             + namespace_
+                             + "/services")
+        .get<kubeent::service_list>();
 }
 
 kubeent::service_list service::list_all_namespace()
 {
-    return this->get_call<kubeent::service_list>("/api/v1/services");
+    return this->get_request("/api/v1/services")
+        .get<kubeent::service_list>();
 }
 
 }

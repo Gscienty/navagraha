@@ -14,7 +14,8 @@ kubeent::cluster_role cluster_role::create(kubeent::cluster_role & role)
 {
     this->set_payload(role);
 
-    return this->post_call<kubeent::cluster_role>("/apis/rbac.authorization.k8s.io/v1/clusterroles");
+    return this->post_request("/apis/rbac.authorization.k8s.io/v1/clusterroles")
+        .get<kubeent::cluster_role>();
 }
 
 kubeent::status cluster_role::delete_(const std::string name,
@@ -22,13 +23,15 @@ kubeent::status cluster_role::delete_(const std::string name,
 {
     this->set_payload(opts);
 
-    return this->delete_call<kubeent::status>("/apis/rbac.authorization.k8s.io/v1/clusterroles/"
-                                               + name);
+    return this->delete_request("/apis/rbac.authorization.k8s.io/v1/clusterroles/"
+                                               + name)
+        .get<kubeent::status>();
 }
 
 kubeent::status cluster_role::delete_collection()
 {
-    return this->delete_call<kubeent::status>("/apis/rbac.authorization.k8s.io/v1/clusterroles");
+    return this->delete_request("/apis/rbac.authorization.k8s.io/v1/clusterroles")
+        .get<kubeent::status>();
 }
 
 }

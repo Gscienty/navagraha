@@ -13,9 +13,10 @@ kubeent::deployment deployment::create(const std::string namespace_,
                                        kubeent::deployment & deployment_)
 {
     this->set_payload(deployment_);
-    return this->post_call<kubeent::deployment>("/apis/apps/v1/namespaces/"
-                                                + namespace_
-                                                + "/deployments");
+    return this->post_request("/apis/apps/v1/namespaces/"
+                              + namespace_
+                              + "/deployments")
+        .get<kubeent::deployment>();
 }
 
 kubeent::deployment deployment::replace(const std::string namespace_,
@@ -23,10 +24,11 @@ kubeent::deployment deployment::replace(const std::string namespace_,
                                         kubeent::deployment & deployment_)
 {
     this->set_payload(deployment_);
-    return this->put_call<kubeent::deployment>("/apis/apps/v1/namespaces/"
-                                               + namespace_
-                                               + "/deployments/"
-                                               + name);
+    return this->put_request("/apis/apps/v1/namespaces/"
+                             + namespace_
+                             + "/deployments/"
+                             + name)
+        .get<kubeent::deployment>();
 }
 
 kubeent::status deployment::delete_(const std::string namespace_,
@@ -34,38 +36,43 @@ kubeent::status deployment::delete_(const std::string namespace_,
                                     kubeent::delete_options & options)
 {
     this->set_payload(options);
-    return this->delete_call<kubeent::status>("/apis/apps/v1/namespaces/"
-                                              + namespace_
-                                              + "/deployments/"
-                                              + name);
+    return this->delete_request("/apis/apps/v1/namespaces/"
+                                + namespace_
+                                + "/deployments/"
+                                + name)
+        .get<kubeent::status>();
 }
 
 kubeent::status deployment::delete_collection(const std::string namespace_)
 {
-    return this->delete_call<kubeent::status>("/apis/apps/v1/namespaces/"
-                                              + namespace_
-                                              + "/deployments");
+    return this->delete_request("/apis/apps/v1/namespaces/"
+                                + namespace_
+                                + "/deployments")
+        .get<kubeent::status>();
 }
 
 kubeent::deployment deployment::read(const std::string namespace_,
                                      const std::string name)
 {
-    return this->get_call<kubeent::deployment>("/apis/apps/v1/namespaces/"
-                                               + namespace_
-                                               + "/deployments/"
-                                               + name);
+    return this->get_request("/apis/apps/v1/namespaces/"
+                             + namespace_
+                             + "/deployments/"
+                             + name)
+        .get<kubeent::deployment>();
 }
 
 kubeent::deployment_list deployment::list(const std::string namespace_)
 {
-    return this->get_call<kubeent::deployment_list>("/apis/apps/v1/namespaces/"
-                                                    + namespace_
-                                                    + "/deployments");
+    return this->get_request("/apis/apps/v1/namespaces/"
+                             + namespace_
+                             + "/deployments")
+        .get<kubeent::deployment_list>();
 }
 
 kubeent::deployment_list deployment::list_all_namespace()
 {
-    return this->get_call<kubeent::deployment_list>("/apis/apps/v1/deployments");
+    return this->get_request("/apis/apps/v1/deployments")
+        .get<kubeent::deployment_list>();
 }
 
 }

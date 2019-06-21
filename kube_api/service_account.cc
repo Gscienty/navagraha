@@ -14,9 +14,10 @@ kubeent::service_account service_account::create(const std::string namespace_,
 {
     this->set_payload(account);
 
-    return this->post_call<kubeent::service_account>("/api/v1/namespaces/"
-                                                     + namespace_
-                                                     + "/serviceaccounts");
+    return this->post_request("/api/v1/namespaces/"
+                              + namespace_
+                              + "/serviceaccounts")
+        .get<kubeent::service_account>();
 }
 
 kubeent::status service_account::delete_(const std::string namespace_,
@@ -25,17 +26,19 @@ kubeent::status service_account::delete_(const std::string namespace_,
 {
     this->set_payload(opts);
 
-    return this->delete_call<kubeent::status>("/api/v1/namespaces/"
-                                              + namespace_
-                                              + "/serviceaccounts/"
-                                              + name);
+    return this->delete_request("/api/v1/namespaces/"
+                                + namespace_
+                                + "/serviceaccounts/"
+                                + name)
+        .get<kubeent::status>();
 }
 
 kubeent::status service_account::delete_collection(const std::string namespace_)
 {
-    return this->delete_call<kubeent::status>("/api/v1/namespaces/"
-                                              + namespace_
-                                              + "/serviceaccounts");
+    return this->delete_request("/api/v1/namespaces/"
+                                + namespace_
+                                + "/serviceaccounts")
+        .get<kubeent::status>();
 }
 
 }

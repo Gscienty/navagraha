@@ -14,9 +14,10 @@ kubeent::config_map config_map::create(const std::string namespace_,
 {
     this->set_payload(config_map_);
 
-    return this->post_call<kubeent::config_map>("/api/v1/namespaces/"
-                                                + namespace_
-                                                + "/configmaps");
+    return this->post_request("/api/v1/namespaces/"
+                              + namespace_
+                              + "/configmaps")
+        .get<kubeent::config_map>();
 }
 
 kubeent::status config_map::delete_(const std::string namespace_,
@@ -25,10 +26,11 @@ kubeent::status config_map::delete_(const std::string namespace_,
 {
     this->set_payload(opts);
 
-    return this->delete_call<kubeent::status>("/api/v1/namespaces/"
-                                              + namespace_
-                                              + "/configmaps/"
-                                              + name);
+    return this->delete_request("/api/v1/namespaces/"
+                                + namespace_
+                                + "/configmaps/"
+                                + name)
+        .get<kubeent::status>();
 }
 
 }

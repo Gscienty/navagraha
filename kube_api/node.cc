@@ -12,7 +12,8 @@ node::node(CURL * curl, const std::string host)
 
 kubeent::node node::read(const std::string name)
 {
-    return this->get_call<kubeent::node>("/api/v1/nodes/" + name);
+    return this->get_request("/api/v1/nodes/" + name)
+        .get<kubeent::node>();
 }
 
 }
