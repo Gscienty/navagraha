@@ -264,7 +264,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         u->conf = &lcf->upstream;
         u->output.tag = (ngx_buf_tag_t) &ngx_http_humha_module;
 
-        url = (ngx_str_t *) ngx_palloc(r->pool, sizeof(ngx_url_t));
+        url = (ngx_str_t *) ngx_palloc(r->pool, sizeof(ngx_str_t));
         if (url == NULL) {
             return NGX_ERROR;
         }
@@ -272,7 +272,7 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
 
         uri_len = r->uri_end - r->uri_start;
         url->len = lcf->call_namespace.len + uri_len;
-        url->data = (u_char *) ngx_palloc(r->pool, url->len + 0);
+        url->data = (u_char *) ngx_palloc(r->pool, url->len + 1);
         ngx_memzero(url->data, url->len + 1);
         ngx_memcpy(url->data, r->uri_start + 1, uri_len - 1);
         url->data[uri_len - 1] = '.';
