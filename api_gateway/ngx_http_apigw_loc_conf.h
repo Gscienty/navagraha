@@ -1,5 +1,5 @@
-#ifndef _NGX_APIGW_LOC_CONF_H
-#define _NGX_APIGW_LOC_CONF_H
+#ifndef _NGX_HTTP_APIGW_LOC_CONF_H
+#define _NGX_HTTP_APIGW_LOC_CONF_H
 
 #include <ngx_config.h>
 #include <ngx_http.h>

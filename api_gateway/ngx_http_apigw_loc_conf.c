@@ -1,8 +1,8 @@
 #include "ngx_http_apigw_loc_conf.h"
+#include "ngx_http_apigw_handler.h"
 
 static char * ngx_http_apigw_conf(ngx_conf_t * cf, ngx_command_t * cmd, void * conf);
 static void * ngx_http_apigw_create_loc_conf(ngx_conf_t * cf);
-static ngx_int_t ngx_http_apigw_handler(ngx_http_request_t * r);
 
 static ngx_command_t ngx_http_apigw_module_commands[] = {
     {
