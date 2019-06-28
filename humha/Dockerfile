@@ -1,9 +1,5 @@
 FROM alpine
 
-LABEL version="0.1"
-LABEL description="Humha image"
-MAINTAINER gaoxiaochuan@hotmail.com
-
 ADD ./ /var/tmp/humha
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \
