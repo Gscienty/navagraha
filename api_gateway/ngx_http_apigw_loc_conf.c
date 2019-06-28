@@ -48,9 +48,11 @@ static char * ngx_http_apigw_conf(ngx_conf_t * cf, ngx_command_t * cmd, void * c
     (void) cmd;
     ngx_http_core_loc_conf_t * ccf = (ngx_http_core_loc_conf_t *) ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
     ngx_http_apigw_loc_conf_t * apigwcf = (ngx_http_apigw_loc_conf_t *) conf;
+    ngx_str_t * conf_namespace = ((ngx_str_t *) cf->args->elts) + 1;
+    char * env_namespace = getenv((const char *)conf_namespace->data);
 
-    apigwcf->func_namespace.data = ((ngx_str_t *) cf->args->elts)[1].data;
-    apigwcf->func_namespace.len = ((ngx_str_t *) cf->args->elts)[1].len;
+    apigwcf->func_namespace.data = (u_char *) env_namespace;
+    apigwcf->func_namespace.len = ngx_strlen(env_namespace);
 
     ccf->handler = ngx_http_apigw_handler;
 
