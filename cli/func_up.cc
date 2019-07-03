@@ -49,12 +49,14 @@ void func_up::create_deployment(std::string namespace_, http_client::curl_helper
     req_obj.api_version = std::string("apps/v1");
     req_obj.kind = std::string("Deployment");
     req_obj.metadata.get().name = std::string(this->name_arg[0]);
-    req_obj.metadata.get().labels.get().values()["app"] = std::string(this->name_arg[0]);
+    req_obj.metadata.get().labels.get().values()["nava_app"] = std::string(this->name_arg[0]);
     req_obj.spec.get().replicas = 1;
     req_obj.spec.get().selector.get().match_labels.get()
-        .values()["app"] = std::string(this->name_arg[0]);
+        .values()["nava_app"] = std::string(this->name_arg[0]);
     req_obj.spec.get().template_.get().metadata.get().labels.get()
-        .values()["app"] = std::string(this->name_arg[0]);
+        .values()["nava_app"] = std::string(this->name_arg[0]);
+    req_obj.spec.get().template_.get().metadata.get().labels.get()
+        .values()["common_domain"] = std::string("navagraha_func");
     req_obj.spec.get().template_.get().metadata.get().annotations.get()
         .values()["prometheus.io/path"] = std::string("/metrics");
     req_obj.spec.get().template_.get().metadata.get().annotations.get()
@@ -109,7 +111,9 @@ void func_up::create_service(std::string namespace_, http_client::curl_helper & 
     req_obj.api_version = std::string("v1");
     req_obj.kind = std::string("Service");
     req_obj.metadata.get().name = std::string(this->name_arg[0]);
-    req_obj.spec.get().selector.get().values()["app"] = std::string(this->name_arg[0]);
+    req_obj.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha_func_svc");
+    req_obj.spec.get().selector.get().values()["nava_app"] = std::string(this->name_arg[0]);
+    req_obj.spec.get().selector.get().values()["common_domain"] = std::string("navagraha_func");
     req_obj.spec.get().ports.get().values().push_back(kubeent::service_port());
     req_obj.spec.get().ports.get().values().front().port = 80;
 
