@@ -73,6 +73,13 @@ void func_up::create_deployment(std::string namespace_, http_client::curl_helper
         .values().push_back(kubeent::container_port());
     req_obj.spec.get().template_.get().spec.get().containers.get().values().front().ports.get()
         .values().front().container_port_ = 80;
+    req_obj.spec.get().template_.get().spec.get().containers.get().values().front().env.get()
+        .values().push_back(kubeent::env_var());
+    req_obj.spec.get().template_.get().spec.get().containers.get().values().front().env.get()
+        .values().front().name = std::string("HUMHA_NAMESPACE");
+    req_obj.spec.get().template_.get().spec.get().containers.get().values().front().env.get()
+        .values().front().value = std::string(namespace_);
+
     if (this->policy_arg.used()) {
         req_obj.spec.get().template_.get().spec.get().containers.get().values().front()
             .image_pull_policy = std::string(this->policy_arg[0]);
