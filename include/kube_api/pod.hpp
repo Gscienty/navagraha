@@ -3,6 +3,7 @@
 
 #include "http_client/client.hpp"
 #include "kubeent/pod.hpp"
+#include <functional>
 
 namespace navagraha {
 namespace kube_api {
@@ -11,7 +12,7 @@ class pod : public http_client::client {
 public:
     pod(CURL * curl, const std::string host);
 
-    kubeent::pod create(const std::string namespace_, kubeent::pod pod_);
+    http_client::http_response && create(const std::string namespace_, kubeent::pod pod_);
 };
 
 }

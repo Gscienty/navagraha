@@ -9,14 +9,13 @@ pod::pod(CURL * curl, const std::string host)
 
 }
 
-kubeent::pod pod::create(const std::string namespace_, kubeent::pod pod_)
+http_client::http_response && pod::create(const std::string namespace_, kubeent::pod pod_)
 {
     this->set_payload(pod_);
 
     return this->post_request("/api/v1/namespaces/"
                               + namespace_
-                              + "/pods")
-        .get<kubeent::pod>();
+                              + "/pods");
 }
 
 }

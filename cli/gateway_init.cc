@@ -49,7 +49,10 @@ void gateway_init::create_pod(std::string namespace_, http_client::curl_helper &
         pod.spec.get().containers.get().values().back().image_pull_policy = std::string(this->image_pull_policy[0]);
     }
 
-    helper.build<kube_api::pod>().create(namespace_, pod);
+    helper.build<kube_api::pod>()
+        .create(namespace_, pod)
+        .response_switch()
+        .response_case<201, kubeent::pod>([] (kubeent::pod &) -> void { std::cout << "api gateway created." << std::endl; });
 }
 
 int gateway_init::execute()
