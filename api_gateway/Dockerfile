@@ -59,3 +59,4 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
     && rm -rf /var/tmp/* \
     && apk del gcc make curl musl-dev
 
+CMD /var/lib/nginx/sbin/nginx -g "daemon off;"
