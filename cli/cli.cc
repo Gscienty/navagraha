@@ -5,6 +5,7 @@
 #include "cli/config.hpp"
 #include "cli/config_map.hpp"
 #include "cli/monitor.hpp"
+#include "cli/gateway.hpp"
 #include "cli_arg/process_collection.hpp"
 
 int main(int argc, char ** argv)
@@ -21,6 +22,7 @@ int main(int argc, char ** argv)
         .add(navagraha::cli::namespace_())
         .add(navagraha::cli::secret())
         .add(navagraha::cli::monitor())
+        .add(navagraha::cli::gateway())
         .add(navagraha::cli::config_map())
         .result();
 }

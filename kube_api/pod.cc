@@ -13,7 +13,7 @@ kubeent::pod pod::create(const std::string namespace_, kubeent::pod pod_)
 {
     this->set_payload(pod_);
 
-    return this->post_request("/api/v1/namespaces"
+    return this->post_request("/api/v1/namespaces/"
                               + namespace_
                               + "/pods")
         .get<kubeent::pod>();

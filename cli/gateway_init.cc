@@ -7,11 +7,17 @@ namespace navagraha {
 namespace cli {
 
 char CLI_GATEWAY_INIT_FLAG[] = "init";
+char CLI_GATEWAY_INIT_IMAGE_PULL_POLICY[] = "--policy";
+char CLI_GATEWAY_INIT_NAMESPACE[] = "--namespace";
 
 void gateway_init::bind(cli_arg::process_helper<gateway_init> & helper)
 {
+    this->image_pull_policy.require(this->init_flag);
+    this->namespace_arg.require(this->init_flag);
     helper
-        .add(this->init_flag);
+        .add(this->init_flag)
+        .add(this->image_pull_policy)
+        .add(this->namespace_arg);
 }
 
 bool gateway_init::satisfy() const
@@ -35,8 +41,13 @@ void gateway_init::create_pod(std::string namespace_, http_client::curl_helper &
     pod.spec.get().containers.get().values().back().image = std::string("nava/apigw:v0.1");
     pod.spec.get().containers.get().values().back().ports.get().values().push_back(kubeent::container_port());
     pod.spec.get().containers.get().values().back().ports.get().values().back().container_port_ = 80;
+    pod.spec.get().containers.get().values().back().env.get().values().push_back(kubeent::env_var());
+    pod.spec.get().containers.get().values().back().env.get().values().back().name = std::string("FUNC_NAMESPACE");
+    pod.spec.get().containers.get().values().back().env.get().values().back().value = std::string(namespace_);
 
-    pod.spec.get().containers.get().values().back().image_pull_policy = "Never"; // TODO 
+    if (this->image_pull_policy.used()) {
+        pod.spec.get().containers.get().values().back().image_pull_policy = std::string(this->image_pull_policy[0]);
+    }
 
     helper.build<kube_api::pod>().create(namespace_, pod);
 }
@@ -44,6 +55,9 @@ void gateway_init::create_pod(std::string namespace_, http_client::curl_helper &
 int gateway_init::execute()
 {
     std::string namespace_ = "default";
+    if (this->namespace_arg.used()) {
+        namespace_ = this->namespace_arg[0];
+    }
     http_client::curl_helper helper(config::get_instance().kube_cert,
                                     config::get_instance().kube_key,
                                     config::get_instance().kube_ca,

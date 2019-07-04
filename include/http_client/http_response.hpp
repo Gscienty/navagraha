@@ -6,6 +6,7 @@
 #include <sstream>
 #include <functional>
 #include <cstddef>
+#include <iostream>
 
 namespace navagraha {
 namespace http_client {
