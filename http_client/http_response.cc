@@ -40,6 +40,12 @@ void http_response::set_write_func(CURL * curl)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, __write_cb);
 }
 
+http_response & http_response::response_switch()
+{
+    this->response_code_switch_case_hit = false;
+
+    return *this;
+}
 
 }
 }
