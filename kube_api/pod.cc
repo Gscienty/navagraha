@@ -9,7 +9,7 @@ pod::pod(CURL * curl, const std::string host)
 
 }
 
-http_client::http_response && pod::create(const std::string namespace_, kubeent::pod pod_)
+http_client::http_response pod::create(const std::string namespace_, kubeent::pod pod_)
 {
     this->set_payload(pod_);
 

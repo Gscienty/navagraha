@@ -23,17 +23,17 @@ private:
     std::string uri(const std::string path) const;
 
 protected:
-    long curl_abstract_process(const std::string path, const char * method, http_response & response);
+    long curl_abstract_process(const std::string path, const char * method, std::ostringstream & oss);
 
-    http_response && get_request(const std::string path);
+    http_response get_request(const std::string path);
 
-    http_response && put_request(const std::string path);
+    http_response put_request(const std::string path);
 
-    http_response && delete_request(const std::string path);
+    http_response delete_request(const std::string path);
 
-    http_response && post_request(const std::string path);
+    http_response post_request(const std::string path);
 
-    http_response && patch_request(const std::string path);
+    http_response patch_request(const std::string path);
 
     template <typename T> void set_payload(T && obj)
     {

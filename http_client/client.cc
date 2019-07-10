@@ -4,6 +4,18 @@
 namespace navagraha {
 namespace http_client {
 
+static size_t __write_cb(void * ptr, size_t size, size_t nitems, void * stream)
+{
+    std::ostringstream * c = reinterpret_cast<std::ostringstream *>(stream);
+    size_t readed_len = size;
+    if (readed_len < size * nitems) {
+        readed_len = size * nitems;
+    }
+
+    c->write(reinterpret_cast<const char *>(ptr), readed_len);
+    return readed_len;
+}
+
 client::client(CURL * curl, const std::string host)
     : curl(curl)
     , host(host)
@@ -23,13 +35,16 @@ std::string client::uri(const std::string path) const
     return this->host + path;
 }
 
-long client::curl_abstract_process(const std::string path, const char * method, http_response & response)
+long client::curl_abstract_process(const std::string path, const char * method, std::ostringstream & oss)
 {
     curl_slist * headers = NULL;
     const std::string uri = this->uri(path);
     long response_code;
     curl_easy_setopt(this->curl, CURLOPT_URL, uri.c_str());
-    response.set_write_func(this->curl);
+    
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &oss);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, __write_cb);
+
     curl_easy_setopt(this->curl, CURLOPT_CUSTOMREQUEST, method);
 
     if (this->payload.size() != 0 || this->binary_payload_length != 0)
@@ -80,49 +95,49 @@ client & client::set_receive_cb(std::function<void (std::string &)> cb)
     return *this;
 }
 
-http_response && client::get_request(const std::string path)
+http_response client::get_request(const std::string path)
 {
-    return std::move(http_response(std::bind(&client::curl_abstract_process,
+    return http_response(std::bind(&client::curl_abstract_process,
                                    this,
                                    path,
                                    "GET",
-                                   std::placeholders::_1)));
+                                   std::placeholders::_1));
 }
 
-http_response && client::put_request(const std::string path)
+http_response client::put_request(const std::string path)
 {
-    return std::move(http_response(std::bind(&client::curl_abstract_process,
+    return http_response(std::bind(&client::curl_abstract_process,
                                    this,
                                    path,
                                    "PUT",
-                                   std::placeholders::_1)));
+                                   std::placeholders::_1));
 }
 
-http_response && client::delete_request(const std::string path)
+http_response client::delete_request(const std::string path)
 {
-    return std::move(http_response(std::bind(&client::curl_abstract_process,
+    return http_response(std::bind(&client::curl_abstract_process,
                                    this,
                                    path,
                                    "DELETE",
-                                   std::placeholders::_1)));
+                                   std::placeholders::_1));
 }
 
-http_response && client::post_request(const std::string path)
+http_response client::post_request(const std::string path)
 {
-    return std::move(http_response(std::bind(&client::curl_abstract_process,
+    return http_response(std::bind(&client::curl_abstract_process,
                                    this,
                                    path,
                                    "POST",
-                                   std::placeholders::_1)));
+                                   std::placeholders::_1));
 }
 
-http_response && client::patch_request(const std::string path)
+http_response client::patch_request(const std::string path)
 {
-    return std::move(http_response(std::bind(&client::curl_abstract_process,
+    return http_response(std::bind(&client::curl_abstract_process,
                                    this,
                                    path,
                                    "PATCH",
-                                   std::placeholders::_1)));
+                                   std::placeholders::_1));
 }
 
 }

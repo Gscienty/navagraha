@@ -32,7 +32,29 @@ int namespace_add::execute()
     ns.metadata.get().name = std::string(this->add_arg[0]);
     ns.metadata.get().labels.get().values()["name"] = std::string(this->add_arg[0]);
 
-    helper.build<kube_api::namespace_>().create(ns);
+    helper.build<kube_api::namespace_>().create(ns)
+        .response_switch()
+        .response_case<200, kubeent::namespace_>([] (kubeent::namespace_ & resp) -> void {
+                                                 std::cout
+                                                     << "create namespace \""
+                                                     << resp.metadata.get().name.const_get()
+                                                     << "\""
+                                                     << std::endl;
+                                                 })
+        .response_case<201, kubeent::namespace_>([] (kubeent::namespace_ & resp) -> void {
+                                                 std::cout
+                                                     << "created namespace \""
+                                                     << resp.metadata.get().name.const_get()
+                                                     << "\""
+                                                     << std::endl;
+                                                 })
+        .response_case<201, kubeent::namespace_>([] (kubeent::namespace_ & resp) -> void {
+                                                 std::cout
+                                                     << "accepted create namespace \""
+                                                     << resp.metadata.get().name.const_get()
+                                                     << "\""
+                                                     << std::endl;
+                                                 });
 
     return 0;
 }

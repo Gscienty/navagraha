@@ -9,37 +9,32 @@ namespace_::namespace_(CURL * curl, const std::string host)
 
 }
 
-kubeent::namespace_ namespace_::read(const std::string name)
+http_client::http_response namespace_::read(const std::string name)
 {
-    return this->get_request("/api/v1/namespaces/" + name)
-        .get<kubeent::namespace_>();
+    return this->get_request("/api/v1/namespaces/" + name);
 }
 
-kubeent::namespace_list namespace_::list()
+http_client::http_response namespace_::list()
 {
-    return this->get_request("/api/v1/namespaces")
-        .get<kubeent::namespace_list>();
+    return this->get_request("/api/v1/namespaces");
 }
 
-kubeent::namespace_ namespace_::create(kubeent::namespace_ & payload)
+http_client::http_response namespace_::create(kubeent::namespace_ & payload)
 {
     this->set_payload(payload);
-    return this->post_request("/api/v1/namespaces")
-        .get<kubeent::namespace_>();
+    return this->post_request("/api/v1/namespaces");
 }
 
-kubeent::namespace_ namespace_::put(const std::string name, kubeent::namespace_ & payload)
+http_client::http_response namespace_::put(const std::string name, kubeent::namespace_ & payload)
 {
     this->set_payload(payload);
-    return this->post_request("/api/v1/namespaces/" + name)
-        .get<kubeent::namespace_>();
+    return this->post_request("/api/v1/namespaces/" + name);
 }
 
-kubeent::status namespace_::delete_(const std::string name, kubeent::delete_options & opt)
+http_client::http_response namespace_::delete_(const std::string name, kubeent::delete_options & opt)
 {
     this->set_payload(opt);
-    return this->delete_request("/api/v1/namespaces/" + name)
-        .get<kubeent::status>();
+    return this->delete_request("/api/v1/namespaces/" + name);
 }
 
 }

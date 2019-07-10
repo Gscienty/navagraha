@@ -14,12 +14,12 @@ class namespace_ : public http_client::client {
 public:
     namespace_(CURL * curl, const std::string host);
 
-    kubeent::namespace_ read(const std::string name);
-    kubeent::namespace_list list();
+    http_client::http_response read(const std::string name);
+    http_client::http_response list();
 
-    kubeent::namespace_ create(kubeent::namespace_ & payload);
-    kubeent::namespace_ put(const std::string name, kubeent::namespace_ & payload);
-    kubeent::status delete_(const std::string name, kubeent::delete_options & opt);
+    http_client::http_response create(kubeent::namespace_ & payload);
+    http_client::http_response put(const std::string name, kubeent::namespace_ & payload);
+    http_client::http_response delete_(const std::string name, kubeent::delete_options & opt);
 };
 
 }

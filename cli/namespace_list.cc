@@ -32,11 +32,14 @@ int namespace_list::execute()
                                     config::get_instance().kube_ca,
                                     config::get_instance().kube_api_server);
 
-    kubeent::namespace_list namespaces = helper.build<kube_api::namespace_>().list();
+    helper.build<kube_api::namespace_>().list()
+        .response_switch()
+        .response_case<200, kubeent::namespace_list>([this] (kubeent::namespace_list & namespaces) -> void {
+                                                         std::for_each(namespaces.items.get().values().begin(),
+                                                                       namespaces.items.get().values().end(),
+                                                                       std::bind(&namespace_list::display_item, this, std::placeholders::_1));
+                                                     });
 
-    std::for_each(namespaces.items.get().values().begin(),
-                  namespaces.items.get().values().end(),
-                 std::bind(&namespace_list::display_item, this, std::placeholders::_1));
 
     return 0;
 }
