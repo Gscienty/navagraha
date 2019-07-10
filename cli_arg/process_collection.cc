@@ -12,12 +12,6 @@ process_collection::process_collection(int argc, char ** argv)
 
 }
 
-process_collection & process_collection::default_process(std::function<int ()> default_)
-{
-    this->default_ = default_;
-    return *this;
-}
-
 int process_collection::result()
 {
     if (this->hited) {

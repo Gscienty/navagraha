@@ -30,7 +30,18 @@ public:
         return *this;
     }
 
-    process_collection & default_process(std::function<int ()> default_);
+    template <typename T_Process> process_collection & default_process(T_Process process)
+    {
+        if (hited == true) {
+            return *this;
+        }
+        process_helper<T_Process> helper(process);
+
+        helper.bind(this->argc, this->argv)();
+        this->ret = helper.result();
+
+        return *this;
+    }
 
     int result();
 };
