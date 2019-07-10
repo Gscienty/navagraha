@@ -7,6 +7,7 @@
 #include "cli/monitor.hpp"
 #include "cli/gateway.hpp"
 #include "cli_arg/process_collection.hpp"
+#include "cli/cli_usage.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -24,5 +25,6 @@ int main(int argc, char ** argv)
         .add(navagraha::cli::monitor())
         .add(navagraha::cli::gateway())
         .add(navagraha::cli::config_map())
+        .default_process(navagraha::cli::cli_usage())
         .result();
 }
