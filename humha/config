@@ -6,4 +6,6 @@ NGX_ADDON_SRCS="$NGX_ADDON_SRCS \
                 $ngx_addon_dir/humha_caller.c \
                 $ngx_addon_dir/prometheus_collections.c \
                 $ngx_addon_dir/prometheus_metric_types.c \
-                $ngx_addon_dir/ngx_http_humha_prometheus.c"
+                $ngx_addon_dir/ngx_http_humha_prometheus.c \
+                $ngx_addon_dir/ngx_http_humha_conf.c \
+                $ngx_addon_dir/ngx_http_humha_upstream.c "
