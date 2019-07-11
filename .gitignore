@@ -5,3 +5,6 @@ __pycache__/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+*.local.sh
+*.out
+*.a

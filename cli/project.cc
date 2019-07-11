@@ -1,6 +1,7 @@
 #include "cli/project.hpp"
 #include "cli/project_init.hpp"
 #include "cli/project_build.hpp"
+#include "cli/project_usage.hpp"
 #include "cli_arg/process_collection.hpp"
 
 namespace navagraha {
@@ -22,6 +23,7 @@ int project::execute() {
                                                   this->name_flag.argv())
         .add(project_init())
         .add(project_build())
+        .add(project_usage())
         .result();
 }
 }
