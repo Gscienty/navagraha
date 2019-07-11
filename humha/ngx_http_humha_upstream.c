@@ -14,7 +14,7 @@ static ngx_int_t ngx_http_humha_upstream_input_filter_init(void * data);
 static ngx_int_t ngx_http_humha_upstream_chunked_filter(ngx_event_pipe_t * p, ngx_buf_t * buf);
 static ngx_int_t ngx_http_humha_upstream_non_buffered_chunked_filter(void * data, ssize_t bytes);
 
-ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_conf_t * lcf, ngx_http_humha_upstream_resolve_fptr_t resolve_fptr)
+ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_conf_t * lcf, ngx_http_humha_upstream_resolve_fptr_t resolve_fptr, ngx_int_t is_unixsock)
 {
     ngx_int_t ret = 0;
     ngx_http_upstream_t * u;
@@ -39,14 +39,6 @@ ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_con
     }
     ngx_http_set_ctx(r, url, ngx_http_humha_module);
 
-    uri_len = r->uri_end - r->uri_start;
-    url->len = lcf->call_namespace.len + uri_len;
-    url->data = (u_char *) ngx_palloc(r->pool, url->len + 1);
-    ngx_memzero(url->data, url->len + 1);
-    ngx_memcpy(url->data, r->uri_start + 1, uri_len - 1);
-    url->data[uri_len - 1] = '.';
-    ngx_memcpy(url->data + uri_len, lcf->call_namespace.data, lcf->call_namespace.len);
-
     u->create_request = ngx_http_humha_upstream_create_request;
     u->abort_request = ngx_http_humha_upstream_abort_request;
     u->process_header = ngx_http_humha_upstream_process_status_line;
@@ -55,6 +47,20 @@ ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_con
     u->resolved = (ngx_http_upstream_resolved_t *) ngx_palloc(r->pool, sizeof(ngx_http_upstream_resolved_t));
     if (u->resolved == NULL) {
         return NGX_ERROR;
+    }
+
+    if (is_unixsock != 0) {
+        url->data = lcf->executor.data;
+        url->len = lcf->executor.len;
+    }
+    else {
+        uri_len = r->uri_end - r->uri_start;
+        url->len = lcf->call_namespace.len + uri_len;
+        url->data = (u_char *) ngx_palloc(r->pool, url->len + 1);
+        ngx_memzero(url->data, url->len + 1);
+        ngx_memcpy(url->data, r->uri_start + 1, uri_len - 1);
+        url->data[uri_len - 1] = '.';
+        ngx_memcpy(url->data + uri_len, lcf->call_namespace.data, lcf->call_namespace.len);
     }
     if (resolve_fptr(r->pool, u->resolved, url) != NGX_OK) {
         return NGX_ERROR;

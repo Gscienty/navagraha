@@ -15,6 +15,7 @@ typedef struct {
     ngx_str_t call_namespace;
     ngx_str_t executor;
     ngx_str_t args[NGX_HTTP_HUMHA_EXECUTOR_ARGS_MAX_COUNT];
+    ngx_str_t upstream_host;
 
     prome_conf prome;
 } ngx_http_humha_loc_conf_t;

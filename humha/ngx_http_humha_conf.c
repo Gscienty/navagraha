@@ -28,6 +28,9 @@ void * ngx_http_humha_create_loc_conf(ngx_conf_t * cf)
         conf->args->len = 0;
     }
 
+    conf->upstream_host.data = NULL;
+    conf->upstream_host.len = 0;
+
     conf->upstream.connect_timeout = 60000;
     conf->upstream.send_timeout = 60000;
     conf->upstream.read_timeout = 60000;
