@@ -194,7 +194,7 @@ static ngx_int_t ngx_http_humha_unixsock_resolve(ngx_pool_t * pool, ngx_http_ups
     resolved->naddrs = 1;
 
     peer_sock->sun_family = AF_UNIX;
-    ngx_memcpy(peer_sock->sun_path, url->data + 7, url->len - 7);
+    ngx_memcpy(peer_sock->sun_path, url->data, url->len);
 
     return NGX_OK;
 }
@@ -223,13 +223,13 @@ static ngx_int_t ngx_http_humha_http_resolve(ngx_pool_t * pool, ngx_http_upstrea
     resolved->sockaddr = (struct sockaddr *) peer_sock;
     resolved->socklen = sizeof(struct sockaddr_in);
     resolved->naddrs = 1;
-    resolved->port = port;
+    resolved->port = (in_port_t) port;
     host = gethostbyname((char *) domain_name);
     if (host == NULL) {
         return NGX_ERROR;
     }
     peer_sock->sin_family = AF_INET;
-    peer_sock->sin_port = htons((in_port_t) 80);
+    peer_sock->sin_port = htons((in_port_t) port);
     peer_ip_str = inet_ntoa(*(struct in_addr *) (host->h_addr_list[0]));
     peer_sock->sin_addr.s_addr = inet_addr(peer_ip_str);
 
@@ -255,8 +255,8 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
         if (ngx_strncmp(lcf->executor.data, "unix://", 7) == 0) {
            ret = ngx_http_humha_upstream(r, lcf, ngx_http_humha_unixsock_resolve, 1);
         }
-        if (ngx_strncmp(lcf->executor.data, "http://", 7) == 0) {
-           ret = ngx_http_humha_upstream(r, lcf, ngx_http_humha_http_resolve, 1);
+        else if (ngx_strncmp(lcf->executor.data, "http://", 7) == 0) {
+            ret = ngx_http_humha_upstream(r, lcf, ngx_http_humha_http_resolve, 1);
         }
         else {
             ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);

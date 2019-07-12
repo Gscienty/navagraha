@@ -14,7 +14,7 @@ static ngx_int_t ngx_http_humha_upstream_input_filter_init(void * data);
 static ngx_int_t ngx_http_humha_upstream_chunked_filter(ngx_event_pipe_t * p, ngx_buf_t * buf);
 static ngx_int_t ngx_http_humha_upstream_non_buffered_chunked_filter(void * data, ssize_t bytes);
 
-ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_conf_t * lcf, ngx_http_humha_upstream_resolve_fptr_t resolve_fptr, ngx_int_t is_unixsock)
+ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_conf_t * lcf, ngx_http_humha_upstream_resolve_fptr_t resolve_fptr, ngx_int_t is_loc_call)
 {
     ngx_int_t ret = 0;
     ngx_http_upstream_t * u;
@@ -49,9 +49,9 @@ ngx_int_t ngx_http_humha_upstream(ngx_http_request_t * r, ngx_http_humha_loc_con
         return NGX_ERROR;
     }
 
-    if (is_unixsock != 0) {
-        url->data = lcf->executor.data;
-        url->len = lcf->executor.len;
+    if (is_loc_call != 0) {
+        url->data = lcf->executor.data + 7;
+        url->len = lcf->executor.len - 7;
     }
     else {
         uri_len = r->uri_end - r->uri_start;
