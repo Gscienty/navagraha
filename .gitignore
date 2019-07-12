@@ -8,3 +8,5 @@ cmake_install.cmake
 *.local.sh
 *.out
 *.a
+build/
+.gradle/
