@@ -16,6 +16,7 @@ static ngx_int_t ngx_http_humha_process_output(ngx_http_request_t * r, humha_pro
 
 static ngx_int_t ngx_http_humha_call_resolve(ngx_pool_t * pool, ngx_http_upstream_resolved_t * resolved, ngx_str_t * url);
 static ngx_int_t ngx_http_humha_unixsock_resolve(ngx_pool_t * pool, ngx_http_upstream_resolved_t * resolved, ngx_str_t * url);
+static ngx_int_t ngx_http_humha_http_resolve(ngx_pool_t * pool, ngx_http_upstream_resolved_t * resolved, ngx_str_t * url);
 
 static ngx_int_t ngx_http_humha_request_is_async(ngx_list_t * headers, ngx_str_t * async_cb);
 
@@ -117,7 +118,7 @@ static char * ngx_http_humha_recv(ngx_conf_t * cf, ngx_command_t * cmd, void * c
     }
     humha_conf->executor.data = (u_char *) executor_executor_base;
     humha_conf->executor.len = ngx_strlen(executor_executor_base);
-    if (ngx_strncmp(executor_executor_base, "unix://", 7) == 0) {
+    if (ngx_strncmp(executor_executor_base, "unix://", 7) == 0 || ngx_strncmp(executor_executor_base, "http://", 7) == 0) {
         return NGX_CONF_OK;
     }
 
@@ -198,6 +199,43 @@ static ngx_int_t ngx_http_humha_unixsock_resolve(ngx_pool_t * pool, ngx_http_ups
     return NGX_OK;
 }
 
+static ngx_int_t ngx_http_humha_http_resolve(ngx_pool_t * pool, ngx_http_upstream_resolved_t * resolved, ngx_str_t * url)
+{
+    struct sockaddr_in * peer_sock = NULL;
+    struct hostent * host = NULL;
+    char * peer_ip_str = NULL;
+    char * domain_name = ngx_palloc(pool, url->len + 1);
+    char * port_split = NULL;
+    int port = 80;
+
+    ngx_memcpy(domain_name, url->data, url->len + 1);
+
+    port_split = ngx_strchr(domain_name, ':');
+    if (port_split != NULL) {
+        *port_split = 0;
+        port = atoi(port_split + 1);
+    }
+
+    peer_sock = (struct sockaddr_in *) ngx_palloc(pool, sizeof(struct sockaddr_in));
+    if (peer_sock == NULL) {
+        return NGX_ERROR;
+    }
+    resolved->sockaddr = (struct sockaddr *) peer_sock;
+    resolved->socklen = sizeof(struct sockaddr_in);
+    resolved->naddrs = 1;
+    resolved->port = port;
+    host = gethostbyname((char *) domain_name);
+    if (host == NULL) {
+        return NGX_ERROR;
+    }
+    peer_sock->sin_family = AF_INET;
+    peer_sock->sin_port = htons((in_port_t) 80);
+    peer_ip_str = inet_ntoa(*(struct in_addr *) (host->h_addr_list[0]));
+    peer_sock->sin_addr.s_addr = inet_addr(peer_ip_str);
+
+    return NGX_OK;
+}
+
 
 #define ngx_chain_free_link(p, x) ({\
                                    ngx_chain_t * __tmp = (x)->next;\
@@ -216,6 +254,9 @@ static ngx_int_t ngx_http_humha_handler(ngx_http_request_t * r)
     if (r->uri.len == 1) {
         if (ngx_strncmp(lcf->executor.data, "unix://", 7) == 0) {
            ret = ngx_http_humha_upstream(r, lcf, ngx_http_humha_unixsock_resolve, 1);
+        }
+        if (ngx_strncmp(lcf->executor.data, "http://", 7) == 0) {
+           ret = ngx_http_humha_upstream(r, lcf, ngx_http_humha_http_resolve, 1);
         }
         else {
             ret = ngx_http_read_client_request_body(r, ngx_http_humha_readed_body_handler);
