@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'nava.enter.Enter'
+
+dependencies {
+    compile project(':model')
+    compile project(':function')
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Nava Func',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+uploadArchives {
+    repositories {
+        flatDir {
+            dirs 'repos'
+        }
+    }
+}
