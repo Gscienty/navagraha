@@ -18,5 +18,12 @@ http_client::http_response pod::create(const std::string namespace_, kubeent::po
                               + "/pods");
 }
 
+http_client::http_response pod::list(const std::string namespace_)
+{
+    return this->get_request("/api/v1/namespaces/"
+                             + namespace_
+                             + "/pods");
+}
+
 }
 }

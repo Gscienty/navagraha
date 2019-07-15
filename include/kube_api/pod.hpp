@@ -13,6 +13,8 @@ public:
     pod(CURL * curl, const std::string host);
 
     http_client::http_response create(const std::string namespace_, kubeent::pod pod_);
+
+    http_client::http_response list(const std::string namespace_);
 };
 
 }

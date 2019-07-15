@@ -1,5 +1,6 @@
 #include "cli/gateway.hpp"
 #include "cli/gateway_init.hpp"
+#include "cli/gateway_list.hpp"
 #include "cli_arg/process_collection.hpp"
 
 namespace navagraha {
@@ -22,6 +23,7 @@ int gateway::execute()
     return navagraha::cli_arg::process_collection(this->name_flag.argc(),
                                                   this->name_flag.argv())
         .add(gateway_init())
+        .add(gateway_list())
         .result();
 }
 
