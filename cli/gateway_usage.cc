@@ -14,6 +14,9 @@ int gateway_usage::execute()
         << "  " << "  " << "   " << "usage:" << "  " << "nava gateway init [--policy {policy_name}] [--namespace {namespace}]"  << std::endl
         << "  " << "  " << "   " << "  " << "policy_name" << " " << "node pull docker image policy, values: \"Always\"(default), \"IfNotPresent\", \"Never\"" << std::endl
         << "  " << "  " << "   " << "  " << "namespace" << "   " << "namespaces where API gateway" << std::endl
+        << "  " << "list" << "   " << "get nava API gateway." << std::endl
+        << "  " << "  " << "   " << "usage:" << "  " << "nava gateway list [--namespace {namespace}]"  << std::endl
+        << "  " << "  " << "   " << "  " << "namespace" << "   " << "namespaces where API gateway" << std::endl
         << std::endl;
     return 0;
 }
