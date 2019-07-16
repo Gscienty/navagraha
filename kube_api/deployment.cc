@@ -9,17 +9,16 @@ deployment::deployment(CURL * curl, const std::string host)
 
 }
 
-kubeent::deployment deployment::create(const std::string namespace_,
+http_client::http_response deployment::create(const std::string namespace_,
                                        kubeent::deployment & deployment_)
 {
     this->set_payload(deployment_);
     return this->post_request("/apis/apps/v1/namespaces/"
                               + namespace_
-                              + "/deployments")
-        .get<kubeent::deployment>();
+                              + "/deployments");
 }
 
-kubeent::deployment deployment::replace(const std::string namespace_,
+http_client::http_response deployment::replace(const std::string namespace_,
                                         const std::string name,
                                         kubeent::deployment & deployment_)
 {
@@ -27,11 +26,10 @@ kubeent::deployment deployment::replace(const std::string namespace_,
     return this->put_request("/apis/apps/v1/namespaces/"
                              + namespace_
                              + "/deployments/"
-                             + name)
-        .get<kubeent::deployment>();
+                             + name);
 }
 
-kubeent::status deployment::delete_(const std::string namespace_,
+http_client::http_response deployment::delete_(const std::string namespace_,
                                     const std::string name,
                                     kubeent::delete_options & options)
 {
@@ -39,40 +37,35 @@ kubeent::status deployment::delete_(const std::string namespace_,
     return this->delete_request("/apis/apps/v1/namespaces/"
                                 + namespace_
                                 + "/deployments/"
-                                + name)
-        .get<kubeent::status>();
+                                + name);
 }
 
-kubeent::status deployment::delete_collection(const std::string namespace_)
+http_client::http_response deployment::delete_collection(const std::string namespace_)
 {
     return this->delete_request("/apis/apps/v1/namespaces/"
                                 + namespace_
-                                + "/deployments")
-        .get<kubeent::status>();
+                                + "/deployments");
 }
 
-kubeent::deployment deployment::read(const std::string namespace_,
+http_client::http_response deployment::read(const std::string namespace_,
                                      const std::string name)
 {
     return this->get_request("/apis/apps/v1/namespaces/"
                              + namespace_
                              + "/deployments/"
-                             + name)
-        .get<kubeent::deployment>();
+                             + name);
 }
 
-kubeent::deployment_list deployment::list(const std::string namespace_)
+http_client::http_response deployment::list(const std::string namespace_)
 {
     return this->get_request("/apis/apps/v1/namespaces/"
                              + namespace_
-                             + "/deployments")
-        .get<kubeent::deployment_list>();
+                             + "/deployments");
 }
 
-kubeent::deployment_list deployment::list_all_namespace()
+http_client::http_response deployment::list_all_namespace()
 {
-    return this->get_request("/apis/apps/v1/deployments")
-        .get<kubeent::deployment_list>();
+    return this->get_request("/apis/apps/v1/deployments");
 }
 
 }

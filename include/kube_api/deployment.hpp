@@ -14,25 +14,25 @@ class deployment : public http_client::client {
 public:
     deployment(CURL * curl, const std::string host);
 
-    kubeent::deployment create(const std::string namespace_,
+    http_client::http_response create(const std::string namespace_,
                                kubeent::deployment & deployment_);
 
-    kubeent::deployment replace(const std::string namespace_,
+    http_client::http_response replace(const std::string namespace_,
                                 const std::string name,
                                 kubeent::deployment & deployment_);
 
-    kubeent::status delete_(const std::string namespace_,
+    http_client::http_response delete_(const std::string namespace_,
                             const std::string name,
                             kubeent::delete_options & options);
 
-    kubeent::status delete_collection(const std::string namespace_);
+    http_client::http_response delete_collection(const std::string namespace_);
 
-    kubeent::deployment read(const std::string namespace_,
+    http_client::http_response read(const std::string namespace_,
                              const std::string name);
 
-    kubeent::deployment_list list(const std::string namespace_);
+    http_client::http_response list(const std::string namespace_);
 
-    kubeent::deployment_list list_all_namespace();
+    http_client::http_response list_all_namespace();
 };
 
 }
