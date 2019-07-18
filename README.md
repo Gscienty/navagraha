@@ -11,3 +11,21 @@ Navagraha（九曜）是基于Kerbernetes和Docker实现的一种函数即服务
 1. nava-cli
 2. API Gateway Docker image
 3. Humha Docker image
+
+### nava-cli 的编译方式
+
+该模块的依赖包括以下内容：
+
+* cmake
+* make
+* gcc
+* libcurl
+* libtar
+* libgit2
+
+该可执行文件现阶段仅支持在linux下使用，需要预先安装这些依赖的工具以及第三方链接库后才能正常编译，如果需要在CentOS下进行编译和使用，则。
+```
+yum install -y cmake make gcc libcurl-devel libtar-devel libgit2-devel
+cmake .
+make
+```
