@@ -1,0 +1,22 @@
+{
+  "name": "navagraha-docs",
+  "version": "1.0.0",
+  "description": "navagraha docs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "bash deploy.sh",
+    "docs:build": "vuepress build .",
+    "docs:dev": "vuepress dev ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gscienty/navagraha.git"
+  },
+  "author": "Gscienty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gscienty/navagraha/issues"
+  },
+  "homepage": "https://github.com/Gscienty/navagraha#readme"
+}
