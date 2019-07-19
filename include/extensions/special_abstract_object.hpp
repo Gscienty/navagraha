@@ -6,7 +6,8 @@
 namespace navagraha {
 namespace extensions {
 
-template<typename T, abstract_object_type Abstract_Object_Type>
+// common_object common_list special_list 的抽象类，主要是用于对 abstract_object 的封装
+template<abstract_object_type Abstract_Object_Type>
 class special_abstract_object {
 private:
     abstract_object _obj;

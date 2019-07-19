@@ -1,313 +1,50 @@
 #ifndef _NAVAGRAHA_EXTENSION_FIELD_H
 #define _NAVAGRAHA_EXTENSION_FIELD_H
 
+/**
+ *
+ * 该文件主要是处理实体类各个字段的序列化与反序列化功能。
+ * 每个消息实体中的字段，可以归纳包括五类字段类型：
+ * 1. 对象类型
+ * 2. 列表类型
+ * 3. 字符串类型
+ * 4. 数字类型
+ * 5. 布尔类型
+ * 其中对象类型和列表类型可以通过重写实体抽象类的方式实现序列化与反序列化，
+ * 而字符串类型、数字类型和布尔类型是基础类型，无法对基础类型扩充序列化和反序列化方法。
+ * 因此将这五类类型的序列化和反序列化统一由
+ * template <typename T_Type> struct serializer 结构体进行序列化与反序列化的操作
+ * 针对字符串类型、数字类型和布尔类型，需要进行模板特例化操作；
+ * 针对对象类型和列表类型，就可以调用抽象类的序列化与反序列化方法进行。
+ *
+ */
+
 #include "extensions/omittable.hpp"
 #include "extensions/static_constructable.hpp"
+#include "extensions/abstract_object.hpp"
+#include "extensions/serializer.hpp"
 #include <functional>
 #include <sstream>
 #include <string.h>
 #include <list>
-#include <string>
-#include <map>
-#include <vector>
+
 
 namespace navagraha {
 namespace extensions {
 
-enum abstract_object_type {
-    abstract_object_type_obj,
-    abstract_object_type_list,
-    abstract_object_type_str,
-    abstract_object_type_num,
-    abstract_object_type_boolean
-};
 
-struct abstract_object {
-    abstract_object_type type;
-    union {
-        int num;
-        bool boolean;
-    } val;
-    std::string str;
-    std::map<std::string, abstract_object> obj;
-    std::vector<abstract_object> list;
 
-    abstract_object();
-    abstract_object(int val);
-    abstract_object(bool val);
-    abstract_object(const char * const val);
-    abstract_object(std::string val);
-
-    abstract_object & serialize(std::ostringstream & str);
-    abstract_object & deserialize(std::istringstream & str);
-    abstract_object to_abstract();
-};
-
-template <typename T_Type> struct serializer {
-    static void serialize(T_Type & obj, std::ostringstream & str)
-    {
-        obj.serialize(str);
-    }
-
-    static void deserialize(T_Type & obj, std::istringstream & str)
-    {
-        obj.deserialize(str);
-    }
-
-    static abstract_object to_abstract(T_Type & obj)
-    {
-        return obj.to_abstract();
-    }
-
-    static T_Type to_special(abstract_object & obj)
-    {
-        return T_Type::to_special(obj);
-    }
-};
-
-template <> struct serializer<std::string> {
-    static void serialize(std::string & obj, std::ostringstream & str)
-    {
-        str.put('"');
-        str.write(obj.data(), obj.size());
-        str.put('"');
-    }
-
-    static void deserialize(std::string & obj, std::istringstream & str)
-    {
-        char c;
-        while (c = str.get(), c != '"');
-        for (c = str.get(); c != '"' || (*obj.rbegin() == '\\'); c = str.get()) {
-            obj.push_back(c);
-        }
-    }
-
-    static abstract_object to_abstract(std::string & obj)
-    {
-        return abstract_object(obj);
-    }
-
-    static std::string to_special(abstract_object & obj)
-    {
-        if (obj.type != abstract_object_type_str) {
-            return std::string();
-        }
-        return obj.str;
-    }
-};
-
-template <> struct serializer<int> {
-    static void serialize(int & obj, std::ostringstream & str)
-    {
-        std::string number = std::to_string(obj);
-        str.write(number.data(), number.size());
-    }
-
-    static void deserialize(int & obj, std::istringstream & str)
-    {
-        std::stringstream num_str;
-        while (str.peek() < '0' || '9' < str.peek()) {
-            str.get();
-        }
-        while ('0' <= str.peek() && str.peek() <= '9') {
-            num_str.put(str.get());
-        }
-        obj = std::stoi(num_str.str());
-    }
-
-    static abstract_object to_abstract(int & obj)
-    {
-        return abstract_object(obj);
-    }
-
-    static int to_special(abstract_object & obj)
-    {
-        if (obj.type != abstract_object_type_num) {
-            return 0;
-        }
-        return obj.val.num;
-    }
-};
-
-template <> struct serializer<bool> {
-    static void serialize(bool & obj, std::ostringstream & str)
-    {
-        std::string boolean(obj ? "true" : "false");
-        str.write(boolean.data(), boolean.size());
-    }
-
-    static void deserialize(bool & obj, std::istringstream & str)
-    {
-        std::stringstream bool_str;
-        while (str.peek() < 'a' || 'z' < str.peek()) {
-            str.get();
-        }
-        while ('a' <= str.peek() && str.peek() <= 'z') {
-            bool_str.put(str.get());
-        }
-        std::string bool_ = bool_str.str();
-
-        if (bool_.compare("true") == 0) {
-            obj = true;
-        }
-        else if (bool_.compare("false") == 0) {
-            obj = false;
-        }
-    }
-
-    static abstract_object to_abstract(bool & obj)
-    {
-        return abstract_object(obj);
-    }
-
-    static bool to_special(abstract_object & obj)
-    {
-        if (obj.type != abstract_object_type_boolean) {
-            return false;
-        }
-        return obj.val.boolean;
-    }
-};
-
-template <> struct serializer<abstract_object> {
-    static void serialize(abstract_object & obj, std::ostringstream & str)
-    {
-        bool first_field = true;
-        switch (obj.type) {
-        case abstract_object_type_boolean:
-            serializer<bool>::serialize(obj.val.boolean, str);
-            break;
-        case abstract_object_type_str:
-            serializer<std::string>::serialize(obj.str, str);
-            break;
-        case abstract_object_type_num:
-            serializer<int>::serialize(obj.val.num, str);
-            break;
-        case abstract_object_type_obj:
-            str.put('{');
-            for (auto & item : obj.obj) {
-                if (first_field) {
-                    first_field = false;
-                }
-                else {
-                    str.put(',');
-                }
-                str.put('"');
-                str.write(item.first.c_str(), item.first.size());
-                str.put('"');
-                str.put(':');
-                serializer<abstract_object>::serialize(item.second, str);
-            }
-            str.put('}');
-            break;
-        case abstract_object_type_list:
-            str.put('[');
-            for (auto & item : obj.list) {
-                if (first_field) {
-                    first_field = false;
-                }
-                else {
-                    str.put(',');
-                }
-                serializer<abstract_object>::serialize(item, str);
-            }
-            str.put(']');
-        }
-    }
-
-    static void deserialize(abstract_object & obj, std::istringstream & str)
-    {
-        std::ostringstream key_str;
-
-        while (str.peek() != '"'
-               && (str.peek() < 'a' || 'z' < str.peek())
-               && str.peek() != '{'
-               && str.peek() != '['
-               && (str.peek() < '0' || '9' < str.peek())) {
-            str.get();
-        }
-
-        switch (str.peek()) {
-        case '"':
-            obj.type = abstract_object_type_str;
-            serializer<std::string>::deserialize(obj.str, str);
-            break;
-        case 'a' ... 'z':
-            obj.type = abstract_object_type_boolean;
-            serializer<bool>::deserialize(obj.val.boolean, str);
-            break;
-        case '0' ... '9':
-            obj.type = abstract_object_type_num;
-            serializer<int>::deserialize(obj.val.num, str);
-            break;
-        case '{':
-            obj.type = abstract_object_type_obj;
-            str.get();
-            while (str.peek() != '}') {
-                key_str.str("");
-                while (str.peek() != '"' && str.peek() != '}') {
-                    str.get();
-                }
-                if (str.peek() == '}') {
-                    break;
-                }
-                str.get();
-                while(str.peek() != '"') {
-                    key_str.put(str.get());
-                }
-                while (str.peek() != ':') {
-                    str.get();
-                }
-                std::string key = key_str.str();
-                abstract_object val;
-                serializer<abstract_object>::deserialize(val, str);
-                obj.obj[key] = val;
-            }
-            str.get();
-            break;
-        case '[':
-            obj.type = abstract_object_type_list;
-            str.get();
-            while (str.peek() != ']') {
-                while (str.peek() != '"'
-                       && (str.peek() < 'a' || 'z' < str.peek())
-                       && str.peek() != '{'
-                       && str.peek() != '['
-                       && (str.peek() < '0' || '9' < str.peek())
-                       && str.peek() != ']') {
-                    str.get();
-                }
-                if (str.peek() == ']') {
-                    break;
-                }
-                abstract_object val;
-                serializer<abstract_object>::deserialize(val, str);
-                obj.list.push_back(val);
-            }
-            str.get();
-        }
-    }
-
-    static abstract_object to_abstract(abstract_object & obj)
-    {
-        return obj;
-    }
-
-    static abstract_object to_special(abstract_object & obj)
-    {
-        return obj;
-    }
-};
-
-template <typename T_Type,
-         const char * T_Name,
-         typename T_Serializer = serializer<T_Type>>
+// 实体类中字段的封装
+template <typename T_Type, // 该字段的类型
+         const char * T_Name, // 该字段的名字或Key值
+         typename T_Serializer = serializer<T_Type>> // 序列化方法，默认为serializer，该方法通常是为实现json的序列化/反序列化功能
 class field : public omittable<T_Type> {
 public:
     const char * key = T_Name;
 
     field() { }
 
+    // copy 构造函数
     field(const field<T_Type, T_Name, T_Serializer> & copyed)
     {
         //this->key = copyed.key;
@@ -316,6 +53,7 @@ public:
         }
     }
 
+    // move 构造函数
     field(field<T_Type, T_Name, T_Serializer> && moved)
     {
         //this->key = moved.key;
@@ -324,6 +62,7 @@ public:
         }
     }
 
+    // 重载 = 
     field & operator=(const field<T_Type, T_Name, T_Serializer> copyed)
     {
         //this->key = copyed.key;
@@ -340,6 +79,7 @@ public:
         return *this;
     }
 
+    // 字段的序列化
     void serialize(std::ostringstream & str)
     {
         str.put('"');
@@ -349,6 +89,7 @@ public:
         T_Serializer::serialize(this->get(), str);
     }
 
+    // 字段的反序列化
     void deserialize(std::istringstream & str)
     {
         while (str.peek() != ':') {
@@ -357,18 +98,21 @@ public:
         T_Serializer::deserialize(this->get(), str);
     }
 
+    // 字段的特例化
     void to_special(abstract_object & obj)
     {
         T_Type special_val = T_Serializer::to_special(obj);
         this->omittable<T_Type>::get() = special_val;
     }
 
+    // 字段的抽象化
     abstract_object to_abstract()
     {
         return serializer<T_Type>::to_abstract(this->get());
     }
 };
 
+// 字段序列化函数指针封装
 template <typename T_Field>
 inline
 std::pair<bool, std::function<void (std::ostringstream &)>>
@@ -380,6 +124,7 @@ field_serializer(T_Field & field)
                                     std::placeholders::_1));
 }
 
+// 字段反序列化函数指针封装
 template <typename T_Field>
 inline
 std::pair<std::string, std::function<void (std::istringstream &)>>
@@ -391,6 +136,7 @@ field_deserialize(T_Field & field)
                                     std::placeholders::_1));
 }
 
+// 字段序列化工具
 void fields_serialize(std::list<std::pair<bool, std::function<void (std::ostringstream &)>>> & serializers,
                       std::ostringstream & str);
 

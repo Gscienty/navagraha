@@ -8,7 +8,7 @@ namespace navagraha {
 namespace extensions {
 
 template <typename Special_Type>
-class special_list : public special_abstract_object<special_list<Special_Type>, abstract_object_type_list> {
+class special_list : public special_abstract_object<abstract_object_type_list> {
 private:
     std::vector<Special_Type> _list;
 public:

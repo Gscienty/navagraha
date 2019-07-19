@@ -11,7 +11,7 @@
 namespace navagraha {
 namespace extensions {
 
-class common_object : public special_abstract_object<common_object, abstract_object_type_obj> {
+class common_object : public special_abstract_object<abstract_object_type_obj> {
 public:
     std::map<std::string, abstract_object> & values();
 
