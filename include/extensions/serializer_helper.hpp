@@ -11,6 +11,7 @@
 namespace navagraha {
 namespace extensions {
 
+// 序列化/反序列化工具中工作类型
 enum serializer_helper_type {
     serializer_helper_type_serialize,
     serializer_helper_type_deserialize,
@@ -18,6 +19,7 @@ enum serializer_helper_type {
     serializer_helper_type_to_special
 };
 
+// 序列化/反序列化工具，包括序列化和反序列化两个字段结合
 class serializer_helper {
 private:
     serializer_helper_type  _type;
@@ -25,6 +27,8 @@ private:
     std::map<std::string, std::function<void (std::istringstream &)>> _deserializers;
     common_object _obj;
 public:
+    // 当进行序列化或反序列化过程中，向序列化或反序列化字段集合中添加字段
+    // 当进行抽象化或特例化过程中，将字段装填进common_object中，或将common_object中的值特例化到field中
     template <typename T_Field> serializer_helper & add(T_Field & field)
     {
         switch (this->_type) {
