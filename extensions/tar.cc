@@ -70,7 +70,6 @@ bool tar::ignore(const std::string & filename, bool is_file)
 
 void tar::direct_each(std::string real_direct_name, std::string logic_direct_name)
 {
-    int ret;
     DIR * dir = opendir(real_direct_name.c_str());
     if (dir == NULL) {
         return;
@@ -85,7 +84,7 @@ void tar::direct_each(std::string real_direct_name, std::string logic_direct_nam
         }
         else if (node->d_type != DT_DIR) {
             if (this->ignore(log_path, true) == false) {
-                ret = tar_append_file(this->tar_handler, const_cast<char *>(real_path.c_str()), const_cast<char *>(log_path.c_str()));
+                tar_append_file(this->tar_handler, const_cast<char *>(real_path.c_str()), const_cast<char *>(log_path.c_str()));
             }
         }
     }
