@@ -1,18 +1,21 @@
 #include "docker_api/images.hpp"
-#include "extensions/tar.hpp"
 #include <time.h>
 #include <unistd.h>
+#include "extensions/tar.hpp"
 
 namespace navagraha {
 namespace docker_api {
-
-
-images::images(CURL * curl)
-    : http_client::unix_socket_client(curl)
+images::images(CURL * curl, const std::string host)
+    : http_client::client(curl, host)
 {
 
 }
 
+images::images(CURL * curl)
+    : http_client::client(curl, "http://localhost")
+{
+
+}
 
 extensions::special_list<dockerent::image> images::list()
 {
