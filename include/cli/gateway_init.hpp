@@ -18,7 +18,8 @@ private:
     cli_arg::arg<CLI_GATEWAY_INIT_IMAGE_PULL_POLICY, 1> image_pull_policy;
     cli_arg::arg<CLI_GATEWAY_INIT_NAMESPACE, 1> namespace_arg;
 
-    void create_pod(std::string namespace_, http_client::curl_helper & helper);
+    void create_deployment(std::string namespace_, http_client::curl_helper & helper);
+    void create_service(std::string namespace_, http_client::curl_helper & helper);
 public:
     virtual void bind(cli_arg::process_helper<gateway_init> & helper) override;
     virtual int execute() override;

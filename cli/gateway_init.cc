@@ -1,7 +1,9 @@
 #include "cli/config.hpp"
 #include "cli/gateway_init.hpp"
-#include "kubeent/pod.hpp"
-#include "kube_api/pod.hpp"
+#include "kubeent/service.hpp"
+#include "kubeent/deployment.hpp"
+#include "kube_api/deployment.hpp"
+#include "kube_api/service.hpp"
 
 namespace navagraha {
 namespace cli {
@@ -26,33 +28,69 @@ bool gateway_init::satisfy() const
 }
 
 
-void gateway_init::create_pod(std::string namespace_, http_client::curl_helper & helper)
+void gateway_init::create_deployment(std::string namespace_, http_client::curl_helper & helper)
 {
-    kubeent::pod pod;
+    kubeent::deployment deploy;
 
-    pod.api_version = std::string("v1");
-    pod.kind = std::string("Pod");
-    pod.metadata.get().name = std::string("nava-api-gateway");
-    pod.metadata.get().namespace_ = std::string(namespace_);
-    pod.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha-apigw-pod");
-    pod.metadata.get().labels.get().values()["nava_app"] = std::string("nava-apigw");
-    pod.spec.get().containers.get().values().push_back(kubeent::container());
-    pod.spec.get().containers.get().values().back().name = std::string("nava-apigw");
-    pod.spec.get().containers.get().values().back().image = std::string("nava/apigw:v0.1");
-    pod.spec.get().containers.get().values().back().ports.get().values().push_back(kubeent::container_port());
-    pod.spec.get().containers.get().values().back().ports.get().values().back().container_port_ = 80;
-    pod.spec.get().containers.get().values().back().env.get().values().push_back(kubeent::env_var());
-    pod.spec.get().containers.get().values().back().env.get().values().back().name = std::string("FUNC_NAMESPACE");
-    pod.spec.get().containers.get().values().back().env.get().values().back().value = std::string(namespace_);
+    deploy.api_version = std::string("apps/v1");
+    deploy.kind = std::string("Deployment");
+    deploy.metadata.get().name = std::string("nava-api-gateway-deploy");
+    deploy.metadata.get().labels.get().values()["nava_app"] = std::string("nava-api-gateway-deploy");
+    deploy.spec.get().replicas = 1;
+    deploy.spec.get().selector.get().match_labels.get()
+        .values()["common_domain"] = std::string("navagraha-apigw-pod");
+    deploy.spec.get().selector.get().match_labels.get()
+        .values()["nava_app"] = std::string("nava-apigw");
+    deploy.spec.get().template_.get().metadata.get().labels.get()
+        .values()["common_domain"] = std::string("navagraha-apigw-pod");
+    deploy.spec.get().template_.get().metadata.get().labels.get()
+        .values()["nava_app"] = std::string("nava-apigw");
+    deploy.spec.get().template_.get().spec.get().containers.get().values()
+        .push_back(kubeent::container());
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .name = std::string("nava-apigw");
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .image = std::string("nava/apigw:v0.1");
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .ports.get().values().push_back(kubeent::container_port());
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .ports.get().values().front().container_port_ = 80;
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .env.get().values().push_back(kubeent::env_var());
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .env.get().values().front().name = std::string("FUNC_NAMESPACE");
+    deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+        .env.get().values().front().value = std::string(namespace_);
 
     if (this->image_pull_policy.used()) {
-        pod.spec.get().containers.get().values().back().image_pull_policy = std::string(this->image_pull_policy[0]);
+        deploy.spec.get().template_.get().spec.get().containers.get().values().front()
+            .image_pull_policy = std::string(this->image_pull_policy[0]);
     }
 
-    helper.build<kube_api::pod>()
-        .create(namespace_, pod)
+    helper.build<kube_api::deployment>()
+        .create(namespace_, deploy)
         .response_switch()
-        .response_case<201, kubeent::pod>([] (kubeent::pod &) -> void { std::cout << "api gateway created." << std::endl; });
+        .response_case<201, kubeent::deployment>([] (kubeent::deployment &) -> void { std::cout << "API Gateway pod created." << std::endl; });
+}
+
+void gateway_init::create_service(std::string namespace_, http_client::curl_helper & helper)
+{
+    kubeent::service svc;
+    
+    svc.api_version = std::string("v1");
+    svc.kind = std::string("Service");
+    svc.metadata.get().name = std::string("nava-api-gateway");
+    svc.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha_apigw_svc");
+    svc.spec.get().selector.get().values()["common_domain"] = std::string("navagraha-apigw-pod");
+    svc.spec.get().selector.get().values()["nava_app"] = std::string("nava-apigw");
+    svc.spec.get().ports.get().values().push_back(kubeent::service_port());
+    svc.spec.get().ports.get().values().front().port = 80;
+
+    helper.build<kube_api::service>().create(namespace_, svc)
+        .response_switch()
+        .response_case<200, kubeent::service>([] (kubeent::service &) -> void { std::cout << "API Gateway service create" << std::endl; })
+        .response_case<201, kubeent::service>([] (kubeent::service &) -> void { std::cout << "API Gateway service created" << std::endl; })
+        .response_case<202, kubeent::service>([] (kubeent::service &) -> void { std::cout << "Accepted API Gateway service created" << std::endl; });
 }
 
 int gateway_init::execute()
@@ -66,7 +104,8 @@ int gateway_init::execute()
                                     config::get_instance().kube_ca,
                                     config::get_instance().kube_api_server);
 
-    this->create_pod(namespace_, helper);
+    this->create_deployment(namespace_, helper);
+    this->create_service(namespace_, helper);
 
     return 0;
 }
