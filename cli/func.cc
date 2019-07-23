@@ -1,6 +1,8 @@
 #include "cli/func.hpp"
 #include "cli/func_up.hpp"
 #include "cli/func_down.hpp"
+#include "cli/func_repo.hpp"
+#include "cli/func_list.hpp"
 #include "cli/func_usage.hpp"
 #include "cli_arg/process_collection.hpp"
 
@@ -27,6 +29,8 @@ int func::execute()
                                                   this->name_flag.argv())
         .add(func_up())
         .add(func_down())
+        .add(func_repo())
+        .add(func_list())
         .add(func_usage())
         .result();
 }
