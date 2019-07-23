@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <map>
 #include <iostream>
+#include <condition_variable>
 
 namespace navagraha {
 namespace http_client {
@@ -18,8 +19,15 @@ private:
     bool response_code_switch_case_hit;
     std::string result_str;
 
+    std::function<void (std::string &)> chunk_cunsumer;
+
+    http_response();
 public:
-    http_response(std::function<long (std::ostringstream &)> caller);
+    static http_response mono_call(std::function<long (std::ostringstream *)> caller);
+
+    static http_response chunk_call(std::function<long ()> caller);
+
+    virtual ~http_response();
 
     template<long T_Res_Code, typename T_Res_Obj> http_response & response_case(std::function<void (T_Res_Obj &)> func)
     {
@@ -30,6 +38,8 @@ public:
         }
         return *this;
     }
+
+    http_response & set_result(std::string str);
 
     http_response & response_switch();
 
