@@ -41,17 +41,15 @@ void func_list::func_deployment_eachor(std::map<std::string, kubeent::service> s
 {
     if (svc_map.find(dep.metadata.get().name.get()) != svc_map.end()) {
         std::cout
+            << dep.metadata.get().namespace_.get()
+            << "/"
             << dep.metadata.get().name.get()
-            << "/"
-            << dep.status.get().replicas.get()
-            << "/"
-            << dep.status.get().ready_replicas.get()
-            << "/"
-            << dep.status.get().updated_replicas.get()
-            << "/"
+            << "\t"
             << dep.status.get().available_replicas.get()
             << "/"
             << dep.status.get().unavailable_replicas.get()
+            << "/"
+            << dep.status.get().replicas.get()
             << std::endl;
     }
 }
