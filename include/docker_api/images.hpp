@@ -2,7 +2,7 @@
 #define _NAVAGRAHA_DOCKER_API_IMAGES_H
 
 #include "http_client/client.hpp"
-#include "extensions/special_list.hpp"
+#include "http_client/http_response.hpp"
 #include "dockerent/image.hpp"
 #include <string>
 
@@ -15,9 +15,9 @@ public:
 
     images(CURL * curl);
 
-    extensions::special_list<dockerent::image> list();
+    http_client::http_response list();
 
-    extensions::common_object create(std::string path, std::string tag);
+    http_client::http_response create(std::string path, std::string tag, std::function<void (std::string &)> cb);
 };
 
 }

@@ -17,13 +17,12 @@ images::images(CURL * curl)
 
 }
 
-extensions::special_list<dockerent::image> images::list()
+http_client::http_response images::list()
 {
-    return this->get_request("/images/json")
-        .get<extensions::special_list<dockerent::image>>();
+    return this->get_request("/images/json");
 }
 
-extensions::common_object images::create(std::string path, std::string tag)
+http_client::http_response images::create(std::string path, std::string tag, std::function<void (std::string &)> cb)
 {
     std::string tar_name = "/tmp/__dockerbuild_" + std::to_string(time(NULL)) + "_.tmp";
     if (access(tar_name.c_str(), F_OK) == 0) {
@@ -34,14 +33,12 @@ extensions::common_object images::create(std::string path, std::string tag)
     extensions::tar tar(tar_name, path);
     tar();
     tar.extract(binary_payload);
-    this->set_binary_content(binary_payload);
-    extensions::common_object obj = this->post_request("/build?dockerfile=.%2FDockerfile"
-                                                       "&t="
-                                                       + tag)
-        .get<extensions::common_object>();
     remove(tar_name.c_str());
-
-    return obj;
+    this->set_binary_content(binary_payload);
+    this->set_receive_cb(cb);
+    return this->post_request("/build?dockerfile=.%2FDockerfile"
+                              "&t="
+                              + tag);
 }
 
 }
