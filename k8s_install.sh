@@ -29,10 +29,8 @@ kubeadm init --pod-network-cidr=10.244.0.0/16
 
 sysctl net.bridge.bridge-nf-call-iptables=1
 
-chown $(id -u):$(id -g) $HOME/.kube/config
-
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
 # master
 kubectl taint nodes --all node-role.kubernetes.io/master-
+
+kubectl apply -f https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 
