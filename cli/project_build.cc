@@ -28,11 +28,10 @@ int project_build::execute()
 {
     auto helper = http_client::curl_helper(config::get_instance().docker_sock)
         .unix_socket_build<docker_api::images>();
-    helper.set_receive_cb(std::bind(&project_build::received_callback,
-                                    this,
-                                    std::placeholders::_1));
     std::string path = this->path_arg.used() ? this->path_arg[0] : ".";
-    helper.create(path, this->build_arg[0]);
+    helper.create(path, this->build_arg[0], std::bind(&project_build::received_callback,
+                                                      this,
+                                                      std::placeholders::_1));
     return 0;
 }
 
@@ -40,7 +39,25 @@ void project_build::received_callback(std::string & msg)
 {
     dockerent::image_build_msg msg_obj = dockerent::image_build_msg::deserialize(msg);
 
-    std::cout << msg_obj.stream.const_get() << std::endl;
+    bool tc = false;
+    for (char c : msg_obj.stream.get()) {
+        if (tc) {
+            switch (c) {
+            case 'n':
+                std::cout << std::endl;
+                break;
+            case '\\':
+                std::cout << '\\';
+            }
+            tc = false;
+        }
+        else if (c != '\\') {
+            std::cout << c;
+        }
+        else {
+            tc = true;
+        }
+    }
 }
 
 }
