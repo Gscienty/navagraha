@@ -3,6 +3,7 @@
 #include "http_client/curl_helper.hpp"
 #include "docker_api/images.hpp"
 #include <algorithm>
+#include <iostream>
 
 namespace navagraha {
 namespace cli {
@@ -34,13 +35,18 @@ int func_repo::execute()
     return 0;
 }
 
+void func_repo::image_eachor(dockerent::image & image)
+{
+    if (image.labels.get().values().find(std::string("navafunc")) != image.labels.get().values().end()) {
+        std::cout << image.repo_tags.get().values()[0] << std::endl;
+    }
+}
+
 void func_repo::images_for_each(extensions::special_list<dockerent::image> & images)
 {
     std::for_each(std::begin(images.values()),
                   std::end(images.values()),
-                  [] (dockerent::image & img) -> void {
-                  std::cout << img.id.get() << std::endl;
-                  });
+                  std::bind(&func_repo::image_eachor, this, std::placeholders::_1));
 }
 
 }

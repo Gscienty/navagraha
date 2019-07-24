@@ -17,6 +17,8 @@ private:
     cli_arg::arg<CLI_FUNC_REPO_NAME, 0> name_arg;
 
     void images_for_each(extensions::special_list<dockerent::image> & images);
+
+    void image_eachor(dockerent::image & image);
 public:
     virtual void bind(cli_arg::process_helper<func_repo> & helper) override;
     virtual bool satisfy() const override;

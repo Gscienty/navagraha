@@ -1,5 +1,7 @@
 FROM openjdk:8u131-jdk-alpine as builder
 
+LABEL navafunc=java8
+
 ENV GRADLE_HOME=/opt/gradle-4.8.1/
 ENV PATH=$PATH:$GRADLE_HOME/bin
 ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"

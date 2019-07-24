@@ -1,5 +1,7 @@
 FROM python:3-alpine
 
+LABEL navafunc=python3
+
 RUN mkdir -p /home/app/function/
 WORKDIR /home/app/function/
 COPY . .
