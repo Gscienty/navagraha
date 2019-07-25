@@ -5,6 +5,7 @@
 #include "kube_api/deployment.hpp"
 #include "kube_api/service.hpp"
 #include <algorithm>
+#include <cstdlib>
 
 namespace navagraha {
 namespace cli {
@@ -14,6 +15,11 @@ char CLI_FUNC_DEPLOY_POLICY[] = "--policy";
 char CLI_FUNC_DEPLOY_IMAGE[] = "--image";
 char CLI_FUNC_DEPLOY_NAMESPACE[] = "--namespace";
 char CLI_FUNC_DEPLOY_CONFIG_VOLUME[] = "--config-volume";
+char CLI_FUNC_DEPLOY_MIN_READY_SECONDS[] = "--ready-seconds";
+char CLI_FUNC_DEPLOY_UPDATE_FLAG[] = "--update";
+char CLI_FUNC_DEPLOY_UPDATE_TYPE[] = "--update-type";
+char CLI_FUNC_DEPLOY_UPDATE_SURGE[] = "--update-surge";
+char CLI_FUNC_DEPLOY_UPDATE_UNAVAILABLE[] = "--update-unavailable";
 
 void func_up::bind(cli_arg::process_helper<func_up> & helper)
 {
@@ -21,12 +27,22 @@ void func_up::bind(cli_arg::process_helper<func_up> & helper)
     this->image_arg.require(this->name_arg);
     this->namespace_arg.require(this->name_arg);
     this->config_volume_arg.require(this->name_arg);
+    this->min_ready_seconds_arg.require(this->name_arg);
+    this->update_flag_arg.require(this->name_arg);
+    this->update_type_arg.require(this->update_flag_arg);
+    this->update_surge_arg.require(this->update_flag_arg);
+    this->update_unavailable_arg.require(this->update_flag_arg);
 
     helper
         .add(this->name_arg)
         .add(this->policy_arg)
         .add(this->image_arg)
-        .add(this->config_volume_arg);
+        .add(this->config_volume_arg)
+        .add(this->min_ready_seconds_arg)
+        .add(this->update_flag_arg)
+        .add(this->update_type_arg)
+        .add(this->update_surge_arg)
+        .add(this->update_unavailable_arg);
 }
 
 bool func_up::satisfy() const 
@@ -108,7 +124,25 @@ void func_up::create_deployment(std::string namespace_, http_client::curl_helper
                       eachor);
     }
 
-    helper.build<kube_api::deployment>().create(namespace_, req_obj);
+    if (this->update_flag_arg.used()) {
+        if (this->update_type_arg.used()) {
+            req_obj.spec.get().strategy.get().type = std::string(this->update_type_arg[0]);
+        }
+        else {
+            req_obj.spec.get().strategy.get().type = std::string("RollingUpdate");
+        }
+        if (this->update_surge_arg.used()) {
+            req_obj.spec.get().strategy.get().rolling_update.get().max_surge = ::atoi(this->update_surge_arg[0].c_str());
+        }
+        if (this->update_unavailable_arg.used()) {
+            req_obj.spec.get().strategy.get().rolling_update.get().max_unavailable = ::atoi(this->update_unavailable_arg[0].c_str());
+        }
+
+        helper.build<kube_api::deployment>().replace(namespace_, this->name_arg[0], req_obj);
+    }
+    else {
+        helper.build<kube_api::deployment>().create(namespace_, req_obj);
+    }
 }
 
 void func_up::create_service(std::string namespace_, http_client::curl_helper & helper)

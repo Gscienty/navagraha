@@ -13,6 +13,8 @@ char CLI_FUNC_REPO_FUNC_NAME[] = "--name";
 
 void func_repo::bind(cli_arg::process_helper<func_repo> & helper)
 {
+    this->func_name_arg.require(this->name_arg);
+
     helper
         .add(this->name_arg)
         .add(this->func_name_arg);
@@ -45,7 +47,7 @@ void func_repo::image_eachor(std::map<std::string, std::list<std::string>> &stor
 
         if (tag_spliter == std::end(fullname)) {
             if (store.find(fullname) == std::end(store)) {
-                if (this->name_arg.used() && fullname.compare(this->name_arg[0]) != 0) {
+                if (this->func_name_arg.used() && fullname.compare(this->func_name_arg[0]) != 0) {
                     return;
                 }
                 store.insert(std::make_pair(fullname, std::list<std::string>()));
@@ -53,7 +55,7 @@ void func_repo::image_eachor(std::map<std::string, std::list<std::string>> &stor
         }
         else {
             std::string tag_name(std::begin(fullname), tag_spliter);
-            if (this->name_arg.used() && tag_name.compare(this->name_arg[0]) != 0) {
+            if (this->func_name_arg.used() && tag_name.compare(this->func_name_arg[0]) != 0) {
                 return;
             }
             tag_spliter++;
