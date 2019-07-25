@@ -17,10 +17,14 @@ int func_usage::execute()
         << "  " << "  " << "   " << "  " << "policy_name" << " " << "node pull docker image policy, values: \"Always\"(default), \"IfNotPresent\", \"Never\"" << std::endl
         << "  " << "  " << "   " << "  " << "namespace" << "   " << "namespaces where function services reside" << std::endl
         << std::endl
-        << "  " << "down" << " " << "Logoff the specified function service" << std::endl
+        << "  " << "down" << " " << "Logoff the specified function service." << std::endl
         << "  " << "    " << " " << "usage:" << "  " <<  "nava func down {func_name} [--namespace {namespace}]" << std::endl
         << "  " << "    " << " " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << "  " << "    " << " " << "  " << "namespace" << "   " << "namespaces where function services reside" << std::endl
+        << std::endl
+        << "  " << "repo" << " " << "Enumerate all function services." << std::endl
+        << "  " << "    " << " " << "usage:" << "  " <<  "nava func repo [--name {func name}]" << std::endl
+        << "  " << "    " << " " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << std::endl;
     return 0;
 }
