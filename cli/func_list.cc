@@ -31,31 +31,37 @@ bool func_list::satisfy() const
     return this->name_arg.used();
 }
 
-void func_list::func_service_eachor(std::map<std::string, kubeent::service> svc_map, kubeent::service & svc)
+void func_list::func_service_eachor(std::map<std::string, kubeent::service> & svc_map, kubeent::service & svc)
 {
     if (svc.metadata.get().labels.get().values()["common_domain"].str == "navagraha_func_svc") {
         svc_map[svc.metadata.get().name.get()] = svc;
     }
 }
-void func_list::func_deployment_eachor(std::map<std::string, kubeent::service> svc_map, kubeent::deployment & dep)
+void func_list::func_deployment_eachor(std::map<std::string, kubeent::service> & svc_map, kubeent::deployment & dep)
 {
     if (svc_map.find(dep.metadata.get().name.get()) != svc_map.end()) {
         std::cout
+            << "  "
             << dep.metadata.get().namespace_.get()
             << "/"
             << dep.metadata.get().name.get()
-            << "\t"
+            << "("
+            << dep.spec.get().template_.get().spec.get().containers.get().values().front().image.get()
+            << ")\t"
+            << dep.status.get().replicas.get()
+            << "/"
             << dep.status.get().available_replicas.get()
             << "/"
             << dep.status.get().unavailable_replicas.get()
-            << "/"
-            << dep.status.get().replicas.get()
             << std::endl;
     }
 }
 
 int func_list::execute()
 {
+    std::cout << "display format:" << std::endl
+        << "  " << "{namespace}/{func name}({image tag}) {replicas}/{available}/{unavailable}" << std::endl << std::endl
+        << "func list:" << std::endl;
     std::string namespace_ = "default";
     if (this->namespace_arg.used()) {
         namespace_ = this->namespace_arg[0];
@@ -87,6 +93,7 @@ int func_list::execute()
                                                                     this->func_deployment_eachor(svc_map, dep);
                                                                     });
                                                       });
+    std::cout << std::endl;
 
     return 0;
 }

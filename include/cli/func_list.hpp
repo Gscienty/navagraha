@@ -20,8 +20,8 @@ private:
     cli_arg::arg<CLI_FUNC_LIST_NAME, 0> name_arg;
     cli_arg::arg<CLI_FUNC_LIST_NAMESPACE, 1> namespace_arg;
 
-    void func_service_eachor(std::map<std::string, kubeent::service> svc_map, kubeent::service & svc);
-    void func_deployment_eachor(std::map<std::string, kubeent::service> svc_map, kubeent::deployment & dep);
+    void func_service_eachor(std::map<std::string, kubeent::service> & svc_map, kubeent::service & svc);
+    void func_deployment_eachor(std::map<std::string, kubeent::service> & svc_map, kubeent::deployment & dep);
 public:
     virtual void bind(cli_arg::process_helper<func_list> & helper) override;
     virtual bool satisfy() const override;
