@@ -24,7 +24,11 @@ int func_usage::execute()
         << "  " << "    " << " " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << "  " << "    " << " " << "  " << "namespace" << "   " << "namespaces where function services reside" << std::endl
         << std::endl
-        << "  " << "repo" << " " << "Enumerate all function services." << std::endl
+        << "  " << "list" << " " << "Enumerate all online function services." << std::endl
+        << "  " << "    " << " " << "usage:" << "  " <<  "nava func list [--namespace {namespace}]" << std::endl
+        << "  " << "    " << " " << "  " << "namespace" << "   " << "namespaces where function services reside" << std::endl
+        << std::endl
+        << "  " << "repo" << " " << "Enumerate all repository function services." << std::endl
         << "  " << "    " << " " << "usage:" << "  " <<  "nava func repo [--name {func name}]" << std::endl
         << "  " << "    " << " " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << std::endl;
