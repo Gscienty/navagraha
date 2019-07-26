@@ -19,8 +19,10 @@ int project_usage::execute()
         << "  " << "    " << "  " << "  " << "  " << "python3" << std::endl
         << "  " << "    " << "  " << "  " << "  " << "java8" << std::endl
         << "  " << "build" << "  " << "Build a project" << std::endl
-        << "  " << "    " << "  " << "usage:" << "  " << "nava project build [--path {project_path}]" << std::endl
-        << "  " << "    " << "  " << "  " << "project_path" << "  " << "project path, default \".\"" << std::endl
+        << "  " << "    " << "  " << "usage:" << "  " << "nava project build {project_name}:{project_version} [--path {project_path}]" << std::endl
+        << "  " << "    " << "  " << "  " << "project_name" << "     " << "project name." << std::endl
+        << "  " << "    " << "  " << "  " << "project_version" << "  " << "project version." << std::endl
+        << "  " << "    " << "  " << "  " << "project_path" << "     " << "project path, default \".\"" << std::endl
         << std::endl;
     return 0;
 }
