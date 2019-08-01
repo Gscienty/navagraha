@@ -80,7 +80,7 @@ void gateway_init::create_service(std::string namespace_, http_client::curl_help
     svc.api_version = std::string("v1");
     svc.kind = std::string("Service");
     svc.metadata.get().name = std::string("nava-api-gateway");
-    svc.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha_apigw_svc");
+    svc.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha-apigw-svc");
     svc.spec.get().selector.get().values()["common_domain"] = std::string("navagraha-apigw-pod");
     svc.spec.get().selector.get().values()["nava_app"] = std::string("nava-apigw");
     svc.spec.get().ports.get().values().push_back(kubeent::service_port());
