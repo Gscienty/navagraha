@@ -3,6 +3,7 @@
 
 #include "extensions/static_constructable.hpp"
 #include "http_client/client.hpp"
+#include "http_client/simple_client.hpp"
 #include <string>
 #include <curl/curl.h>
 
@@ -48,6 +49,8 @@ public:
 
         return T(curl);
     }
+
+    simple_client simple_build(const std::string host);
 };
 
 }

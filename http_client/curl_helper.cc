@@ -28,5 +28,11 @@ void curl_helper::static_construct()
     curl_global_init(CURL_GLOBAL_SSL);
 }
 
+simple_client curl_helper::simple_build(const std::string host)
+{
+    CURL * curl = curl_easy_init();
+    return simple_client(curl, host);
+}
+
 }
 }

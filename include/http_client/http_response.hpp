@@ -41,6 +41,8 @@ public:
 
     http_response & set_result(std::string str);
 
+    std::string result() const;
+
     http_response & response_switch();
 
     template <typename T> T get()

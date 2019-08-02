@@ -44,5 +44,10 @@ http_response & http_response::response_switch()
     return *this;
 }
 
+std::string http_response::result() const
+{
+    return this->result_str;
+}
+
 }
 }
