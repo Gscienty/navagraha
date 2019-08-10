@@ -13,17 +13,25 @@ class stateful_set : public http_client::client {
 public:
     stateful_set(CURL * curl, const std::string host);
 
-    kubeent::stateful_set create(const std::string namespace_,
-                                 kubeent::stateful_set & stateful_set_);
+    http_client::http_response create(const std::string namespace_,
+                                      kubeent::stateful_set & stateful_set_);
 
-    kubeent::status delete_(const std::string namespace_,
-                            const std::string name,
-                            kubeent::delete_options & options);
+    http_client::http_response delete_(const std::string namespace_,
+                                       const std::string name,
+                                       kubeent::delete_options & options);
 
-    kubeent::status delete_collection(const std::string namespace_);
+    http_client::http_response delete_collection(const std::string namespace_,
+                                                 kubeent::delete_options & options);
 
-    kubeent::stateful_set read(const std::string namespace_,
-                               const std::string name);
+    http_client::http_response read(const std::string namespace_,
+                                    const std::string name);
+
+    http_client::http_response list(const std::string namespace_);
+
+    http_client::http_response replace(const std::string namespace_,
+                                       const std::string name,
+                                       kubeent::stateful_set & stateful_set_);
+
 };
 
 }

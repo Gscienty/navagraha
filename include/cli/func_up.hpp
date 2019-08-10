@@ -10,19 +10,24 @@ namespace navagraha {
 namespace cli {
 
 extern char CLI_FUNC_DEPLOY_NAME[];
+extern char CLI_FUNC_DEPLOY_STATEFUL[];
 extern char CLI_FUNC_DEPLOY_POLICY[];
 extern char CLI_FUNC_DEPLOY_IMAGE[];
 extern char CLI_FUNC_DEPLOY_NAMESPACE[];
 extern char CLI_FUNC_DEPLOY_CONFIG_VOLUME[];
 extern char CLI_FUNC_DEPLOY_MIN_READY_SECONDS[];
+extern char CLI_FUNC_DEPLOY_REPLICAS[];
 extern char CLI_FUNC_DEPLOY_UPDATE_FLAG[];
 extern char CLI_FUNC_DEPLOY_UPDATE_TYPE[];
 extern char CLI_FUNC_DEPLOY_UPDATE_SURGE[];
 extern char CLI_FUNC_DEPLOY_UPDATE_UNAVAILABLE[];
+extern char CLI_FUNC_DEPLOY_UPDATE_PARTITION[];
 
 class func_up : public cli_arg::abstract_process<func_up> {
 private:
     cli_arg::arg<CLI_FUNC_DEPLOY_NAME, 1> name_arg;
+    cli_arg::arg<CLI_FUNC_DEPLOY_STATEFUL, 0> stateful_arg;
+    cli_arg::arg<CLI_FUNC_DEPLOY_REPLICAS, 1> replicas_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_POLICY, 1> policy_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_IMAGE, 1> image_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_NAMESPACE, 1> namespace_arg;
@@ -32,9 +37,11 @@ private:
     cli_arg::arg<CLI_FUNC_DEPLOY_UPDATE_TYPE, 1> update_type_arg;
     cli_arg::arg<CLI_FUNC_DEPLOY_UPDATE_SURGE, 1> update_surge_arg; 
     cli_arg::arg<CLI_FUNC_DEPLOY_UPDATE_UNAVAILABLE, 1> update_unavailable_arg; 
+    cli_arg::arg<CLI_FUNC_DEPLOY_UPDATE_PARTITION, 1> partition_arg;
 
     void create_deployment(std::string namespace_, http_client::curl_helper & helper);
     void create_service(std::string namespace_, http_client::curl_helper & helper);
+    void create_stateful(std::string namespace_, http_client::curl_helper & helper);
 
 public:
     virtual void bind(cli_arg::process_helper<func_up> & helper) override;
