@@ -5,9 +5,12 @@ __pycache__/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+Makefile
 *.local.sh
 *.out
 *.a
+*.so
+nava
 build/
 !docs/build
 .gradle/
