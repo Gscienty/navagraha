@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+application {
+    mainClassName = 'indi.gscienty.navagraha.dashboard.App'
+
+    applicationDefaultJvmArgs = [
+        '-Djava.library.path=../jni'
+    ]
+}
+
+test {
+    jvmArgs = [
+        '-Djava.library.path=../jni'
+    ]
+}
