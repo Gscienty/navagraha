@@ -18,57 +18,57 @@ static std::string config_get_ca(JNIEnv * env, jobject self);
 static std::string config_get_api_server(JNIEnv * env, jobject self);
 static std::string config_get_docker_sock(JNIEnv * env, jobject self);
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_init(JNIEnv * env, jobject self)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_init(JNIEnv * env, jobject self)
 {
     return config_init(env, self) == 0;
 }
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_setCert(JNIEnv * env, jobject self, jstring cert)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_setCert(JNIEnv * env, jobject self, jstring cert)
 {
     return config_set_cert(env, self, jstring2str(env, cert)) == 0;
 }
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_setKey(JNIEnv * env, jobject self, jstring key)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_setKey(JNIEnv * env, jobject self, jstring key)
 {
     return config_set_key(env, self, jstring2str(env, key)) == 0;
 }
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_setCA(JNIEnv * env, jobject self, jstring ca)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_setCA(JNIEnv * env, jobject self, jstring ca)
 {
     return config_set_ca(env, self, jstring2str(env, ca)) == 0;
 }
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_setApiServer(JNIEnv * env, jobject self, jstring api_server)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_setApiServer(JNIEnv * env, jobject self, jstring api_server)
 {
     return config_set_api_server(env, self, jstring2str(env, api_server)) == 0;
 }
 
-JNIEXPORT jboolean JNICALL Java_nava_Config_setDockerSock(JNIEnv * env, jobject self, jstring docker_sock)
+JNIEXPORT jboolean JNICALL Java_indi_gscienty_navagraha_jni_Config_setDockerSock(JNIEnv * env, jobject self, jstring docker_sock)
 {
     return config_set_docker_sock(env, self, jstring2str(env, docker_sock)) == 0;
 }
 
-JNIEXPORT jstring JNICALL Java_nava_Config_getCert(JNIEnv * env, jobject self)
+JNIEXPORT jstring JNICALL Java_indi_gscienty_navagraha_jni_Config_getCert(JNIEnv * env, jobject self)
 {
     return str2jstring(env, config_get_cert(env, self));
 }
 
-JNIEXPORT jstring JNICALL Java_nava_Config_getKey(JNIEnv * env, jobject self)
+JNIEXPORT jstring JNICALL Java_indi_gscienty_navagraha_jni_Config_getKey(JNIEnv * env, jobject self)
 {
     return str2jstring(env, config_get_key(env, self));
 }
 
-JNIEXPORT jstring JNICALL Java_nava_Config_getCA(JNIEnv * env, jobject self)
+JNIEXPORT jstring JNICALL Java_indi_gscienty_navagraha_jni_Config_getCA(JNIEnv * env, jobject self)
 {
     return str2jstring(env, config_get_ca(env, self));
 }
 
-JNIEXPORT jstring JNICALL Java_nava_Config_getApiServer(JNIEnv * env, jobject self)
+JNIEXPORT jstring JNICALL Java_indi_gscienty_navagraha_jni_Config_getApiServer(JNIEnv * env, jobject self)
 {
     return str2jstring(env, config_get_api_server(env, self));
 }
 
-JNIEXPORT jstring JNICALL Java_nava_Config_getDockerSock(JNIEnv * env, jobject self)
+JNIEXPORT jstring JNICALL Java_indi_gscienty_navagraha_jni_Config_getDockerSock(JNIEnv * env, jobject self)
 {
     return str2jstring(env, config_get_docker_sock(env, self));
 }
