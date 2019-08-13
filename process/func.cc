@@ -6,6 +6,7 @@
 #include "kube_api/service.hpp"
 #include "kubeent/stateful_set.hpp"
 #include "kube_api/stateful_set.hpp"
+#include "kubeent/stateful_set_list.hpp"
 #include "docker_api/images.hpp"
 #include <algorithm>
 
@@ -20,7 +21,7 @@ func::func(cli::config & cfg)
 }
 
 
-std::string func::up(const args::func_up & func_up)
+std::string func::up(const func_up_arg & func_up)
 {
     http_client::curl_helper helper(this->config.kube_cert,
                                     this->config.kube_key,
@@ -40,7 +41,7 @@ std::string func::up(const args::func_up & func_up)
 }
 
 void func::func_up_create_service(http_client::curl_helper & helper,
-                                  const args::func_up & func_up)
+                                  const func_up_arg & func_up)
 {
     kubeent::service req;
     req.api_version = std::string("v1");
@@ -57,7 +58,7 @@ void func::func_up_create_service(http_client::curl_helper & helper,
 }
 
 void func::func_up_create_deployment(http_client::curl_helper & helper,
-                                     const args::func_up & func_up)
+                                     const func_up_arg & func_up)
 {
     kubeent::deployment req;
 
@@ -112,7 +113,7 @@ void func::func_up_create_deployment(http_client::curl_helper & helper,
 }
 
 void func::func_up_create_statefulset(http_client::curl_helper & helper,
-                                      const args::func_up & func_up)
+                                      const func_up_arg & func_up)
 {
     kubeent::stateful_set req;
 
@@ -158,7 +159,7 @@ void func::func_up_create_statefulset(http_client::curl_helper & helper,
     }
 }
 
-std::string func::down(const args::func_down & func_down)
+std::string func::down(const func_down_arg & func_down)
 {
     http_client::curl_helper helper(this->config.kube_cert,
                                     this->config.kube_key,
@@ -216,6 +217,82 @@ extensions::special_list<func_repo_item> func::repo()
     return items;
 }
 
+extensions::special_list<func_list_item> func::list(func_list_arg & arg)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    navagraha::extensions::special_list<func_list_item> items;
+
+    std::map<std::string, kubeent::service> svc_stored;
+
+    helper.build<kube_api::service>()
+        .list(arg.namespace_)
+        .response_switch()
+        .response_case<200, kubeent::service_list>(std::bind(&func::func_repo_list_filter,
+                                                             this,
+                                                             svc_stored,
+                                                             std::placeholders::_1));
+
+    auto deploy_list_cb = [&svc_stored, &items, &arg] (kubeent::deployment_list & deps) -> void
+    {
+        for (auto & dep : deps.items.get().values()) {
+            if (svc_stored.find(dep.metadata.get().name.get()) != svc_stored.end()) {
+                items.values().push_back(func_list_item());
+
+                items.values().back().name = std::string(dep.metadata.get().name.get());
+                items.values().back().namespace_ = std::string(arg.namespace_);
+                items.values().back().image_tag = std::string(dep.spec.get().template_.get().spec.get().containers.get().values().front().image.get());
+                items.values().back().replicas.get() = dep.status.get().replicas.get();
+                items.values().back().available.get() = dep.status.get().available_replicas.get();
+                items.values().back().unavailable.get() = dep.status.get().unavailable_replicas.get();
+                items.values().back().stateful.get() = false;
+            }
+        }
+    };
+
+    helper.build<kube_api::deployment>()
+        .list(arg.namespace_)
+        .response_switch()
+        .response_case<200, kubeent::deployment_list>(deploy_list_cb);
+
+    auto stateful_list_cb = [&svc_stored, &items, &arg] (kubeent::stateful_set_list & list) -> void
+    {
+        for (auto & stateful : list.items.get().values()) {
+            if (svc_stored.find(stateful.metadata.get().name.get()) != svc_stored.end()) {
+                items.values().push_back(func_list_item());
+
+                items.values().back().name = std::string(stateful.metadata.get().name.get());
+                items.values().back().namespace_ = std::string(arg.namespace_);
+                items.values().back().image_tag = std::string(stateful.spec.get().template_.get().spec.get().containers.get().values().front().image.get());
+                items.values().back().replicas.get() = stateful.status.get().replicas.get();
+                items.values().back().available.get() = stateful.status.get().current_replicas.get();
+                items.values().back().unavailable.get() = 0;
+                items.values().back().stateful.get() = true;
+            }
+        }
+    };
+
+    helper.build<kube_api::stateful_set>()
+        .list(arg.namespace_)
+        .response_switch()
+        .response_case<200, kubeent::stateful_set_list>(stateful_list_cb);
+
+    return items;
+}
+
+void func::func_repo_list_filter(std::map<std::string, kubeent::service> & stored,
+                                 kubeent::service_list & list)
+{
+    for (auto & svc : list.items.get().values()) {
+        if (svc.metadata.get().labels.get().values()["common_domain"].str == "navagraha_func_svc") {
+            stored[svc.metadata.get().name.get()] = svc;
+        }
+    }
+}
+
 void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
                                   navagraha::dockerent::image & image)
 {
@@ -249,6 +326,27 @@ void func_repo_item::bind(extensions::serializer_helper & helper)
         .add(this->name)
         .add(this->versions);
 }
+
+char FUNC_LIST_ITEM_NAMESPACE[] = "namespace";
+char FUNC_LIST_ITEM_NAME[] = "name";
+char FUNC_LIST_ITEM_STATEFUL[] = "stateful";
+char FUNC_LIST_ITEM_IMAGE_TAG[] = "imageTag";
+char FUNC_LIST_ITEM_REPLICAS[] = "replicas";
+char FUNC_LIST_ITEM_AVAILABLE[] = "available";
+char FUNC_LIST_ITEM_UNAVAILABLE[] = "unavailable";
+
+void func_list_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->namespace_)
+        .add(this->name)
+        .add(this->stateful)
+        .add(this->image_tag)
+        .add(this->replicas)
+        .add(this->available)
+        .add(this->unavailable);
+}
+
 
 }
 }
