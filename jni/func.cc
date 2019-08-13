@@ -2,10 +2,12 @@
 #include "jni/string.hpp"
 #include "cli/config.hpp"
 #include "args/func_up.hpp"
+#include "args/func_down.hpp"
 #include "process/func.hpp"
 
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg);
-static void j_func_up_to_func_up_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jcfg);
+static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jcfg);
+static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_down_cfg, jobject jcfg);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
@@ -18,11 +20,29 @@ JNIEXPORT jstring JNICALL
     navagraha::args::func_up func_up_arg;
 
     jconfig_to_config(env, &cfg, j_cfg);
-    j_func_up_to_func_up_arg(env, &func_up_arg, j_func_up);
+    jfunc_up_to_arg(env, &func_up_arg, j_func_up);
 
     navagraha::process::func(cfg).up(func_up_arg);
 
     return str2jstring(env, std::string("created"));
+}
+
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_down(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg,
+                                               jobject j_func_down)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+    navagraha::args::func_down func_down_arg;
+
+    jconfig_to_config(env, &cfg, j_cfg);
+    jfunc_down_to_arg(env, &func_down_arg, j_func_down);
+
+    navagraha::process::func(cfg).down(func_down_arg);
+
+    return str2jstring(env, std::string("deleted"));
 }
 
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg)
@@ -47,7 +67,7 @@ static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobjec
     cfg->docker_sock = jstring2str(env, docker_sock_jstr);
 }
 
-static void j_func_up_to_func_up_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jent)
+static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jent)
 {
     jclass arg_cls = env->GetObjectClass(jent);
     jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
@@ -73,4 +93,16 @@ static void j_func_up_to_func_up_arg(JNIEnv * env, navagraha::args::func_up * fu
     func_up_cfg->stateful = stateful_jbool;
     func_up_cfg->update = update_jbool;
     func_up_cfg->replicas = replicas_jint;
+}
+
+static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_down_cfg, jobject jent)
+{
+    jclass arg_cls = env->GetObjectClass(jent);
+    jmethodID namespace_mid = env->GetMethodID(arg_cls, "getNamespace", "()Ljava/lang/String;");
+    jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
+    jmethodID stateful_mid = env->GetMethodID(arg_cls, "getStateful", "()Z");
+
+    func_down_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
+    func_down_cfg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, name_mid)));
+    func_down_cfg->stateful = env->CallBooleanMethod(jent, stateful_mid);
 }

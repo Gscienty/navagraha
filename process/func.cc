@@ -4,6 +4,8 @@
 #include "kube_api/deployment.hpp"
 #include "kubeent/service.hpp"
 #include "kube_api/service.hpp"
+#include "kubeent/stateful_set.hpp"
+#include "kube_api/stateful_set.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -27,6 +29,7 @@ std::string func::up(const args::func_up & func_up)
                                     this->config.kube_api_server);
 
     if (func_up.stateful) {
+        this->func_up_create_service(helper, func_up);
     }
     else {
         this->func_up_create_deployment(helper, func_up);
@@ -109,5 +112,80 @@ void func::func_up_create_deployment(http_client::curl_helper & helper,
     }
 }
 
+void func::func_up_create_statefulset(http_client::curl_helper & helper,
+                                      const args::func_up & func_up)
+{
+    kubeent::stateful_set req;
+
+    req.api_version = std::string("apps/v1");
+    req.kind = std::string("StatefulSet");
+    req.metadata.get().name = std::string(func_up.name);
+    req.metadata.get().labels.get().values()["nava_app"] = std::string(func_up.name);
+    req.spec.get().replicas.get() = func_up.replicas;
+    req.spec.get().selector.get().match_labels.get()
+        .values()["nava_app"] = std::string(func_up.name);
+
+    req.spec.get().template_.get().metadata.get().labels.get()
+        .values()["nava_app"] = std::string(func_up.name);
+    req.spec.get().template_.get().metadata.get().labels.get()
+        .values()["common_domain"] = std::string("navagraha_func");
+    req.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/path"] = std::string("/metrics");
+    req.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/port"] = std::string("80");
+    req.spec.get().template_.get().metadata.get().annotations.get()
+        .values()["prometheus.io/scrape"] = std::string("true");
+    req.spec.get().template_.get().spec.get().containers.get()
+        .values().push_back(kubeent::container());
+    req.spec.get().template_.get().spec.get().containers.get().values()
+        .front().name = std::string(func_up.name);
+    req.spec.get().template_.get().spec.get().containers.get().values()
+        .front().image = std::string(func_up.image);
+    req.spec.get().template_.get().spec.get().containers.get().values()
+        .front().ports.get().values().push_back(kubeent::container_port());
+
+    if (!func_up.policy.empty()) {
+        req.spec.get().template_.get().spec.get().containers.get().values().front()
+            .image_pull_policy = std::string(func_up.policy);
+    }
+
+    if (func_up.update) {
+        req.spec.get().update_strategy.get().type = std::string("RollingUpdate");
+        
+        helper.build<kube_api::stateful_set>().replace(func_up.namespace_, func_up.name, req);
+    }
+    else {
+        helper.build<kube_api::stateful_set>().create(func_up.namespace_, req);
+    }
+}
+
+std::string func::down(const args::func_down & func_down)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    if (func_down.stateful) {
+        kubeent::delete_options stateful_del_ops;
+        helper.build<kube_api::stateful_set>().delete_(func_down.namespace_,
+                                                       func_down.name,
+                                                       stateful_del_ops);
+    }
+    else {
+        kubeent::delete_options deploy_del_ops;
+        helper.build<kube_api::deployment>().delete_(func_down.namespace_,
+                                                     func_down.name,
+                                                     deploy_del_ops);
+    }
+
+    kubeent::delete_options service_del_ops;
+    helper.build<kube_api::service>().delete_(func_down.namespace_,
+                                              func_down.name,
+                                              service_del_ops);
+
+    return std::string();
+}
+    
 }
 }

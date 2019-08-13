@@ -3,6 +3,7 @@
 
 #include "cli/config.hpp"
 #include "args/func_up.hpp"
+#include "args/func_down.hpp"
 #include "http_client/curl_helper.hpp"
 
 namespace navagraha {
@@ -16,10 +17,14 @@ private:
                                    const args::func_up & func_up);
     void func_up_create_service(http_client::curl_helper & helper,
                                 const args::func_up & func_up);
+    void func_up_create_statefulset(http_client::curl_helper & helper,
+                                    const args::func_up & func_up);
 public:
     func(cli::config & cfg);
 
     std::string up(const args::func_up & func_up);
+
+    std::string down(const args::func_down & func_down);
 };
 
 }
