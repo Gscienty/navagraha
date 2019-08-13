@@ -18,6 +18,11 @@ JNIEXPORT jstring JNICALL
                                                jobject j_cfg,
                                                jobject j_func_down);
 
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_repo(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg);
+
 #ifdef __cplusplus
 }
 

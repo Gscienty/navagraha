@@ -4,10 +4,16 @@
 #include "args/func_up.hpp"
 #include "args/func_down.hpp"
 #include "process/func.hpp"
+#include "docker_api/images.hpp"
+#include "extensions/special_list.hpp"
+#include <map>
+#include <list>
+#include <algorithm>
 
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg);
 static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jcfg);
 static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_down_cfg, jobject jcfg);
+static void func_image_filter(std::map<std::string, std::list<std::string>> & stored, navagraha::dockerent::image & image);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
@@ -43,6 +49,22 @@ JNIEXPORT jstring JNICALL
     navagraha::process::func(cfg).down(func_down_arg);
 
     return str2jstring(env, std::string("deleted"));
+}
+
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_repo(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+
+    jconfig_to_config(env, &cfg, j_cfg);
+
+    std::ostringstream oss;
+    navagraha::process::func(cfg).repo().serialize(oss);
+
+    return str2jstring(env, oss.str());
 }
 
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg)
@@ -105,4 +127,27 @@ static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_do
     func_down_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
     func_down_cfg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, name_mid)));
     func_down_cfg->stateful = env->CallBooleanMethod(jent, stateful_mid);
+}
+
+static void func_image_filter(std::map<std::string, std::list<std::string>> & stored, navagraha::dockerent::image & image)
+{
+    if (image.labels.get().values().find(std::string("navafunc")) != image.labels.get().values().end()) {
+        std::string fullname = image.repo_tags.get().values().front();
+        std::string::iterator tag_spliter = std::find(std::begin(fullname), std::end(fullname), ':');
+
+        if (tag_spliter == std::end(fullname)) {
+            if (stored.find(fullname) == std::end(stored)) {
+                stored.insert(std::make_pair(fullname, std::list<std::string>()));
+            }
+        }
+        else {
+            std::string tag_name(std::begin(fullname), tag_spliter);
+            tag_spliter++;
+            std::string version(tag_spliter, std::end(fullname));
+            if (stored.find(tag_name) == std::end(stored)) {
+                stored.insert(std::make_pair(tag_name, std::list<std::string>()));
+            }
+            stored[tag_name].push_back(version);
+        }
+    }
 }

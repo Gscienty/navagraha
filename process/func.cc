@@ -6,9 +6,8 @@
 #include "kube_api/service.hpp"
 #include "kubeent/stateful_set.hpp"
 #include "kube_api/stateful_set.hpp"
-
-#include <iostream>
-#include <sstream>
+#include "docker_api/images.hpp"
+#include <algorithm>
 
 namespace navagraha {
 namespace process {
@@ -187,5 +186,69 @@ std::string func::down(const args::func_down & func_down)
     return std::string();
 }
     
+extensions::special_list<func_repo_item> func::repo()
+{
+    navagraha::extensions::special_list<func_repo_item> items;
+
+    auto eachor = [&items, this] (navagraha::extensions::special_list<navagraha::dockerent::image> & images) -> void 
+    {
+        std::map<std::string, std::list<std::string>> stored;
+        for (auto image : images.values()) {
+            this->func_repo_image_filter(stored, image);
+        }
+
+        for (auto pair : stored) {
+            items.values().push_back(func_repo_item());
+
+            items.values().back().name = std::string(pair.first);
+            for (auto version : pair.second) {
+                items.values().back().versions.get().values().push_back(version);
+            }
+        }
+    };
+    
+    navagraha::http_client::curl_helper(this->config.docker_sock)
+        .unix_socket_build<navagraha::docker_api::images>()
+        .list()
+        .response_switch()
+        .response_case<200, navagraha::extensions::special_list<navagraha::dockerent::image>>(eachor);
+
+    return items;
+}
+
+void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
+                                  navagraha::dockerent::image & image)
+{
+    if (image.labels.get().values().find(std::string("navafunc")) != image.labels.get().values().end()) {
+        std::string fullname = image.repo_tags.get().values().front();
+        std::string::iterator tag_spliter = std::find(std::begin(fullname), std::end(fullname), ':');
+
+        if (tag_spliter == std::end(fullname)) {
+            if (stored.find(fullname) == std::end(stored)) {
+                stored.insert(std::make_pair(fullname, std::list<std::string>()));
+            }
+        }
+        else {
+            std::string tag_name(std::begin(fullname), tag_spliter);
+            tag_spliter++;
+            std::string version(tag_spliter, std::end(fullname));
+            if (stored.find(tag_name) == std::end(stored)) {
+                stored.insert(std::make_pair(tag_name, std::list<std::string>()));
+            }
+            stored[tag_name].push_back(version);
+        }
+    }
+}
+
+char FUNC_REPO_ITEM_NAME[] = "name";
+char FUNC_REPO_ITEM_VERSIONS[] = "versions";
+
+void func_repo_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->name)
+        .add(this->versions);
+}
+
 }
 }

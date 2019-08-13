@@ -9,4 +9,6 @@ public class Func {
     public native String up(Config cfg, FuncUp funcUp);
 
     public native String down(Config cfg, FuncDown funcDown);
+
+    public native String repo(Config cfg);
 }
