@@ -49,5 +49,10 @@ std::string http_response::result() const
     return this->result_str;
 }
 
+long http_response::status_code() const
+{
+    return this->response_code;
+}
+
 }
 }

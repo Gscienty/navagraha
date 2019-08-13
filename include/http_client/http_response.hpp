@@ -43,6 +43,8 @@ public:
 
     std::string result() const;
 
+    long status_code() const;
+
     http_response & response_switch();
 
     template <typename T> T get()
