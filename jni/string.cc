@@ -12,7 +12,7 @@ JNIEXPORT std::string JNICALL jstring2str(JNIEnv * env, jstring jstr)
     jbyte * ba = env->GetByteArrayElements(bar, JNI_FALSE);
 
     if (len > 0) {
-        ret.resize(len + 1, 0);
+        ret.resize(len, 0);
         memcpy(const_cast<char *>(reinterpret_cast<const char *>(ret.data())), reinterpret_cast<const void *>(ba), len);
     }
     env->ReleaseByteArrayElements(bar, ba, 0);
