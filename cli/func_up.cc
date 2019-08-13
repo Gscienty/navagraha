@@ -171,11 +171,11 @@ void func_up::create_stateful(std::string namespace_, http_client::curl_helper &
 
     req_obj.spec.get().template_.get().metadata.get().labels.get()
         .values()["nava_app"] = std::string(this->name_arg[0]);
-    req_obj.spec.get().template_.get().metadata.get().labels.get()
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
         .values()["common_domain"] = std::string("navagraha_func");
-    req_obj.spec.get().template_.get().metadata.get().labels.get()
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
         .values()["prometheus.io/path"] = std::string("/metrics");
-    req_obj.spec.get().template_.get().metadata.get().labels.get()
+    req_obj.spec.get().template_.get().metadata.get().annotations.get()
         .values()["prometheus.io/port"] = std::string("80");
     req_obj.spec.get().template_.get().metadata.get().labels.get()
         .values()["prometheus.io/scrape"] = std::string("true");
