@@ -76,8 +76,6 @@ private:
                                     const func_up_arg & func_up);
     void func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
                                 dockerent::image & image);
-    void func_repo_list_filter(std::map<std::string, kubeent::service> & stored,
-                               kubeent::service_list & list);
 public:
     func(cli::config & cfg);
 

@@ -24,8 +24,8 @@ JNIEXPORT jstring JNICALL str2jstring(JNIEnv * env, std::string str)
 {
     jclass str_class = env->FindClass("Ljava/lang/String;");
     jmethodID ctor_mid = env->GetMethodID(str_class, "<init>", "([BLjava/lang/String;)V");
-    jbyteArray bytes = env->NewByteArray(str.size() - 1);
-    env->SetByteArrayRegion(bytes, 0, str.size() - 1, reinterpret_cast<const jbyte *>(str.data()));
+    jbyteArray bytes = env->NewByteArray(str.size());
+    env->SetByteArrayRegion(bytes, 0, str.size(), reinterpret_cast<const jbyte *>(str.data()));
     jstring encoding = env->NewStringUTF("UTF-8");
     
     return static_cast<jstring>(env->NewObject(str_class, ctor_mid, bytes, encoding));

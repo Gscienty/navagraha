@@ -1,8 +1,6 @@
 #include "jni/func.hpp"
 #include "jni/string.hpp"
 #include "cli/config.hpp"
-#include "args/func_up.hpp"
-#include "args/func_down.hpp"
 #include "process/func.hpp"
 #include "docker_api/images.hpp"
 #include "extensions/special_list.hpp"
@@ -11,9 +9,9 @@
 #include <algorithm>
 
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg);
-static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jcfg);
-static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_down_cfg, jobject jcfg);
-static void func_image_filter(std::map<std::string, std::list<std::string>> & stored, navagraha::dockerent::image & image);
+static void jfunc_up_to_arg(JNIEnv * env, navagraha::process::func_up_arg * func_up_cfg, jobject jent);
+static void jfunc_down_to_arg(JNIEnv * env, navagraha::process::func_down_arg * func_down_cfg, jobject jent);
+static void jfunc_list_to_arg(JNIEnv * env, navagraha::process::func_list_arg * func_list_cfg, jobject jent);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
@@ -23,7 +21,7 @@ JNIEXPORT jstring JNICALL
 {
     (void) self;
     navagraha::cli::config cfg;
-    navagraha::args::func_up func_up_arg;
+    navagraha::process::func_up_arg func_up_arg;
 
     jconfig_to_config(env, &cfg, j_cfg);
     jfunc_up_to_arg(env, &func_up_arg, j_func_up);
@@ -41,7 +39,7 @@ JNIEXPORT jstring JNICALL
 {
     (void) self;
     navagraha::cli::config cfg;
-    navagraha::args::func_down func_down_arg;
+    navagraha::process::func_down_arg func_down_arg;
 
     jconfig_to_config(env, &cfg, j_cfg);
     jfunc_down_to_arg(env, &func_down_arg, j_func_down);
@@ -63,6 +61,25 @@ JNIEXPORT jstring JNICALL
 
     std::ostringstream oss;
     navagraha::process::func(cfg).repo().serialize(oss);
+
+    return str2jstring(env, oss.str());
+}
+
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_list(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg,
+                                               jobject j_func_list)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+    navagraha::process::func_list_arg arg;
+
+    jconfig_to_config(env, &cfg, j_cfg);
+    jfunc_list_to_arg(env, &arg, j_func_list);
+
+    std::ostringstream oss;
+    navagraha::process::func(cfg).list(arg).serialize(oss);
 
     return str2jstring(env, oss.str());
 }
@@ -89,7 +106,7 @@ static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobjec
     cfg->docker_sock = jstring2str(env, docker_sock_jstr);
 }
 
-static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg, jobject jent)
+static void jfunc_up_to_arg(JNIEnv * env, navagraha::process::func_up_arg * func_up_cfg, jobject jent)
 {
     jclass arg_cls = env->GetObjectClass(jent);
     jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
@@ -117,7 +134,7 @@ static void jfunc_up_to_arg(JNIEnv * env, navagraha::args::func_up * func_up_cfg
     func_up_cfg->replicas = replicas_jint;
 }
 
-static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_down_cfg, jobject jent)
+static void jfunc_down_to_arg(JNIEnv * env, navagraha::process::func_down_arg * func_down_cfg, jobject jent)
 {
     jclass arg_cls = env->GetObjectClass(jent);
     jmethodID namespace_mid = env->GetMethodID(arg_cls, "getNamespace", "()Ljava/lang/String;");
@@ -129,25 +146,10 @@ static void jfunc_down_to_arg(JNIEnv * env, navagraha::args::func_down * func_do
     func_down_cfg->stateful = env->CallBooleanMethod(jent, stateful_mid);
 }
 
-static void func_image_filter(std::map<std::string, std::list<std::string>> & stored, navagraha::dockerent::image & image)
+static void jfunc_list_to_arg(JNIEnv * env, navagraha::process::func_list_arg * func_list_cfg, jobject jent)
 {
-    if (image.labels.get().values().find(std::string("navafunc")) != image.labels.get().values().end()) {
-        std::string fullname = image.repo_tags.get().values().front();
-        std::string::iterator tag_spliter = std::find(std::begin(fullname), std::end(fullname), ':');
+    jclass arg_cls = env->GetObjectClass(jent);
+    jmethodID namespace_mid = env->GetMethodID(arg_cls, "getNamespace", "()Ljava/lang/String;");
 
-        if (tag_spliter == std::end(fullname)) {
-            if (stored.find(fullname) == std::end(stored)) {
-                stored.insert(std::make_pair(fullname, std::list<std::string>()));
-            }
-        }
-        else {
-            std::string tag_name(std::begin(fullname), tag_spliter);
-            tag_spliter++;
-            std::string version(tag_spliter, std::end(fullname));
-            if (stored.find(tag_name) == std::end(stored)) {
-                stored.insert(std::make_pair(tag_name, std::list<std::string>()));
-            }
-            stored[tag_name].push_back(version);
-        }
-    }
+    func_list_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
 }

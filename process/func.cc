@@ -228,13 +228,19 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
 
     std::map<std::string, kubeent::service> svc_stored;
 
+    auto svc_store_cb = [&svc_stored] (kubeent::service_list & list) -> void
+    {
+        for (auto & svc : list.items.get().values()) {
+            if (svc.metadata.get().labels.get().values()["common_domain"].str == "navagraha_func_svc") {
+                svc_stored[svc.metadata.get().name.get()] = svc;
+            }
+        }
+    };
+
     helper.build<kube_api::service>()
         .list(arg.namespace_)
         .response_switch()
-        .response_case<200, kubeent::service_list>(std::bind(&func::func_repo_list_filter,
-                                                             this,
-                                                             svc_stored,
-                                                             std::placeholders::_1));
+        .response_case<200, kubeent::service_list>(svc_store_cb);
 
     auto deploy_list_cb = [&svc_stored, &items, &arg] (kubeent::deployment_list & deps) -> void
     {
@@ -281,16 +287,6 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
         .response_case<200, kubeent::stateful_set_list>(stateful_list_cb);
 
     return items;
-}
-
-void func::func_repo_list_filter(std::map<std::string, kubeent::service> & stored,
-                                 kubeent::service_list & list)
-{
-    for (auto & svc : list.items.get().values()) {
-        if (svc.metadata.get().labels.get().values()["common_domain"].str == "navagraha_func_svc") {
-            stored[svc.metadata.get().name.get()] = svc;
-        }
-    }
 }
 
 void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
