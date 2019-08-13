@@ -12,6 +12,7 @@ static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobjec
 static void jfunc_up_to_arg(JNIEnv * env, navagraha::process::func_up_arg * func_up_cfg, jobject jent);
 static void jfunc_down_to_arg(JNIEnv * env, navagraha::process::func_down_arg * func_down_cfg, jobject jent);
 static void jfunc_list_to_arg(JNIEnv * env, navagraha::process::func_list_arg * func_list_cfg, jobject jent);
+static void jfunc_autoscaling_to_arg(JNIEnv * env, navagraha::process::func_autoscaling_arg * func_autoscaling_cfg, jobject jent);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
@@ -84,6 +85,24 @@ JNIEXPORT jstring JNICALL
     return str2jstring(env, oss.str());
 }
 
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_autoscaling(JNIEnv * env,
+                                                      jobject self,
+                                                      jobject j_cfg,
+                                                      jobject j_func_autoscaling)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+    navagraha::process::func_autoscaling_arg arg;
+
+    jconfig_to_config(env, &cfg, j_cfg);
+    jfunc_autoscaling_to_arg(env, &arg, j_func_autoscaling);
+
+    navagraha::process::func(cfg).autoscaling(arg);
+
+    return str2jstring(env, std::string("created"));
+}
+
 static void jconfig_to_config(JNIEnv * env, navagraha::cli::config * cfg, jobject jcfg)
 {
     jclass cfg_cls = env->GetObjectClass(jcfg);
@@ -152,4 +171,20 @@ static void jfunc_list_to_arg(JNIEnv * env, navagraha::process::func_list_arg * 
     jmethodID namespace_mid = env->GetMethodID(arg_cls, "getNamespace", "()Ljava/lang/String;");
 
     func_list_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
+}
+
+static void jfunc_autoscaling_to_arg(JNIEnv * env, navagraha::process::func_autoscaling_arg * func_autoscaling_cfg, jobject jent)
+{
+    jclass arg_cls = env->GetObjectClass(jent);
+    jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
+    jmethodID namespace_mid = env->GetMethodID(arg_cls, "getNamespace", "()Ljava/lang/String;");
+    jmethodID cpu_mid = env->GetMethodID(arg_cls, "getCpu", "()I");
+    jmethodID min_mid = env->GetMethodID(arg_cls, "getMin", "()I");
+    jmethodID max_mid = env->GetMethodID(arg_cls, "getMax", "()I");
+
+    func_autoscaling_cfg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, name_mid)));
+    func_autoscaling_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
+    func_autoscaling_cfg->cpu = env->CallIntMethod(jent, cpu_mid);
+    func_autoscaling_cfg->min = env->CallIntMethod(jent, min_mid);
+    func_autoscaling_cfg->max = env->CallIntMethod(jent, max_mid);
 }

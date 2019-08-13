@@ -32,6 +32,14 @@ struct func_list_arg {
     std::string namespace_;
 };
 
+struct func_autoscaling_arg {
+    std::string name;
+    std::string namespace_;
+    int cpu;
+    int min;
+    int max;
+};
+
 extern char FUNC_REPO_ITEM_NAME[];
 extern char FUNC_REPO_ITEM_VERSIONS[];
 
@@ -86,6 +94,8 @@ public:
     extensions::special_list<func_repo_item> repo();
 
     extensions::special_list<func_list_item> list(func_list_arg & arg);
+
+    std::string autoscaling(func_autoscaling_arg & arg);
 };
 
 }

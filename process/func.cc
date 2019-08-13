@@ -1,12 +1,14 @@
 #include "process/func.hpp"
 #include "http_client/curl_helper.hpp"
 #include "kubeent/deployment.hpp"
-#include "kube_api/deployment.hpp"
-#include "kubeent/service.hpp"
-#include "kube_api/service.hpp"
-#include "kubeent/stateful_set.hpp"
-#include "kube_api/stateful_set.hpp"
 #include "kubeent/stateful_set_list.hpp"
+#include "kubeent/service.hpp"
+#include "kubeent/stateful_set.hpp"
+#include "kubeent/horizontal_pod_autoscaler.hpp"
+#include "kube_api/deployment.hpp"
+#include "kube_api/service.hpp"
+#include "kube_api/stateful_set.hpp"
+#include "kube_api/horizontal_pod_autoscaler.hpp"
 #include "docker_api/images.hpp"
 #include <algorithm>
 
@@ -287,6 +289,30 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
         .response_case<200, kubeent::stateful_set_list>(stateful_list_cb);
 
     return items;
+}
+
+std::string func::autoscaling(func_autoscaling_arg & arg)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    kubeent::horizontal_pod_autoscaler hpa;
+    hpa.api_version = "autoscaling/v1";
+    hpa.kind = "HorizontalPodAutoscaler";
+    hpa.metadata.get().name = std::string(arg.name);
+    hpa.spec.get().cpu_utilization_percentage.get() = arg.cpu;
+    hpa.spec.get().min_replicas.get() = arg.min;
+    hpa.spec.get().max_replicas.get() = arg.max;
+    hpa.spec.get().scale_target_ref.get().api_version = std::string("apps/v1");
+    hpa.spec.get().scale_target_ref.get().kind = std::string("Deployment");
+    hpa.spec.get().scale_target_ref.get().name = std::string(arg.name);
+
+    helper.build<kube_api::horizontal_pod_autoscaler>()
+        .create(arg.namespace_, hpa);
+
+    return std::string();
 }
 
 void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
