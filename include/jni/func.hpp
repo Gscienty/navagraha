@@ -6,6 +6,11 @@
 extern "C" {
 #endif
 
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
+                                             jobject self,
+                                             jobject j_cfg,
+                                             jobject j_func_up);
 
 #ifdef __cplusplus
 }
