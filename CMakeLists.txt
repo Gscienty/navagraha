@@ -27,6 +27,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/docker_api NAVAGRAHA_DOCKER_API)
 aux_source_directory(${PROJECT_SOURCE_DIR}/cli_arg NAVAGRAHA_CLI_ARG)
 aux_source_directory(${PROJECT_SOURCE_DIR}/cli NAVAGRAHA_CLI)
 aux_source_directory(${PROJECT_SOURCE_DIR}/git NAVAGRAHA_GIT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/process NAVAGRAHA_PROCESS)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/cli)
 add_subdirectory(${PROJECT_SOURCE_DIR}/jni)

@@ -16,4 +16,5 @@ add_library(navajni SHARED
     ${NAVAGRAHA_CLI}
     ${NAVAGRAHA_CLI_ARG}
     ${NAVAGRAHA_GIT}
+    ${NAVAGRAHA_PROCESS}
     )
