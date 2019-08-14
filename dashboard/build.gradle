@@ -1,26 +1,48 @@
-plugins {
-    id 'java'
-    id 'application'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.4.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.apache.httpcomponents:httpclient:4.5.9")
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.1.5.RELEASE'
+    //compile group: 'org.springframework.data', name: 'spring-data-mongodb', version: '2.1.9.RELEASE'
+    compile group: 'org.springframework.session', name: 'spring-session-core', version: '2.1.7.RELEASE'
+    compile group: 'org.springframework.session', name: 'spring-session', version: '1.3.5.RELEASE'
+    //compile group: 'org.springframework.data', name: 'spring-data-redis', version: '2.1.9.RELEASE'
+    //compile('org.springframework.session:spring-session-data-redis')
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.58'
+    compile group: 'com.google.zxing', name: 'core', version: '3.4.0'
+
+    testCompile("junit:junit")
 }
 
-application {
-    mainClassName = 'indi.gscienty.navagraha.dashboard.App'
+tasks.withType(JavaCompile) {  
+    options.encoding = "UTF-8"  
 
-    applicationDefaultJvmArgs = [
-        '-Djava.library.path=../jni'
-    ]
 }
 
-test {
-    jvmArgs = [
-        '-Djava.library.path=../jni'
-    ]
-}
