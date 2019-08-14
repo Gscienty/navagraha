@@ -4,6 +4,7 @@ import indi.gscienty.navagraha.entities.Config;
 import indi.gscienty.navagraha.entities.FuncUp;
 import indi.gscienty.navagraha.entities.FuncDown;
 import indi.gscienty.navagraha.entities.FuncList;
+import indi.gscienty.navagraha.entities.FuncAutoscaling;
 
 public class Func {
 
@@ -14,4 +15,6 @@ public class Func {
     public native String repo(Config cfg);
 
     public native String list(Config cfg, FuncList funcList);
+
+    public native String autoscaling(Config cfg, FuncAutoscaling funcAutoscaling);
 }

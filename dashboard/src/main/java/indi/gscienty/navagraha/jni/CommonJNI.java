@@ -1,7 +1,10 @@
 package indi.gscienty.navagraha.jni;
 
+import java.io.File;
+
 public class CommonJNI {
     public static void init() {
-        System.loadLibrary("navajni");
+        File file = new File("../jni", "libnavajni.so");
+        System.load(file.getAbsolutePath());
     }
 }
