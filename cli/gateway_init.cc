@@ -34,21 +34,21 @@ void gateway_init::create_deployment(std::string namespace_, http_client::curl_h
 
     deploy.api_version = std::string("apps/v1");
     deploy.kind = std::string("Deployment");
-    deploy.metadata.get().name = std::string("nava-api-gateway-deploy");
-    deploy.metadata.get().labels.get().values()["nava_app"] = std::string("nava-api-gateway-deploy");
+    deploy.metadata.get().name = std::string("nava-api-gateway");
+    deploy.metadata.get().labels.get().values()["nava_app"] = std::string("nava-api-gateway");
     deploy.spec.get().replicas = 1;
     deploy.spec.get().selector.get().match_labels.get()
-        .values()["common_domain"] = std::string("navagraha-apigw-pod");
+        .values()["common_domain"] = std::string("navagraha_apigw_pod");
     deploy.spec.get().selector.get().match_labels.get()
-        .values()["nava_app"] = std::string("nava-apigw");
+        .values()["nava_app"] = std::string("nava_apigw");
     deploy.spec.get().template_.get().metadata.get().labels.get()
-        .values()["common_domain"] = std::string("navagraha-apigw-pod");
+        .values()["common_domain"] = std::string("navagraha_apigw_pod");
     deploy.spec.get().template_.get().metadata.get().labels.get()
-        .values()["nava_app"] = std::string("nava-apigw");
+        .values()["nava_app"] = std::string("nava_apigw");
     deploy.spec.get().template_.get().spec.get().containers.get().values()
         .push_back(kubeent::container());
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()
-        .name = std::string("nava-apigw");
+        .name = std::string("nava_apigw");
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()
         .image = std::string("nava/apigw:v0.1");
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()
@@ -80,9 +80,9 @@ void gateway_init::create_service(std::string namespace_, http_client::curl_help
     svc.api_version = std::string("v1");
     svc.kind = std::string("Service");
     svc.metadata.get().name = std::string("nava-api-gateway");
-    svc.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha-apigw-svc");
-    svc.spec.get().selector.get().values()["common_domain"] = std::string("navagraha-apigw-pod");
-    svc.spec.get().selector.get().values()["nava_app"] = std::string("nava-apigw");
+    svc.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha_apigw_svc");
+    svc.spec.get().selector.get().values()["common_domain"] = std::string("navagraha_apigw_pod");
+    svc.spec.get().selector.get().values()["nava_app"] = std::string("nava_apigw");
     svc.spec.get().ports.get().values().push_back(kubeent::service_port());
     svc.spec.get().ports.get().values().front().port = 80;
 

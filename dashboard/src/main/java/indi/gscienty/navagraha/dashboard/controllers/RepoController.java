@@ -15,7 +15,7 @@ public class RepoController {
     @Autowired
     private IFuncService funcService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/func", method = RequestMethod.GET)
     public List<FuncRepoInfo> funcRepoAction() {
         return this.funcService.repo();
     }
