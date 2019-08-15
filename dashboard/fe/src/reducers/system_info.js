@@ -3,7 +3,7 @@ import {
     SYSTEM_INFO_NAVA_VERSION_RECEIVE_POST,
     SYSTEM_INFO_NAVA_VERSION_UNSET,
     SYSTEM_INFO_NAVA_VERSION_SET
-} from '../actions/system_info'
+} from '../actions/system_info';
 
 
 const initState = {
@@ -12,7 +12,7 @@ const initState = {
         name: 'unknow',
         version: 'unknow'
     }
-}
+};
 
 export default function systemInfoReduce(state = initState, action) {
     
@@ -35,5 +35,5 @@ export default function systemInfoReduce(state = initState, action) {
 
         default:
             return state;
-    }
-}
+    };
+};

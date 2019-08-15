@@ -10,7 +10,7 @@ import {
 const initState = {
     state: NAMESPACE_LIST_UNSET,
     namespace: []
-}
+};
 
 export default function namespaceReduce(state = initState, action) {
 
@@ -39,5 +39,5 @@ export default function namespaceReduce(state = initState, action) {
 
         default:
             return state;
-    }
-}
+    };
+};

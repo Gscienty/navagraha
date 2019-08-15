@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { PREFIX_URI } from './common'
+import { PREFIX_URI } from './common';
 
 export const NAMESPACE_LIST_REQUEST_POST = 'namespace_request_post';
 export function requestNamespaces() {
@@ -39,8 +39,8 @@ export function fetchNamespaces() {
         dispatch(requestNamespaces());
 
         return fetch(`${PREFIX_URI}/api/namespace`)
-            .then(response => response.json(), error => console.log('An error occurred.', error))
-            .then(json => dispatch(receiveNamespaces(json)));
+        .then(response => response.json(), error => console.log('An error occurred.', error))
+        .then(json => dispatch(receiveNamespaces(json)));
     };
 };
 
@@ -50,13 +50,14 @@ export function addNamespace(name) {
         dispatch(addingNamespace());
 
         return fetch(`${PREFIX_URI}/api/namespace`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => dispatch(fetchNamespaces()));
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ namespace: name })
+        })
+        .then(response => dispatch(fetchNamespaces()));
     };
 };
 
@@ -65,7 +66,7 @@ export function deleteNamespace(name) {
         dispatch(deletingNamespace());
 
         return fetch(`${PREFIX_URI}/api/namespace/${name}`, {
-            method: 'POST',
+            method: 'DELETE',
             credentials: 'include'
         })
         .then(response => dispatch(fetchNamespaces()));

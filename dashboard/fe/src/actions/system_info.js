@@ -32,7 +32,7 @@ export function fetchSystemInfoNavaVersion() {
         dispatch(requestSystemInfoNavaVersion());
 
         return fetch(`${PREFIX_URI}/api/system_info/nava_version`)
-            .then(response => response.json(), error => console.log('An error occurred.', error))
-            .then(json => dispatch(receiveSystemInfoNavaVersion(json)));
+        .then(response => response.json(), error => console.log('An error occurred.', error))
+        .then(json => dispatch(receiveSystemInfoNavaVersion(json)));
     };
 };

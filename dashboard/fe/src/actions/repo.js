@@ -26,7 +26,7 @@ export function fetchRepo() {
         dispatch(requestRepo());
 
         return fetch(`{PREFIX_URI}/api/repo`)
-            .then(response => response.json())
-            .then(json => dispatch(receiveRepo(json)));
+        .then(response => response.json())
+        .then(json => dispatch(receiveRepo(json)));
     };
 };

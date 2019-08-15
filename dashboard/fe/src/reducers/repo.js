@@ -27,6 +27,6 @@ export default function repoReduce(state = initState, action) {
 
         default:
             return state;
-    }
-}
+    };
+};
 
