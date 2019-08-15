@@ -5,7 +5,7 @@ import {
     NAMESPACE_LIST_DELETING_POST,
     NAMESPACE_LIST_UNSET,
     NAMESPACE_LIST_SET
-} from '../actions/namespace'
+} from '../actions/namespace';
 
 const initState = {
     state: NAMESPACE_LIST_UNSET,

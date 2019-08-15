@@ -6,10 +6,10 @@ import {
     SYSTEM_INFO_NAVA_VERSION_UNSET
 } from './actions/system_info'
 
-class App extends React.Component {
+class App extends React.PureComponent {
 
     constructor(props) {
-        super();
+        super(props);
 
         if (props.navaVersion.state === SYSTEM_INFO_NAVA_VERSION_UNSET) {
             props.dispatch(fetchSystemInfoNavaVersion());
