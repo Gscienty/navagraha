@@ -8,9 +8,11 @@ import {
 
 class App extends React.Component {
 
-    componentWillMount() {
-        if (this.props.navaVersion.state === SYSTEM_INFO_NAVA_VERSION_UNSET) {
-            this.props.dispatch(fetchSystemInfoNavaVersion());
+    constructor(props) {
+        super();
+
+        if (props.navaVersion.state === SYSTEM_INFO_NAVA_VERSION_UNSET) {
+            props.dispatch(fetchSystemInfoNavaVersion());
         }
     }
 
@@ -26,3 +28,4 @@ class App extends React.Component {
 export default connect(({ systemInfo }) => ({
     navaVersion: systemInfo.navaVersion
 }))(App);
+
