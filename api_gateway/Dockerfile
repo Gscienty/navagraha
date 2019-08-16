@@ -1,5 +1,7 @@
 FROM alpine
 
+LABEL navaapigw=apigw
+
 ADD ./ /var/tmp/api_gateway
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories \

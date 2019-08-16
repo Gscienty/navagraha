@@ -12,4 +12,6 @@ public class Gateway {
     public native String set(Config config, GatewaySet gatewaySet);
 
     public native String remove(Config config, GatewayRemove gatewayRemove);
+
+    public native String repo(Config config);
 }

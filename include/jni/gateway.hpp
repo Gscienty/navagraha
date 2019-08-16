@@ -25,6 +25,11 @@ JNIEXPORT jstring JNICALL
                                                     jobject j_cfg,
                                                     jobject j_gateway_cfg);
 
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Gateway_repo(JNIEnv * env,
+                                                  jobject self,
+                                                  jobject j_cfg);
+
 #ifdef __cplusplus
 }
 #endif

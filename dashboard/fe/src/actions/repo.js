@@ -1,32 +1,61 @@
 import fetch from 'cross-fetch';
 import { PREFIX_URI } from './common';
 
-export REPO_REQUEST_POST = 'repo_request_post';
-export function requestRepo() {
+export FUNC_REPO_LIST_REQUEST_POST = 'func_repo_list_request_post';
+export function requestFuncRepoList() {
     return {
-        type: REPO_REQUEST_POST,
+        type: FUNC_REPO_LIST_REQUEST_POST,
         repo: []
     };
 };
 
-export REPO_RECEIVE_POST = 'repo_receive_post';
-export function receiveRepo(received) {
+export FUNC_REPO_LIST_RECEIVE_POST = 'func_repo_list_receive_post';
+export function receiveFuncRepoList(received) {
     return {
-        type: REPO_RECEIVE_POST,
+        type: FUNC_REPO_LIST_RECEIVE_POST,
         repo: received
     };
 };
 
-export REPO_UNSET = 'repo_unset';
-export REPO_SET = 'repo_set';
+export FUNC_REPO_LIST_UNSET = 'func_repo_list_unset';
+export FUNC_REPO_LIST_SET = 'func_repo_list_set';
 
-export function fetchRepo() {
+export function fetchFuncRepoList() {
 
     return function(dispatch) {
-        dispatch(requestRepo());
+        dispatch(requestFuncRepoList());
 
-        return fetch(`{PREFIX_URI}/api/repo`)
+        return fetch(`${PREFIX_URI}/api/repo/func`)
         .then(response => response.json())
-        .then(json => dispatch(receiveRepo(json)));
+        .then(json => dispatch(receiveFuncRepoList(json)));
+    };
+};
+
+export const GATEWAY_REPO_LIST_REQUEST_POST = 'gateway_repo_list_request_post';
+export function requestGatewayRepoList() {
+    return {
+        type: GATEWAY_REPO_LIST_REQUEST,
+        repo: []
+    };
+};
+
+export const GATEWAY_REPO_LIST_RECEIVE_POST = 'gateway_repo_list_receive_post';
+export function receiveGatewayRepoList(received) {
+    return {
+        type: GATEWAY_REPO_LIST_RECEIVE_POST,
+        repo: received
+    };
+};
+
+export const GATEWAY_REPO_LIST_UNSET = 'gateway_repo_list_unset';
+export const GATEWAY_REPO_LIST_SET = 'gateway_repo_list_set';
+export function fetchGatewayRepoList() {
+
+    return function (dispatch) {
+        dispatch(requestGatewayRepoList());
+
+        return fetch(`${PREFIX_URI}/api/repo/apigw`)
+        .then(response => response.json())
+        .then(json => dispatch(receiveGatewayRepoList(json)));
     };
 };

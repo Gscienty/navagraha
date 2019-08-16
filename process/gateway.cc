@@ -5,6 +5,9 @@
 #include "kubeent/service_list.hpp"
 #include "kube_api/deployment.hpp"
 #include "kube_api/service.hpp"
+#include "docker_api/images.hpp"
+#include "dockerent/image.hpp"
+#include <algorithm>
 
 namespace navagraha {
 namespace process {
@@ -137,6 +140,53 @@ std::string gateway::remove(const gateway_remove_arg & arg)
         .delete_(arg.namespace_, "nava-api-gateway", svc_opt);
     
     return std::string();
+}
+
+extensions::special_list<gateway_repo_list_item> gateway::repo()
+{
+    extensions::special_list<gateway_repo_list_item> items;
+
+    auto eachor = [&items] (navagraha::extensions::special_list<navagraha::dockerent::image> & images) -> void
+    {
+        for (auto image : images.values()) {
+            if (image.labels.get().values().find(std::string("navaapigw")) == image.labels.get().values().end()) {
+                continue;
+            }
+            std::string fullname = image.repo_tags.get().values().front();
+            std::string::iterator tag_spliter = std::find(std::begin(fullname), std::end(fullname), ':');
+
+            items.values().push_back(gateway_repo_list_item());
+            if (tag_spliter == std::end(fullname)) {
+                items.values().back().name = std::string(fullname);
+            }
+            else {
+                std::string tag_name(std::begin(fullname), tag_spliter);
+                tag_spliter++;
+                std::string version(tag_spliter, std::end(fullname));
+
+                items.values().back().name = std::string(tag_name);
+                items.values().back().version = std::string(version);
+            }
+        }
+    };
+
+    navagraha::http_client::curl_helper(this->config.docker_sock)
+        .unix_socket_build<navagraha::docker_api::images>()
+        .list()
+        .response_switch()
+        .response_case<200, navagraha::extensions::special_list<navagraha::dockerent::image>>(eachor);
+
+    return items;
+}
+
+char GATEWAY_REPO_LIST_ITEM_NAME[] = "name";
+char GATEWAY_REPO_LIST_ITEM_VERSION[] = "version";
+
+void gateway_repo_list_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->name)
+        .add(this->version);
 }
 
 }

@@ -10,6 +10,7 @@ import indi.gscienty.navagraha.entities.GatewaySet;
 import indi.gscienty.navagraha.dashboard.ConfigSingleton;
 import indi.gscienty.navagraha.dashboard.entities.GatewayInfo;
 import indi.gscienty.navagraha.dashboard.entities.GatewayForm;
+import indi.gscienty.navagraha.dashboard.entities.GatewayRepoInfo;
 import indi.gscienty.navagraha.jni.Gateway;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +49,10 @@ public class GatewayService implements IGatewayService {
         remove.setNamespace(namespace);
 
         this.gateway.remove(ConfigSingleton.getInstance().getConfig(), remove);
+    }
+
+    public List<GatewayRepoInfo> repo() {
+       String result = this.gateway.repo(ConfigSingleton.getInstance().getConfig());
+       return JSON.parseArray(result, GatewayRepoInfo.class);
     }
 }

@@ -38,6 +38,17 @@ public:
     void bind(extensions::serializer_helper & helper);
 };
 
+extern char GATEWAY_REPO_LIST_ITEM_NAME[];
+extern char GATEWAY_REPO_LIST_ITEM_VERSION[];
+
+class gateway_repo_list_item : public extensions::serializable<gateway_repo_list_item> {
+public:
+    extensions::field<std::string, GATEWAY_REPO_LIST_ITEM_NAME> name;
+    extensions::field<std::string, GATEWAY_REPO_LIST_ITEM_VERSION> version;
+
+    void bind(extensions::serializer_helper & helper);
+};
+
 class gateway {
 private:
     cli::config & config;
@@ -52,6 +63,8 @@ public:
     extensions::special_list<gateway_list_item> get(const gateway_get_arg & arg);
 
     std::string remove(const gateway_remove_arg & arg);
+
+    extensions::special_list<gateway_repo_list_item> repo();
 };
 
 }

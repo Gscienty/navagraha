@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { PREFIX_URI } from './common';
 
 export const FUNC_LIST_REQUEST_POST = 'func_list_request_post';
 export function requestFunc(namespace) {

@@ -1,29 +1,57 @@
 import {
-    REPO_REQUEST_POST,
-    REPO_RECEIVE_POST,
-    REPO_UNSET,
-    REPO_SET
+    FUNC_REPO_LIST_RECEIVE_POST,
+    FUNC_REPO_LIST_REQUEST_POST,
+    FUNC_REPO_LIST_SET,
+    FUNC_REPO_LIST_UNSET,
+
+    GATEWAY_REPO_LIST_RECEIVE_POST,
+    GATEWAY_REPO_LIST_REQUEST_POST,
+    GATEWAY_REPO_LIST_SET,
+    GATEWAY_REPO_LIST_UNSET
 } from '../actions/repo';
 
 const initState = {
-    state: REPO_UNSET,
-    repo: []
+    funcRepo: {
+        state: FUNC_REPO_LIST_UNSET,
+        repo: []
+    },
+    gatewayRepo: {
+        state: GATEWAY_REPO_LIST_UNSET,
+        repo: []
+    }
 };
 
 export default function repoReduce(state = initState, action) {
     
     switch (action.type) {
 
-        case REPO_RECEIVE_POST:
+        case FUNC_REPO_LIST_RECEIVE_POST:
             return Object.assign({}, state, {
-                state: REPO_SET,
-                repo: action.repo
-            });
+            funcRepo: {
+                state: FUNC_REPO_LIST_UNSET,
+                repo: []
+            }
+        });
 
-        case REPO_REQUEST_POST:
+        case FUNC_REPO_LIST_REQUEST_POST:
             return Object.assign({}, state, {
-                state: REPO_UNSET,
-            });
+            funcRepo: {
+                state: FUNC_REPO_LIST_SET,
+                repo: action.repo
+            }
+        });
+
+        case GATEWAY_REPO_LIST_RECEIVE_POST:
+            return Object.assign({}, state, {
+            state: GATEWAY_REPO_LIST_SET,
+            repo: action.repo
+        });
+
+        case GATEWAY_REPO_LIST_REQUEST_POST:
+            return Object.assign({}, state, {
+            state: GATEWAY_REPO_LIST_UNSET,
+            repo: []
+        })；
 
         default:
             return state;

@@ -21,7 +21,6 @@ JNIEXPORT jstring JNICALL
     jgateway_set_to_arg(env, &arg, j_gateway_cfg);
 
     navagraha::process::gateway(cfg).set(arg);
-
     return str2jstring(env, std::string(""));
 }
 
@@ -39,9 +38,7 @@ JNIEXPORT jstring JNICALL
     jgateway_get_to_arg(env, &arg, j_gateway_cfg);
 
     std::ostringstream oss;
-
     navagraha::process::gateway(cfg).get(arg).serialize(oss);
-
     return str2jstring(env, oss.str());
 }
 
@@ -59,8 +56,21 @@ JNIEXPORT jstring JNICALL
     jgateway_remove_to_arg(env, &arg, j_gateway_cfg);
 
     navagraha::process::gateway(cfg).remove(arg);
-
     return str2jstring(env, std::string());
+}
+
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Gateway_repo(JNIEnv * env,
+                                                  jobject self,
+                                                  jobject j_cfg)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+    jconfig_to_config(env, &cfg, j_cfg);
+
+    std::ostringstream oss;
+    navagraha::process::gateway(cfg).repo().serialize(oss);
+    return str2jstring(env, oss.str());
 }
 
 static void jgateway_set_to_arg(JNIEnv * env, navagraha::process::gateway_set_arg * arg, jobject j_gateway_cfg)
