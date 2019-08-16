@@ -33,14 +33,17 @@ export function deletingNamespace() {
 
 export const NAMESPACE_LIST_UNSET = 'namespace_unset';
 export const NAMESPACE_LIST_SET = 'namespace_set';
-export function fetchNamespaces() {
+export function fetchNamespaces(check_cb) {
 
     return function (dispatch) {
         dispatch(requestNamespaces());
 
         return fetch(`${PREFIX_URI}/api/namespace`)
         .then(response => response.json(), error => console.log('An error occurred.', error))
-        .then(json => dispatch(receiveNamespaces(json)));
+        .then(json => {
+            dispatch(receiveNamespaces(json));
+            check_cb && check_cb();
+        });
     };
 };
 
@@ -70,5 +73,15 @@ export function deleteNamespace(name) {
             credentials: 'include'
         })
         .then(response => dispatch(fetchNamespaces()));
+    };
+};
+
+export const NAMESPACE_SELECTED_SET = 'namespace_selected_set';
+export const NAMESPACE_SELECTED_UNSET = 'namespace_selected_unset';
+export const NAMESPACE_SELECT_DISPLAY = 'namespace_select_display';
+export function selectDisplayNamespace(namespace) {
+    return {
+        type: NAMESPACE_SELECT_DISPLAY,
+        namespace: namespace
     };
 };

@@ -2,9 +2,11 @@ package indi.gscienty.navagraha.dashboard.services;
 
 import java.util.List;
 
+import indi.gscienty.navagraha.dashboard.entities.NamespaceInfo;
+
 public interface INamespaceService {
 
-    public List<String> list();
+    public List<NamespaceInfo> list();
 
     public void add(String namespace);
 

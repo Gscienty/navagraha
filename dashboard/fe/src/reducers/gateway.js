@@ -48,5 +48,5 @@ export default function gatewayReduce(state = initState, action) {
 
         default:
             return state;
-    }
-}
+    };
+};

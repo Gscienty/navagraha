@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 
+import indi.gscienty.navagraha.dashboard.entities.NamespaceInfo;
 import indi.gscienty.navagraha.dashboard.ConfigSingleton;
 import indi.gscienty.navagraha.jni.Namespace;
 
@@ -18,9 +19,9 @@ public class NamespaceService implements INamespaceService {
         this.namespace = new Namespace();
     }
 
-    public List<String> list() {
+    public List<NamespaceInfo> list() {
         String result = this.namespace.list(ConfigSingleton.getInstance().getConfig());
-        return JSON.parseArray(result, String.class);
+        return JSON.parseArray(result, NamespaceInfo.class);
     }
 
     public void add(String namespace) {

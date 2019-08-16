@@ -2,6 +2,7 @@ package indi.gscienty.navagraha.dashboard.controllers;
 
 import java.util.List;
 
+import indi.gscienty.navagraha.dashboard.entities.NamespaceInfo;
 import indi.gscienty.navagraha.dashboard.services.INamespaceService;
 import indi.gscienty.navagraha.dashboard.entities.NamespaceForm;
 
@@ -20,7 +21,7 @@ public class NamespaceController {
     private INamespaceService namespaceService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<String> namespaceListAction() {
+    public List<NamespaceInfo> namespaceListAction() {
         return this.namespaceService.list();
     }
 
