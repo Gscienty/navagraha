@@ -38,14 +38,14 @@ std::string namespace_::remove(std::string name)
     return std::string();
 }
 
-extensions::special_list<std::string> namespace_::list()
+extensions::special_list<namespace_list_item> namespace_::list()
 {
     http_client::curl_helper helper(this->config.kube_cert,
                                     this->config.kube_key,
                                     this->config.kube_ca,
                                     this->config.kube_api_server);
 
-    extensions::special_list<std::string> ret;
+    extensions::special_list<namespace_list_item> ret;
     auto cb = [&ret] (kubeent::namespace_list & list) -> void
     {
         for (auto & ns : list.items.get().values()) {
@@ -53,7 +53,9 @@ extensions::special_list<std::string> namespace_::list()
                 && ns.metadata.get().name.get().compare("default") != 0) {
                 continue;
             }
-            ret.values().push_back(std::string(ns.metadata.get().name.get()));
+            ret.values().push_back(namespace_list_item());
+            ret.values().back().name = std::string(ns.metadata.get().name.get());
+            ret.values().back().status = std::string(ns.status.get().phase.get());
         }
     };
 
@@ -62,6 +64,16 @@ extensions::special_list<std::string> namespace_::list()
         .response_case<200, kubeent::namespace_list>(cb);
 
     return ret;
+}
+
+char NAMESPACE_LIST_ITEM_NAME[] = "name";
+char NAMESPACE_LIST_ITEM_STATUS[] = "status";
+
+void namespace_list_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->name)
+        .add(this->status);
 }
 
 }
