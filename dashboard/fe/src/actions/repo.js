@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
 import { PREFIX_URI } from './common';
 
-export FUNC_REPO_LIST_REQUEST_POST = 'func_repo_list_request_post';
+export const FUNC_REPO_LIST_REQUEST_POST = 'func_repo_list_request_post';
 export function requestFuncRepoList() {
     return {
         type: FUNC_REPO_LIST_REQUEST_POST,
@@ -9,7 +9,7 @@ export function requestFuncRepoList() {
     };
 };
 
-export FUNC_REPO_LIST_RECEIVE_POST = 'func_repo_list_receive_post';
+export const FUNC_REPO_LIST_RECEIVE_POST = 'func_repo_list_receive_post';
 export function receiveFuncRepoList(received) {
     return {
         type: FUNC_REPO_LIST_RECEIVE_POST,
@@ -17,8 +17,8 @@ export function receiveFuncRepoList(received) {
     };
 };
 
-export FUNC_REPO_LIST_UNSET = 'func_repo_list_unset';
-export FUNC_REPO_LIST_SET = 'func_repo_list_set';
+export const FUNC_REPO_LIST_UNSET = 'func_repo_list_unset';
+export const FUNC_REPO_LIST_SET = 'func_repo_list_set';
 
 export function fetchFuncRepoList() {
 
@@ -34,7 +34,7 @@ export function fetchFuncRepoList() {
 export const GATEWAY_REPO_LIST_REQUEST_POST = 'gateway_repo_list_request_post';
 export function requestGatewayRepoList() {
     return {
-        type: GATEWAY_REPO_LIST_REQUEST,
+        type: GATEWAY_REPO_LIST_REQUEST_POST,
         repo: []
     };
 };

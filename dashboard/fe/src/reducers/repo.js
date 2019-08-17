@@ -25,15 +25,10 @@ export default function repoReduce(state = initState, action) {
     
     switch (action.type) {
 
-        case FUNC_REPO_LIST_RECEIVE_POST:
-            return Object.assign({}, state, {
-            funcRepo: {
-                state: FUNC_REPO_LIST_UNSET,
-                repo: []
-            }
-        });
-
         case FUNC_REPO_LIST_REQUEST_POST:
+            return state;
+
+        case FUNC_REPO_LIST_RECEIVE_POST:
             return Object.assign({}, state, {
             funcRepo: {
                 state: FUNC_REPO_LIST_SET,
@@ -41,17 +36,16 @@ export default function repoReduce(state = initState, action) {
             }
         });
 
+        case GATEWAY_REPO_LIST_REQUEST_POST:
+            return state;
+        
         case GATEWAY_REPO_LIST_RECEIVE_POST:
             return Object.assign({}, state, {
-            state: GATEWAY_REPO_LIST_SET,
-            repo: action.repo
+            gatewayRepo: {
+                state: GATEWAY_REPO_LIST_SET,
+                repo: action.repo
+            }
         });
-
-        case GATEWAY_REPO_LIST_REQUEST_POST:
-            return Object.assign({}, state, {
-            state: GATEWAY_REPO_LIST_UNSET,
-            repo: []
-        })；
 
         default:
             return state;

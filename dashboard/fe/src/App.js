@@ -6,8 +6,7 @@ import {
     SYSTEM_INFO_NAVA_VERSION_UNSET
 } from './actions/system_info';
 import NamespaceSelector from './components/namespace_selector';
-import NamespaceList from './components/namespace_list';
-import NamespaceAdd from './components/namespace_add';
+import FuncRepoList from './components/gateway_repo_list';
 
 class App extends React.PureComponent {
 
@@ -23,10 +22,8 @@ class App extends React.PureComponent {
         return (
             <div className="App">
                 <NamespaceSelector />
-                <NamespaceAdd />
                 Hello { this.props.navaVersion.name } { this.props.navaVersion.version }
-
-                <NamespaceList />
+                <FuncRepoList />
             </div>
         );
     }

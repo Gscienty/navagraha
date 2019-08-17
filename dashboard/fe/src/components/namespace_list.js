@@ -48,16 +48,18 @@ class NamespaceList extends React.PureComponent {
             {
                 title: '操作',
                 key: 'operation',
-                dataIndex: 'namespaceName',
-                render: value => (
+                render: n => (
                     <div>
                         {(() => {
                             if (this.props.namespace.selectedState === NAMESPACE_SELECTED_SET
-                               && this.props.namespace.selectedNamespace === value) {
+                               && this.props.namespace.selectedNamespace === n.namespaceName) {
                                 return (
-                                    <Tag key={value} closable={false}>
-                                        已选择
-                                    </Tag>
+                                    <Tag key={n.namespaceName} closable={false} color='#108ee9'>已选择</Tag>
+                                )
+                            }
+                            if (n.namespaceStatus === 'Terminating') {
+                                return (
+                                    <Tag key={n.namespaceName} closable={false} color='#f50'>移除中...</Tag>
                                 )
                             }
                             else {
@@ -66,13 +68,13 @@ class NamespaceList extends React.PureComponent {
                                         <Button
                                         type='primary'
                                         size='small'
-                                        onClick={() => this.props.dispatch(selectDisplayNamespace(value))}>
+                                        onClick={() => this.props.dispatch(selectDisplayNamespace(n.namespaceName))}>
                                         选择
                                         </Button>
 
                                         &nbsp;
 
-                                        <Button size='small' onClick={() => this.props.dispatch(deleteNamespace(value))}>删除</Button>
+                                        <Button size='small' onClick={() => this.props.dispatch(deleteNamespace(n.namespaceName))}>删除</Button>
                                     </div>
                                 );
                             }
