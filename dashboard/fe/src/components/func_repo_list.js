@@ -39,11 +39,11 @@ class FuncRepoList extends React.PureComponent {
         ];
 
         let dataSource = [];
-        if (this.props.repo.repo.map(n => dataSource.push({
+        this.props.repo.repo.map(n => dataSource.push({
             key: n.name,
             repoName: n.name,
             repoVersions: n.versions
-        })))
+        }))
         
         return (<Table columns={COLUMNS} dataSource={dataSource} />);
     }

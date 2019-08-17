@@ -6,7 +6,7 @@ import {
     SYSTEM_INFO_NAVA_VERSION_UNSET
 } from './actions/system_info';
 import NamespaceSelector from './components/namespace_selector';
-import FuncRepoList from './components/gateway_repo_list';
+import FuncRepoList from './components/func_list';
 
 class App extends React.PureComponent {
 

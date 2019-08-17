@@ -18,10 +18,7 @@ export default function funcReduce(state = initState, action) {
     switch (action.type) {
 
         case FUNC_LIST_REQUEST_POST:
-            return Object.assign({}, state, {
-            type: FUNC_LIST_UNSET,
-            namespace: action.namespace
-        });
+            return state;
 
         case FUNC_LIST_RECEIVE_POST:
             return Object.assign({}, state, {
@@ -31,14 +28,10 @@ export default function funcReduce(state = initState, action) {
         });
 
         case FUNC_UP_POST:
-            return Object.assign({}, state, {
-            type: FUNC_LIST_UNSET,
-        });
+            return state;
 
         case FUNC_DOWN_POST:
-            return Object.assign({}, state, {
-            type: FUNC_LIST_UNSET,
-        });
+            return state;
 
         default:
             return state;
