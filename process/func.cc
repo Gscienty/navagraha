@@ -253,9 +253,15 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
                 items.values().back().name = std::string(dep.metadata.get().name.get());
                 items.values().back().namespace_ = std::string(arg.namespace_);
                 items.values().back().image_tag = std::string(dep.spec.get().template_.get().spec.get().containers.get().values().front().image.get());
-                items.values().back().replicas.get() = dep.status.get().replicas.get();
-                items.values().back().available.get() = dep.status.get().available_replicas.get();
-                items.values().back().unavailable.get() = dep.status.get().unavailable_replicas.get();
+                items.values().back().replicas.get() = dep.status.get().replicas.omit()
+                    ? dep.status.get().replicas.get()
+                    : 0;
+                items.values().back().available.get() = dep.status.get().available_replicas.omit()
+                    ? dep.status.get().available_replicas.get()
+                    : 0;
+                items.values().back().unavailable.get() = dep.status.get().unavailable_replicas.omit()
+                    ? dep.status.get().unavailable_replicas.get()
+                    : 0;
                 items.values().back().stateful.get() = false;
             }
         }
@@ -275,8 +281,12 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
                 items.values().back().name = std::string(stateful.metadata.get().name.get());
                 items.values().back().namespace_ = std::string(arg.namespace_);
                 items.values().back().image_tag = std::string(stateful.spec.get().template_.get().spec.get().containers.get().values().front().image.get());
-                items.values().back().replicas.get() = stateful.status.get().replicas.get();
-                items.values().back().available.get() = stateful.status.get().current_replicas.get();
+                items.values().back().replicas.get() = stateful.status.get().replicas.omit()
+                    ? stateful.status.get().replicas.get()
+                    : 0;
+                items.values().back().available.get() = stateful.status.get().current_replicas.omit()
+                    ? stateful.status.get().current_replicas.get()
+                    : 0;
                 items.values().back().unavailable.get() = 0;
                 items.values().back().stateful.get() = true;
             }
