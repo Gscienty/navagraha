@@ -42,5 +42,17 @@ http_client::http_response horizontal_pod_autoscaler::list(const std::string nam
                              + "/horizontalpodautoscalers");
 }
 
+http_client::http_response horizontal_pod_autoscaler::replace(const std::string namespace_,
+                                                              const std::string name,
+                                                              kubeent::horizontal_pod_autoscaler & hpa)
+{
+    this->set_payload(hpa);
+
+    return this->put_request("/apis/autoscaling/v1/namespaces/"
+                             + namespace_
+                             + "/horizontalpodautoscalers/"
+                             + name);
+}
+
 }
 }

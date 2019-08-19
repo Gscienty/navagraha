@@ -20,6 +20,8 @@ public:
     http_client::http_response read(const std::string namespace_, const std::string name);
 
     http_client::http_response list(const std::string namespace_);
+
+    http_client::http_response replace(const std::string namespace_, const std::string name, kubeent::horizontal_pod_autoscaler & hpa);
 }; 
 }
 }

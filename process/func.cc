@@ -5,10 +5,13 @@
 #include "kubeent/service.hpp"
 #include "kubeent/stateful_set.hpp"
 #include "kubeent/horizontal_pod_autoscaler.hpp"
+#include "kubeent/horizontal_pod_autoscaler_list.hpp"
+#include "kubeent/pod_list.hpp"
 #include "kube_api/deployment.hpp"
 #include "kube_api/service.hpp"
 #include "kube_api/stateful_set.hpp"
 #include "kube_api/horizontal_pod_autoscaler.hpp"
+#include "kube_api/pod.hpp"
 #include "docker_api/images.hpp"
 #include <algorithm>
 
@@ -196,15 +199,15 @@ extensions::special_list<func_repo_item> func::repo()
     auto eachor = [&items, this] (navagraha::extensions::special_list<navagraha::dockerent::image> & images) -> void 
     {
         std::map<std::string, std::list<std::string>> stored;
-        for (auto image : images.values()) {
+        for (auto & image : images.values()) {
             this->func_repo_image_filter(stored, image);
         }
 
-        for (auto pair : stored) {
+        for (auto & pair : stored) {
             items.values().push_back(func_repo_item());
 
             items.values().back().name = std::string(pair.first);
-            for (auto version : pair.second) {
+            for (auto & version : pair.second) {
                 items.values().back().versions.get().values().push_back(version);
             }
         }
@@ -219,7 +222,7 @@ extensions::special_list<func_repo_item> func::repo()
     return items;
 }
 
-extensions::special_list<func_list_item> func::list(func_list_arg & arg)
+extensions::special_list<func_list_item> func::list(const func_list_arg & arg)
 {
     http_client::curl_helper helper(this->config.kube_cert,
                                     this->config.kube_key,
@@ -301,7 +304,45 @@ extensions::special_list<func_list_item> func::list(func_list_arg & arg)
     return items;
 }
 
-std::string func::autoscaling(func_autoscaling_arg & arg)
+extensions::special_list<func_pod_list_item> func::list_pod(const func_pod_list_arg & arg)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    extensions::special_list<func_pod_list_item> ret;
+
+    auto eachor = [&ret, &arg] (kubeent::pod_list & list) -> void
+    {
+        for (auto & pod : list.items.get().values()) {
+            if (pod.metadata.get().labels.get().values().find("nava_app") == pod.metadata.get().labels.get().values().end()) {
+                continue;
+            }
+            if (pod.metadata.get().labels.get().values()["nava_app"].str.compare(arg.name) != 0) {
+                continue;
+            }
+
+            ret.values().push_back(func_pod_list_item());
+
+            ret.values().back().name = std::string(pod.metadata.get().name.get());
+            ret.values().back().namespace_ = std::string(pod.metadata.get().namespace_.get());
+            ret.values().back().image = std::string(pod.status.get().container_statuses.get().values().front().image.get());
+            ret.values().back().node = std::string(pod.spec.get().node_name.get());
+            ret.values().back().policy = std::string(pod.spec.get().containers.get().values().back().image_pull_policy.get());
+            ret.values().back().status = std::string(pod.status.get().phase.get());
+        }
+    };
+
+    helper.build<kube_api::pod>()
+        .list(arg.namespace_)
+        .response_switch()
+        .response_case<200, kubeent::pod_list>(eachor);
+
+    return ret;
+}
+
+std::string func::autoscaling(const func_autoscaling_arg & arg)
 {
     http_client::curl_helper helper(this->config.kube_cert,
                                     this->config.kube_key,
@@ -312,6 +353,7 @@ std::string func::autoscaling(func_autoscaling_arg & arg)
     hpa.api_version = "autoscaling/v1";
     hpa.kind = "HorizontalPodAutoscaler";
     hpa.metadata.get().name = std::string(arg.name);
+    hpa.metadata.get().labels.get().values()["nava_hpa"] = std::string(arg.name);
     hpa.spec.get().cpu_utilization_percentage.get() = arg.cpu;
     hpa.spec.get().min_replicas.get() = arg.min;
     hpa.spec.get().max_replicas.get() = arg.max;
@@ -323,6 +365,40 @@ std::string func::autoscaling(func_autoscaling_arg & arg)
         .create(arg.namespace_, hpa);
 
     return std::string();
+}
+
+extensions::special_list<func_autoscaling_list_item> func::list_autoscaling(const func_autoscaling_list_arg & arg)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    extensions::special_list<func_autoscaling_list_item> ret;
+
+    auto eachor = [&ret] (kubeent::horizontal_pod_autoscaler_list & list) -> void
+    {
+        for (auto & hpa : list.items.get().values()) {
+            if (hpa.metadata.get().labels.get().values().find("nava_hpa") == hpa.metadata.get().labels.get().values().end()) {
+                continue;
+            }
+
+            ret.values().push_back(func_autoscaling_list_item());
+
+            ret.values().back().cpu.get() = hpa.spec.get().cpu_utilization_percentage.get();
+            ret.values().back().name = std::string(hpa.metadata.get().name.get());
+            ret.values().back().max.get() = hpa.spec.get().max_replicas.get();
+            ret.values().back().min.get() = hpa.spec.get().min_replicas.get();
+            ret.values().back().target.get() = hpa.spec.get().scale_target_ref.get().name.get();
+        }
+    };
+
+    helper.build<kube_api::horizontal_pod_autoscaler>()
+        .list(arg.namespace_)
+        .response_switch()
+        .response_case<200, kubeent::horizontal_pod_autoscaler_list>(eachor);
+
+    return ret;
 }
 
 void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
@@ -379,6 +455,39 @@ void func_list_item::bind(extensions::serializer_helper & helper)
         .add(this->unavailable);
 }
 
+char FUNC_POD_LIST_ITEM_NAMESPACE[] = "namespace";
+char FUNC_POD_LIST_ITEM_NAME[] = "name";
+char FUNC_POD_LIST_ITEM_STATUS[] = "status";
+char FUNC_POD_LIST_ITEM_IMAGE[] = "imageTag";
+char FUNC_POD_LIST_ITEM_POLICY[] = "policy";
+char FUNC_POD_LIST_ITEM_NODE[] = "node";
+
+void func_pod_list_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->namespace_)
+        .add(this->name)
+        .add(this->status)
+        .add(this->image)
+        .add(this->policy)
+        .add(this->node);
+}
+
+char FUNC_AUTOSCALING_LIST_ITEM_NAME[] = "name";
+char FUNC_AUTOSCALING_LIST_ITEM_CPU[] = "cpu";
+char FUNC_AUTOSCALING_LIST_ITEM_MIN_REPLICAS[] = "minReplicas";
+char FUNC_AUTOSCALING_LIST_ITEM_MAX_REPLICAS[] = "maxReplicas";
+char FUNC_AUTOSCALING_LIST_ITEM_TARGET[] = "target";
+
+void func_autoscaling_list_item::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->name)
+        .add(this->cpu)
+        .add(this->min)
+        .add(this->max)
+        .add(this->target);
+}
 
 }
 }
