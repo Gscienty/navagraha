@@ -4,13 +4,20 @@ import {
     FUNC_UP_POST,
     FUNC_DOWN_POST,
     FUNC_LIST_SET,
-    FUNC_LIST_UNSET
+    FUNC_LIST_UNSET,
+
+    FUNC_LIST_INTERVAL_FETCH_SET_INTERVAL_HANDLER,
+    FUNC_LIST_INTERCAL_FETCH_UNSET_INTERVAL_HANDLER,
+    FUNC_LIST_INTERVAL_FETCH_SET,
+    FUNC_LIST_INTERVAL_FETCH_UNSET
 } from '../actions/func';
 
 const initState = {
     state: FUNC_LIST_UNSET,
     namespace: 'unset',
-    func: []
+    func: [],
+    fetchInterval: 0,
+    fetchIntervalState: FUNC_LIST_INTERVAL_FETCH_UNSET
 };
 
 export default function funcReduce(state = initState, action) {
@@ -32,6 +39,28 @@ export default function funcReduce(state = initState, action) {
 
         case FUNC_DOWN_POST:
             return state;
+
+        case FUNC_LIST_INTERVAL_FETCH_SET_INTERVAL_HANDLER:
+            if (state.fetchIntervalState === FUNC_LIST_INTERVAL_FETCH_SET) {
+            return state;
+        }
+        else {
+            return Object.assign({}, state, {
+                fetchInterval: setInterval(action.callback, action.interval),
+                fetchIntervalState: FUNC_LIST_INTERVAL_FETCH_SET
+            });
+        };
+
+        case FUNC_LIST_INTERCAL_FETCH_UNSET_INTERVAL_HANDLER:
+            if (state.fetchIntervalState === FUNC_LIST_INTERVAL_FETCH_UNSET) {
+            return state;
+        }
+        else {
+            clearInterval(state.fetchInterval);
+            return Object.assign({}, state, {
+                fetchIntervalState: FUNC_LIST_INTERVAL_FETCH_UNSET
+            });
+        }
 
         default:
             return state;

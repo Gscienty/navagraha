@@ -8,6 +8,7 @@ public class FuncInfo {
     private int replicas;
     private int available;
     private int unavailable;
+    private FuncAutoscalingInfo autoscalingInfo;
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
@@ -63,5 +64,13 @@ public class FuncInfo {
 
     public int getUnavailable() {
         return unavailable;
+    }
+
+    public void setAutoscalingInfo(FuncAutoscalingInfo autoscalingInfo) {
+        this.autoscalingInfo = autoscalingInfo;
+    }
+
+    public FuncAutoscalingInfo getAutoscalingInfo() {
+        return autoscalingInfo;
     }
 }

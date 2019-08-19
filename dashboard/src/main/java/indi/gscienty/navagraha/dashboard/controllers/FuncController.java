@@ -5,6 +5,7 @@ import java.util.List;
 import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
 import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
+import indi.gscienty.navagraha.dashboard.entities.FuncAutoscalingForm;
 import indi.gscienty.navagraha.dashboard.services.IFuncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,6 @@ public class FuncController {
     @RequestMapping(value = "/{namespace}", method = RequestMethod.POST)
     public String funcUpAction(@PathVariable String namespace, @RequestBody FuncUpForm form) {
         form.setNamespace(namespace);
-        // TODO check form
         this.funcService.up(form);
         return "done";
     }
@@ -42,5 +42,11 @@ public class FuncController {
     @RequestMapping(value = "/{namespace}/{name}/pod", method = RequestMethod.GET)
     public List<FuncPodInfo> getFuncPodListAction(@PathVariable String namespace, @PathVariable String name) {
         return this.funcService.podList(namespace, name);
+    }
+
+    @RequestMapping(value = "/{namespace}/{name}/autoscaling", method = RequestMethod.POST)
+    public String funcAutoscalingAddAction(@PathVariable String namespace, @PathVariable String name, @RequestBody FuncAutoscalingForm form) {
+        this.funcService.autoscaling(namespace, name, form);
+        return "done";
     }
 }

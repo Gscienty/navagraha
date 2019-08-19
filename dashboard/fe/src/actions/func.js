@@ -92,3 +92,33 @@ export function receiveFuncPodList(namespace, name, pods) {
         pods: pods
     };
 };
+
+export const FUNC_LIST_INTERVAL_FETCH_SET = 'func_list_interval_fetch_set';
+export const FUNC_LIST_INTERVAL_FETCH_UNSET = 'func_list_interval_fetch_unset';
+
+export const FUNC_LIST_INTERVAL_FETCH_SET_INTERVAL_HANDLER = 'func_list_interval_fetch_set_interval_handler';
+export function intervalFuncListSetHandler(callback, interval) {
+    return {
+        type: FUNC_LIST_INTERVAL_FETCH_SET_INTERVAL_HANDLER,
+        callback: callback,
+        interval: interval
+    };
+};
+
+export const FUNC_LIST_INTERCAL_FETCH_UNSET_INTERVAL_HANDLER = 'fetch_list_interval_fetch_unset_interval_handler';
+export function intervalFuncListUnsetHandler() {
+    return {
+        type: FUNC_LIST_INTERCAL_FETCH_UNSET_INTERVAL_HANDLER
+    };
+};
+
+export function intervalFuncListFetch(namespace, interval) {
+    
+    return function (dispatch) {
+        return new Promise((resolve, reject) => 
+                 dispatch(intervalFuncListSetHandler(() => {
+                     dispatch(fetchFuncList(namespace));
+                 }, interval)));
+    };
+};
+
