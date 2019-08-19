@@ -8,20 +8,26 @@
 namespace navagraha {
 namespace cli {
 
+extern char CLI_FUNC_AUTOSCALING_FLAG[];
 extern char CLI_FUNC_AUTOSCALING_NAME[];
 extern char CLI_FUNC_AUTOSCALING_NAMESPACE[];
+extern char CLI_FUNC_AUTOSCALING_LIST[];
 extern char CLI_FUNC_AUTOSCALING_CPU[];
 extern char CLI_FUNC_AUTOSCALING_MIN[];
 extern char CLI_FUNC_AUTOSCALING_MAX[];
 
 class func_autoscaling : public cli_arg::abstract_process<func_autoscaling> {
 private:
-    cli_arg::arg<CLI_FUNC_AUTOSCALING_NAME, 1> name_arg;
+    cli_arg::arg<CLI_FUNC_AUTOSCALING_FLAG, 0> flag_arg;
+    cli_arg::arg<CLI_FUNC_AUTOSCALING_FLAG, 1> name_arg;
     cli_arg::arg<CLI_FUNC_AUTOSCALING_NAMESPACE, 1> namespace_arg;
+    cli_arg::arg<CLI_FUNC_AUTOSCALING_LIST, 0> list_arg;
     cli_arg::arg<CLI_FUNC_AUTOSCALING_CPU, 1> cpu_arg;
     cli_arg::arg<CLI_FUNC_AUTOSCALING_MIN, 1> min_arg;
     cli_arg::arg<CLI_FUNC_AUTOSCALING_MAX, 1> max_arg;
 
+    int add();
+    int list();
 public:
     virtual void bind(cli_arg::process_helper<func_autoscaling> & helper) override;
     virtual bool satisfy() const override;

@@ -34,7 +34,7 @@ int func_usage::execute()
         << "  " << "    " << "        " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << std::endl
         << "  " << "autoscaling" << " " << "Enumerate all repository function services." << std::endl
-        << "  " << "    " << "        " << "usage:" << "  " <<  "nava func autoscaling {func_name} --cpu {cpu_limit} --min {min} --max{max} [--namespace {func name}]" << std::endl
+        << "  " << "    " << "        " << "usage:" << "  " <<  "nava func autoscaling [--list] [--name {func_name} --cpu {cpu_limit} --min {min} --max{max}] [--namespace {func name}]" << std::endl
         << "  " << "    " << "        " << "  " << "func_name" << "   " << "function service name in function computing cluster." << std::endl
         << "  " << "    " << "        " << "  " << "cpu" << "         " << "cpu utilization percentage." << std::endl
         << "  " << "    " << "        " << "  " << "min" << "         " << "function pod min count." << std::endl

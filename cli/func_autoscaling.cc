@@ -2,11 +2,14 @@
 #include "cli/config.hpp"
 #include "kubeent/horizontal_pod_autoscaler.hpp"
 #include "kube_api/horizontal_pod_autoscaler.hpp"
+#include "process/func.hpp"
 
 namespace navagraha {
 namespace cli {
 
-char CLI_FUNC_AUTOSCALING_NAME[] = "autoscaling";
+char CLI_FUNC_AUTOSCALING_FLAG[] = "autoscaling";
+char CLI_FUNC_AUTOSCALING_NAME[] = "--name";
+char CLI_FUNC_AUTOSCALING_LIST[] = "--list";
 char CLI_FUNC_AUTOSCALING_NAMESPACE[] = "--namespace";
 char CLI_FUNC_AUTOSCALING_CPU[] = "--cpu";
 char CLI_FUNC_AUTOSCALING_MIN[] = "--min";
@@ -14,14 +17,18 @@ char CLI_FUNC_AUTOSCALING_MAX[] = "--max";
 
 void func_autoscaling::bind(cli_arg::process_helper<func_autoscaling> & helper)
 {
-    this->cpu_arg.require(this->name_arg);
-    this->namespace_arg.require(this->name_arg);
-    this->min_arg.require(this->name_arg);
-    this->max_arg.require(this->name_arg);
+    this->cpu_arg.require(this->flag_arg);
+    this->name_arg.require(this->flag_arg);
+    this->namespace_arg.require(this->flag_arg);
+    this->min_arg.require(this->flag_arg);
+    this->max_arg.require(this->flag_arg);
+    this->list_arg.require(this->flag_arg);
 
     helper
+        .add(this->flag_arg)
         .add(this->name_arg)
         .add(this->namespace_arg)
+        .add(this->list_arg)
         .add(this->cpu_arg)
         .add(this->min_arg)
         .add(this->max_arg);
@@ -29,13 +36,41 @@ void func_autoscaling::bind(cli_arg::process_helper<func_autoscaling> & helper)
 
 bool func_autoscaling::satisfy() const
 {
-    return this->name_arg.used()
-        && this->cpu_arg.used()
-        && this->min_arg.used()
-        && this->max_arg.used();
+    return this->flag_arg.used();
 }
 
 int func_autoscaling::execute()
+{
+    if (this->list_arg.used()) {
+        return this->list();
+    }
+    else {
+        return this->add();
+    }
+}
+
+int func_autoscaling::list()
+{
+    process::func_autoscaling_list_arg arg;
+    arg.namespace_ = this->namespace_arg[0];
+    auto ret = process::func(config::get_instance()).list_autoscaling(arg).values();
+
+    for (auto & item : ret) {
+        std::cout
+            << item.name.get()
+            << '\t'
+            << item.cpu
+            << '\t'
+            << item.max
+            << '-'
+            << item.min
+            << '\n';
+    }
+
+    return 0;
+}
+
+int func_autoscaling::add()
 {
     std::string namespace_ = "default";
     http_client::curl_helper helper(config::get_instance().kube_cert,
