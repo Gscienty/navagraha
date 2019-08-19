@@ -10,9 +10,11 @@ import indi.gscienty.navagraha.dashboard.ConfigSingleton;
 import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncRepoInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
+import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.entities.FuncList;
 import indi.gscienty.navagraha.entities.FuncUp;
 import indi.gscienty.navagraha.entities.FuncDown;
+import indi.gscienty.navagraha.entities.FuncPodList;
 import indi.gscienty.navagraha.jni.Func;
 
 @Service
@@ -59,4 +61,15 @@ public class FuncService implements IFuncService {
 
         this.func.down(ConfigSingleton.getInstance().getConfig(), downConfig);
     }
+
+    public List<FuncPodInfo> podList(String namespace, String name) {
+        FuncPodList podListConfig = new FuncPodList();
+
+        podListConfig.setName(name);
+        podListConfig.setNamespace(namespace);
+
+        String result = this.func.podList(ConfigSingleton.getInstance().getConfig(), podListConfig);
+        return JSON.parseArray(result, FuncPodInfo.class);
+    }
 }
+

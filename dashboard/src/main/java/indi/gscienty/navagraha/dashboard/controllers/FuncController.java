@@ -2,6 +2,7 @@ package indi.gscienty.navagraha.dashboard.controllers;
 
 import java.util.List;
 
+import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
 import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
 import indi.gscienty.navagraha.dashboard.services.IFuncService;
@@ -36,5 +37,10 @@ public class FuncController {
     public String funcDownAction(@PathVariable String namespace, @PathVariable String name) {
         this.funcService.down(name, namespace);
         return "done";
+    }
+
+    @RequestMapping(value = "/{namespace}/{name}/pod", method = RequestMethod.GET)
+    public List<FuncPodInfo> getFuncPodListAction(@PathVariable String namespace, @PathVariable String name) {
+        return this.funcService.podList(namespace, name);
     }
 }
