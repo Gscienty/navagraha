@@ -13,7 +13,11 @@ import {
 
 class NamespaceList extends React.PureComponent {
 
-    state = { waitingFresh: false };
+    state = {
+        waitingFresh: false,
+    };
+
+    FRESH_INTERVAL = 1000;
 
     constructor(props) {
         super(props);
@@ -25,15 +29,14 @@ class NamespaceList extends React.PureComponent {
     }
 
     render() {
-        if (this.props.namespace.namespace.find(n => n.status !== 'Active')) {
-            if (this.state.waitingFresh === false) {
-                this.setState({ waitingFresh: true })
-                setTimeout(() => {
-                    this.props.dispatch(fetchNamespaces());
-                    this.setState({ waitingFresh: false });
-                }, 1000);
-            }
-        }
+        if (this.state.waitingFresh === false) {
+            this.setState({ waitingFresh: true })
+            setTimeout(() => {
+                this.props.dispatch(fetchNamespaces());
+                this.setState({ waitingFresh: false });
+            }, this.FRESH_INTERVAL);
+        };
+
         const COLUMNS = [
             {
                 title: '名称',

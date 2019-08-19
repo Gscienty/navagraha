@@ -2,7 +2,7 @@ import fetch from 'cross-fetch';
 import { PREFIX_URI } from './common';
 
 export const FUNC_LIST_REQUEST_POST = 'func_list_request_post';
-export function requestFunc(namespace) {
+export function requestFuncList(namespace) {
     return {
         type: FUNC_LIST_REQUEST_POST,
         namespace: namespace,
@@ -11,7 +11,7 @@ export function requestFunc(namespace) {
 };
 
 export const FUNC_LIST_RECEIVE_POST = 'func_list_receive_post';
-export function receiveFunc(namespace, received) {
+export function receiveFuncList(namespace, received) {
     return {
         type: FUNC_LIST_RECEIVE_POST,
         namespace: namespace,
@@ -21,14 +21,14 @@ export function receiveFunc(namespace, received) {
 
 export const FUNC_LIST_UNSET = 'func_list_unset';
 export const FUNC_LIST_SET = 'func_list_set';
-export function fetchFunc(namespace) {
+export function fetchFuncList(namespace) {
     
     return function (dispatch) {
-        dispatch(requestFunc(namespace));
+        dispatch(requestFuncList(namespace));
 
         return fetch(`${PREFIX_URI}/api/func/${namespace}`)
         .then(response => response.json())
-        .then(json => dispatch(receiveFunc(namespace, json)));
+        .then(json => dispatch(receiveFuncList(namespace, json)));
     };
 };
 
@@ -52,7 +52,7 @@ export function upFunc(funcConfig) {
             },
             body: JSON.stringify(funcConfig)
         })
-        .then(response => dispatch(fetchFunc(funcConfig.namespace)))
+        .then(response => dispatch(fetchFuncList(funcConfig.namespace)))
     };
 };
 
@@ -72,7 +72,23 @@ export function downFunc(namespace, name) {
             method: 'DELETE',
             credentials: 'include'
         })
-        .then(response => dispatch(fetchFunc(namespace)));
+        .then(response => dispatch(fetchFuncList(namespace)));
     };
 };
 
+export const FUNC_POD_LIST_REQUEST_POST = 'func_pod_list_request_post';
+export function requestFuncPodList(namespace, name) {
+    return {
+        type: FUNC_POD_LIST_REQUEST_POST
+    };
+};
+
+export const FUNC_POD_LIST_RECEIVE_POST = 'func_pod_list_receive_post';
+export function receiveFuncPodList(namespace, name, pods) {
+    return {
+        type: FUNC_POD_LIST_RECEIVE_POST,
+        namespace: namespace,
+        name: name,
+        pods: pods
+    };
+};
