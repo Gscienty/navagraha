@@ -1,0 +1,2 @@
+def handle(req):
+    return "hello world %s" % (req)
