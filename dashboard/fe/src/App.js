@@ -6,7 +6,10 @@ import {
     SYSTEM_INFO_NAVA_VERSION_UNSET
 } from './actions/system_info';
 import NamespaceSelector from './components/namespace_selector';
-import FuncRepoList from './components/func_list';
+import FuncRepoList from './components/code_editor';
+import CodeTemplateSelector from './components/code_type_selector.js';
+import CodeMetadata from './components/code_metadata.js';
+import CodeSubmitButton from './components/code_submit_button.js';
 
 class App extends React.PureComponent {
 
@@ -23,6 +26,9 @@ class App extends React.PureComponent {
             <div className="App">
                 <NamespaceSelector />
                 Hello { this.props.navaVersion.name } { this.props.navaVersion.version }
+                <CodeMetadata />
+                <CodeSubmitButton />
+                <CodeTemplateSelector />
                 <FuncRepoList />
             </div>
         );
