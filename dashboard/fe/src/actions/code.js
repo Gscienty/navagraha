@@ -103,3 +103,38 @@ export function codeChangeMetadata(metadata) {
         metadata: metadata
     };
 };
+
+export const CODE_BUILDING_RUNNING = 'code_building_running';
+export function codeBuildingRunning() {
+    return {
+        type: CODE_BUILDING_RUNNING
+    };
+};
+
+export const CODE_BUILDING_FINISHED = 'code_building_finished';
+export function codeBuildingFinished() {
+    return {
+        type: CODE_BUILDING_FINISHED
+    };
+};
+
+export function codeBuild(codeInfo) {
+
+    return function (dispatch) {
+        dispatch(codeBuildingRunning());
+
+        return fetch(`${PREFIX_URI}/api/repo/build/${codeInfo.type}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: codeInfo.name,
+                version: codeInfo.version,
+                content: codeInfo.getContent
+            })
+        })
+        .then(response => dispatch(codeBuildingFinished()));
+    }
+}

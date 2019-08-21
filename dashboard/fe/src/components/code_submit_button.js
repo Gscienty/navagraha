@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Button } from 'antd';
 
 import {
+    codeBuild,
     resetCode,
     codeResetMetadata,
     submitToggle,
@@ -14,6 +15,12 @@ class CodeSubmitButton extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.metadataState === CODE_METADATA_SET && nextProps.codeInfoState === CODE_SUBMIT_SET) {
+
+            this.props.dispatch(codeBuild({
+                name: this.props.namespace.name,
+                version: this.props.metadata.version,
+                content: this.props.codeInfo.content
+            }));
 
             this.props.dispatch(codeResetMetadata());
             this.props.dispatch(resetCode());
