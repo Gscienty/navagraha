@@ -9,11 +9,13 @@ namespace navagraha {
 namespace cli {
 
 extern char CLI_FUNC_BUILD_BUILD[];
+extern char CLI_FUNC_BUILD_VERSION[];
 extern char CLI_FUNC_BUILD_PATH[];
 
 class project_build : public cli_arg::abstract_process<project_build> {
 private:
     cli_arg::arg<CLI_FUNC_BUILD_BUILD, 1> build_arg;
+    cli_arg::arg<CLI_FUNC_BUILD_VERSION, 1> version_arg;
     cli_arg::arg<CLI_FUNC_BUILD_PATH, 1> path_arg;
 
     void received_callback(std::string & msg);

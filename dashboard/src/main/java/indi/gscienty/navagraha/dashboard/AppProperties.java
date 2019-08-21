@@ -14,8 +14,21 @@ public class AppProperties {
     @Value("${nava.app.template.java8}")
     private String javaTemplateContent;
 
+    @Value("${nava.app.template.java8.rewritepath}")
+    private String javaRewritePath;
+
     @Value("${nava.app.template.python3}")
     private String pythonTemplateContent;
+
+    @Value("${nava.app.template.python3.rewritepath}")
+    private String pythonRewritePath;
+
+    @Value("${nava.app.template.repo.uselocal}")
+    private Boolean templateRepoLocal;
+
+    @Value("${nava.app.template.repo.path}")
+    private String localTemplateRepoPath;
+
 
     public String getJavaTemplateContent() {
         return this.javaTemplateContent;
@@ -29,4 +42,19 @@ public class AppProperties {
         return this.supportedTemplates;
     }
 
+    public Boolean getTemplateRepoLocal() {
+        return templateRepoLocal;
+    }
+
+    public String getLocalTemplateRepoPath() {
+        return localTemplateRepoPath;
+    }
+
+    public String getJavaRewritePath() {
+        return javaRewritePath;
+    }
+
+    public String getPythonRewritePath() {
+        return pythonRewritePath;
+    }
 }

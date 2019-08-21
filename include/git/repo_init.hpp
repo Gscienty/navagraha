@@ -13,14 +13,15 @@ private:
     git_repository * repo_handler;
     git_remote * template_remote;
     std::string repo_path;
-    std::string github_uri;
+    std::string url;
     std::string template_path;
+    bool local;
 
     void set_template_remote();
     void merge();
     void perform_fastforward(const git_oid * target_oid, bool is_unborn);
 public:
-    repo_init(std::string repo_path, std::string github_uri, std::string template_path);
+    repo_init(std::string repo_path, std::string url, bool local, std::string template_path);
     virtual ~repo_init();
     static void static_construct();
 
