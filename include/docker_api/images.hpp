@@ -18,6 +18,10 @@ public:
     http_client::http_response list();
 
     http_client::http_response create(std::string path, std::string tag, std::function<void (std::string &)> cb);
+
+    http_client::http_response delete_builder_cache();
+
+    http_client::http_response remove(std::string name);
 };
 
 }

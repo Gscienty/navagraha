@@ -29,13 +29,14 @@ std::string project::init(project_init_arg & arg)
 
 std::string project::build(project_build_arg & arg)
 {
-    http_client::curl_helper(this->config.docker_sock)
-        .unix_socket_build<docker_api::images>()
-        .create(arg.path,
-                arg.name + ":" + arg.version,
-                bool(arg.callback)
-                ? arg.callback
-                : std::bind(&project::build_callback, this, std::placeholders::_1));
+    auto helper = http_client::curl_helper(this->config.docker_sock)
+        .unix_socket_build<docker_api::images>();
+    helper.create(arg.path,
+                  arg.name + ":" + arg.version,
+                  bool(arg.callback)
+                  ? arg.callback
+                  : std::bind(&project::build_callback, this, std::placeholders::_1));
+    helper.delete_builder_cache();
 
         return "";
 }

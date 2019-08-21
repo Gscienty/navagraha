@@ -222,6 +222,14 @@ extensions::special_list<func_repo_item> func::repo()
     return items;
 }
 
+int func::repoRemove(const std::string name)
+{
+    return navagraha::http_client::curl_helper(this->config.docker_sock)
+        .unix_socket_build<navagraha::docker_api::images>()
+        .remove(name)
+        .status_code();
+}
+
 extensions::special_list<func_list_item> func::list(const func_list_arg & arg)
 {
     http_client::curl_helper helper(this->config.kube_cert,

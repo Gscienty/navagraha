@@ -36,18 +36,15 @@ JNIEXPORT jstring JNICALL
     jconfig_to_config(env, &config, jconfig);
     jproj_build_to_arg(env, &arg, consumer, j_proj_build);
 
+    jclass consumer_cls = env->GetObjectClass(consumer);
+    jmethodID accept_mid = env->GetMethodID(consumer_cls, "accept", "(Ljava/lang/Object;)V");
 
-    arg.callback = [&consumer, env] (std::string & msg) -> void
+    arg.callback = [&consumer, accept_mid, env] (std::string & msg) -> void
     {
-        jclass consumer_cls = env->GetObjectClass(consumer);
-        jmethodID accept_mid = env->GetMethodID(consumer_cls, "accept", "(Ljava/lang/Object;)V");
 
         jstring local_str_arg = str2jstring(env, msg);
 
         env->CallVoidMethod(consumer, accept_mid, static_cast<jobject>(local_str_arg));
-
-        env->DeleteLocalRef(local_str_arg);
-        env->DeleteLocalRef(consumer_cls);
     };
 
     navagraha::process::project(config).build(arg);

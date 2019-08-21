@@ -50,6 +50,11 @@ struct func_autoscaling_list_arg {
     std::string namespace_;
 };
 
+struct func_repo_remove_arg {
+    std::string name;
+    std::string version;
+};
+
 extern char FUNC_REPO_ITEM_NAME[];
 extern char FUNC_REPO_ITEM_VERSIONS[];
 
@@ -138,6 +143,8 @@ public:
     std::string down(const func_down_arg & func_down);
 
     extensions::special_list<func_repo_item> repo();
+
+    int repoRemove(const std::string name);
 
     extensions::special_list<func_list_item> list(const func_list_arg & arg);
 

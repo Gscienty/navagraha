@@ -23,6 +23,12 @@ JNIEXPORT jstring JNICALL
                                                jobject self,
                                                jobject j_cfg);
 
+JNIEXPORT jint JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_repoRemove(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg,
+                                               jobject j_func_remove);
+
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_list(JNIEnv * env,
                                                jobject self,

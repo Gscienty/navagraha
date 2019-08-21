@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @RestController
 @RequestMapping(value = "/api/repo")
@@ -24,6 +26,9 @@ public class RepoController {
 
     @Autowired
     private IGatewayService gatewayService;
+
+    @Autowired
+    private ThreadPoolTaskExecutor threadPool;
 
     @RequestMapping(value = "/func", method = RequestMethod.GET)
     public List<FuncRepoInfo> funcRepoAction() {
@@ -36,16 +41,32 @@ public class RepoController {
     }
 
     @RequestMapping(value = "/build/{type}", method = RequestMethod.POST)
-    public String buildRepoAction(@PathVariable String type, @RequestBody BuildRepoForm form) {
-        String path = "/tmp/nava-build-" + UUID.randomUUID().toString();
-        this.funcService.repoInit(type, path);
-        this.funcService.repoFillContent(type, path, form.getContent());
-        this.funcService.repoBuild(form.getName(), form.getVersion(), path, val -> {
-            System.out.println(val);
-        });
-        this.funcService.repoRemove(path);
+    public SseEmitter buildRepoAction(@PathVariable String type, @RequestBody BuildRepoForm form) {
+        SseEmitter event = new SseEmitter();
 
-        return "done";
+        this.threadPool.execute(() -> {
+            String path = "/tmp/nava-build-" + UUID.randomUUID().toString();
+            this.funcService.repoInit(type, path);
+            //this.funcService.repoFillContent(type, path, form.getContent());
+            this.funcService.repoBuild(form.getName(), form.getVersion(), path, val -> {
+                try {
+                    event.send(SseEmitter.event().name("dockerCallback").data((Object) val));
+                }
+                catch (Exception ex) {
+                    event.complete();
+                }
+            });
+            event.complete();
+            try {
+                Thread.sleep(5000);
+            }
+            catch (Exception ex) {
+
+            }
+            this.funcService.repoRemove(path);
+        });
+
+        return event;
     }
 
 }

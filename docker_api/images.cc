@@ -38,7 +38,18 @@ http_client::http_response images::create(std::string path, std::string tag, std
     this->set_receive_cb(cb);
     return this->post_request("/build?dockerfile=.%2FDockerfile"
                               "&t="
-                              + tag);
+                              + tag
+                              + "&forcerm=true");
+}
+
+http_client::http_response images::delete_builder_cache()
+{
+    return this->post_request("/build/prune?all=true");
+}
+
+http_client::http_response images::remove(std::string name)
+{
+    return this->delete_request("/images/" + name);
 }
 
 }

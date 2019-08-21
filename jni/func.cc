@@ -15,6 +15,7 @@ static void jfunc_list_to_arg(JNIEnv * env, navagraha::process::func_list_arg * 
 static void jfunc_pod_list_to_arg(JNIEnv * env, navagraha::process::func_pod_list_arg * func_pod_list_cfg, jobject jent);
 static void jfunc_autoscaling_to_arg(JNIEnv * env, navagraha::process::func_autoscaling_arg * func_autoscaling_cfg, jobject jent);
 static void jfunc_autoscaling_list_to_arg(JNIEnv * env, navagraha::process::func_autoscaling_list_arg * func_autoscaling_list_cfg, jobject jent);
+static void jfunc_repo_remove_to_arg(JNIEnv * env, navagraha::process::func_repo_remove_arg * arg, jobject jent);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_up(JNIEnv * env,
@@ -66,6 +67,22 @@ JNIEXPORT jstring JNICALL
     navagraha::process::func(cfg).repo().serialize(oss);
 
     return str2jstring(env, oss.str());
+}
+
+JNIEXPORT jint JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_repoRemove(JNIEnv * env,
+                                               jobject self,
+                                               jobject j_cfg,
+                                               jobject j_func_remove)
+{
+    (void) self;
+    navagraha::cli::config cfg;
+    navagraha::process::func_repo_remove_arg arg;
+
+    jconfig_to_config(env, &cfg, j_cfg);
+    jfunc_repo_remove_to_arg(env,  &arg, j_func_remove);
+
+    return navagraha::process::func(cfg).repoRemove(arg.name + ":" + arg.version);
 }
 
 JNIEXPORT jstring JNICALL
@@ -223,4 +240,14 @@ static void jfunc_autoscaling_list_to_arg(JNIEnv * env, navagraha::process::func
 
     func_autoscaling_list_cfg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, name_mid)));
     func_autoscaling_list_cfg->namespace_ = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, namespace_mid)));
+}
+
+static void jfunc_repo_remove_to_arg(JNIEnv * env, navagraha::process::func_repo_remove_arg * arg, jobject jent)
+{
+    jclass arg_cls = env->GetObjectClass(jent);
+    jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
+    jmethodID version_mid = env->GetMethodID(arg_cls, "getVersion", "()Ljava/lang/String;");
+
+    arg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, name_mid)));
+    arg->version = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(jent, version_mid)));
 }
