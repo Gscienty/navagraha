@@ -11,6 +11,7 @@
 #include <git2/object.h>
 #include <git2/tree.h>
 #include <git2/commit.h>
+#include <git2/errors.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -21,13 +22,15 @@ namespace git {
 
 
 repo_init::repo_init(std::string repo_path,
-                     std::string github_uri,
+                     std::string url,
+                     bool local,
                      std::string template_path)
     : repo_handler(nullptr)
     , template_remote(nullptr)
     , repo_path(repo_path)
-    , github_uri(github_uri)
+    , url(url)
     , template_path(template_path)
+    , local(local)
 {
 
 }
@@ -59,7 +62,7 @@ void repo_init::set_template_remote()
     git_remote_create(&this->template_remote,
                       this->repo_handler,
                       "nava_template",
-                      this->github_uri.c_str());
+                      this->url.c_str());
 }
 
 void repo_init::perform_fastforward(const git_oid * target_oid, bool is_unborn)
@@ -196,12 +199,23 @@ void repo_init::merge()
 void repo_init::fetch_template()
 {
     git_fetch_options fetch_opts;
+    git_fetch_init_options(&fetch_opts, GIT_FETCH_OPTIONS_VERSION);
+
     if (this->template_remote == nullptr) {
         return;
     }
-    git_fetch_init_options(&fetch_opts, GIT_FETCH_OPTIONS_VERSION);
-    git_remote_fetch(this->template_remote, NULL, &fetch_opts, "fetch");
-    this->merge();
+
+    if (this->local) {
+        git_remote * local_remote = nullptr;
+        git_remote_lookup(&local_remote, this->repo_handler, "nava_template");
+        git_remote_fetch(local_remote, NULL, &fetch_opts, "fetch");
+        printf("%d %s\n", giterr_last()->klass, giterr_last()->message);
+    }
+    else {
+        git_remote_fetch(this->template_remote, NULL, &fetch_opts, "fetch");
+        this->merge();
+    }
+
 }
 
 }
