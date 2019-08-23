@@ -38,12 +38,6 @@ int project_build::execute()
     arg.callback = std::bind(&project_build::received_callback, this, std::placeholders::_1);
 
     process::project(config::get_instance()).build(arg);
-
-    //auto helper = http_client::curl_helper(config::get_instance().docker_sock)
-        //.unix_socket_build<docker_api::images>();
-    //helper.create(path, this->build_arg[0], std::bind(&project_build::received_callback,
-                                                      //this,
-                                                      //std::placeholders::_1));
     return 0;
 }
 
