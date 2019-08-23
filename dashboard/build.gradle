@@ -26,7 +26,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    //compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.apache.httpcomponents:httpclient:4.5.9")
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.1.5.RELEASE'
@@ -37,6 +37,8 @@ dependencies {
     //compile('org.springframework.session:spring-session-data-redis')
     compile group: 'com.alibaba', name: 'fastjson', version: '1.2.58'
     compile group: 'com.google.zxing', name: 'core', version: '3.4.0'
+    compile("org.springframework.boot:spring-boot-starter-websocket")
+    //compile("org.webjars:stomp-websocket:2.3.3")
 
     testCompile("junit:junit")
 }
