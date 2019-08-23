@@ -21,7 +21,13 @@ import {
     CODE_SUBMIT_SET,
     CODE_SUBMIT_UNSET,
     CODE_SUBMIT_CODE_INFO,
-    CODE_RESET_CODE_INFO
+    CODE_RESET_CODE_INFO,
+
+    CODE_BUILD_RUNNING,
+    CODE_BUILD_WAITING,
+    CODE_BUILDING_RUNNING,
+    CODE_BUILDING_FINISHED,
+    CODE_BUILDING_PROCESS
 } from '../actions/code';
 
 const initState = {
@@ -36,7 +42,12 @@ const initState = {
     codeMetadata: null,
 
     codeInfoState: CODE_SUBMIT_UNSET,
-    codeInfo: null
+    codeInfo: null,
+
+    codeBuildState: CODE_BUILD_WAITING,
+
+    codeBuildingProcess: 0,
+    codeBuildingLastInfo: ''
 };
 
 export default function codeReduce(state = initState, action) {
@@ -86,6 +97,24 @@ export default function codeReduce(state = initState, action) {
         case CODE_RESET_CODE_INFO:
             return Object.assign({}, state, {
             codeInfoState: CODE_SUBMIT_UNSET
+        });
+
+        case CODE_BUILDING_RUNNING:
+            return Object.assign({}, state, {
+            codeBuildState: CODE_BUILD_RUNNING,
+            codeBuildingProcess: 0,
+            codeBuildingLastInfo: ''
+        });
+
+        case CODE_BUILDING_FINISHED:
+            return Object.assign({}, state, {
+            codeBuildState: CODE_BUILD_WAITING
+        });
+
+        case CODE_BUILDING_PROCESS:
+            return Object.assign({}, state, {
+            codeBuildingProcess: action.buildingProcess,
+            codeBuildingLastInfo: action.buildingInfo
         });
 
         default:

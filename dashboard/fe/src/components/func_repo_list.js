@@ -39,7 +39,7 @@ class FuncRepoList extends React.PureComponent {
         ];
 
         let dataSource = [];
-        this.props.repo.repo.map(n => dataSource.push({
+        this.props.repo.repo.filter(n => n.name !== '<none>').map(n => dataSource.push({
             key: n.name,
             repoName: n.name,
             repoVersions: n.versions

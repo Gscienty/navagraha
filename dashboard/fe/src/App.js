@@ -10,6 +10,7 @@ import FuncRepoList from './components/code_editor';
 import CodeTemplateSelector from './components/code_type_selector.js';
 import CodeMetadata from './components/code_metadata.js';
 import CodeSubmitButton from './components/code_submit_button.js';
+import Sidecar from './components/sidecar.js';
 
 class App extends React.PureComponent {
 
@@ -24,12 +25,6 @@ class App extends React.PureComponent {
     render() {
         return (
             <div className="App">
-                <NamespaceSelector />
-                Hello { this.props.navaVersion.name } { this.props.navaVersion.version }
-                <CodeMetadata />
-                <CodeSubmitButton />
-                <CodeTemplateSelector />
-                <FuncRepoList />
             </div>
         );
     }

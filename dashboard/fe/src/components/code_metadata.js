@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Form, Input } from 'antd';
+import { Form, Input, Modal } from 'antd';
 
 import {
     codeResetMetadata,
@@ -18,7 +18,12 @@ class CodeMetadataForm extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.toggle !== this.props.toggle) {
             this.props.form.validateFields((err, values) => {
-                this.props.dispatch(codeChangeMetadata(values));
+                if (values.name === '' || typeof values.name === 'undefined' || values.version === '' || typeof values.version === 'undefined') {
+                    Modal.error({ title: '错误', content: '您尚未填写函数名/函数版本。', onOk: () => Modal.destroyAll() });
+                }
+                else {
+                    this.props.dispatch(codeChangeMetadata(values));
+                }
             });
         }
         return true;

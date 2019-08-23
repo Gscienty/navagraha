@@ -104,6 +104,9 @@ export function codeChangeMetadata(metadata) {
     };
 };
 
+export const CODE_BUILD_WAITING = 'code_build_waiting';
+export const CODE_BUILD_RUNNING = 'code_build_running';
+
 export const CODE_BUILDING_RUNNING = 'code_building_running';
 export function codeBuildingRunning() {
     return {
@@ -118,23 +121,86 @@ export function codeBuildingFinished() {
     };
 };
 
+export const CODE_BUILDING_PROCESS = 'code_building_process';
+export function codeBuildingProcess(msg) {
+    let spliter = msg.indexOf(':');
+    let tmp = msg.indexOf(' ') + 1;
+    let process = msg.substr(tmp, spliter - 1 - tmp);
+    let nums = process.split('/');
+
+    return {
+        type: CODE_BUILDING_PROCESS,
+        buildingProcess: parseFloat(nums[0]) / parseFloat(nums[1]),
+        buildingInfo: msg.substr(spliter + 1)
+    };
+};
+
 export function codeBuild(codeInfo) {
 
     return function (dispatch) {
         dispatch(codeBuildingRunning());
 
-        return fetch(`${PREFIX_URI}/api/repo/build/${codeInfo.type}`, {
+        return fetch(`${PREFIX_URI}/api/topic`, {
             method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: codeInfo.name,
-                version: codeInfo.version,
-                content: codeInfo.getContent
-            })
+            credentials: 'include'
         })
-        .then(response => dispatch(codeBuildingFinished()));
+        .then(response => response.json())
+        .then(json => {
+            let sock = new WebSocket(`ws://${window.location.host}/api/ws-topic/${json.topic}`);
+
+            sock.onmessage = msg => {
+                let spliter = msg.data.indexOf(':');
+                let eve = msg.data.substr(0, spliter);
+                let payload = msg.data.substr(spliter + 1);
+
+                switch (eve) {
+                case 'complete':
+                    dispatch(codeBuildingFinished());
+                    break;
+
+                case 'data':
+                    let json = JSON.parse(payload);
+                    if (typeof json.stream !== 'undefined' && json.stream.startsWith('Step')) {
+                        dispatch(codeBuildingProcess(json.stream));
+                    }
+                    break;
+                };
+            };
+
+            sock.onclose = () => {
+                dispatch(codeBuildingFinished());
+            }
+
+            //let eve = new EventSource(`${PREFIX_URI}/api/topic/${json.topic}`);
+
+            //eve.addEventListener('close', e => {
+                //console.log('close');
+                //console.log(e);
+                //eve.close();
+                //dispatch(codeBuildingFinished());
+            //});
+            //eve.addEventListener('data', e => {
+                //let json = JSON.parse(e.data);
+                //if (typeof json.stream !== 'undefined' && json.stream.startsWith('Step')) {
+                    //dispatch(codeBuildingProcess(json.stream));
+                //}
+            //}, false);
+            //eve.addEventListener('complete', e => {
+                //eve.close();
+                //dispatch(codeBuildingFinished());
+            //}, false);
+
+            return fetch(`${PREFIX_URI}/api/repo/build/${json.topic}`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: codeInfo.type,
+                    name: codeInfo.name,
+                    version: codeInfo.version,
+                    content: codeInfo.content
+                })
+            });
+        })
     }
 }
