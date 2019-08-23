@@ -1,6 +1,7 @@
 package indi.gscienty.navagraha.dashboard.entities;
 
 public class BuildRepoForm {
+    private String type;
     private String content;
     private String name;
     private String version;
@@ -27,5 +28,13 @@ public class BuildRepoForm {
 
     public String getVersion() {
         return version;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 }
