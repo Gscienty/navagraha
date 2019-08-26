@@ -28,6 +28,7 @@ import indi.gscienty.navagraha.entities.FuncPodList;
 import indi.gscienty.navagraha.entities.FuncUp;
 import indi.gscienty.navagraha.entities.ProjectBuild;
 import indi.gscienty.navagraha.entities.ProjectInit;
+import indi.gscienty.navagraha.entities.ProjectRemove;
 import indi.gscienty.navagraha.jni.Func;
 import indi.gscienty.navagraha.jni.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +126,7 @@ public class FuncService implements IFuncService {
         this.func.autoscaling(ConfigSingleton.getInstance().getConfig(), autoscaling);
     }
 
-    public void repoInit(String type, String path) {
+    public void localRepoInit(String type, String path) {
         if (this.props.getTemplateRepoLocal()) {
             this.copyLocalRepoTemplateDir(this.props.getLocalTemplateRepoPath() + "/template/" + type, path);
         }
@@ -143,7 +144,7 @@ public class FuncService implements IFuncService {
 
     }
 
-    public void repoBuild(String name, String version, String path, Consumer<String> callback) {
+    public void localRepoBuild(String name, String version, String path, Consumer<String> callback) {
         Project project = new Project();
         ProjectBuild build = new ProjectBuild();
 
@@ -155,7 +156,7 @@ public class FuncService implements IFuncService {
         project.build(ConfigSingleton.getInstance().getConfig(), build);
     }
 
-    public void repoFillContent(String type, String path, String content) {
+    public void localRepoFillContent(String type, String path, String content) {
         switch (type) {
             case "java8":
                 path = path + "/" + this.props.getJavaRewritePath();
@@ -176,7 +177,7 @@ public class FuncService implements IFuncService {
         }
     }
 
-    public void repoRemove(String path) {
+    public void localRepoRemove(String path) {
         File file = new File(path);
         if (file.exists() == false) {
             return;
@@ -184,10 +185,19 @@ public class FuncService implements IFuncService {
 
         if (file.isDirectory()) {
             for (File subFile : file.listFiles()) {
-                this.repoRemove(subFile.getAbsolutePath());
+                this.localRepoRemove(subFile.getAbsolutePath());
             }
         }
         file.delete();
+    }
+
+    public void dockerRepoRemove(String name, String version) {
+        Project project = new Project();
+        ProjectRemove remove = new ProjectRemove();
+        remove.setName(name);
+        remove.setVersion(version);
+
+        project.remove(ConfigSingleton.getInstance().getConfig(), remove);
     }
 
     private void copyLocalRepoTemplateDir(String src, String dst) {

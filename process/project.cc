@@ -41,6 +41,15 @@ std::string project::build(project_build_arg & arg)
         return "";
 }
 
+std::string project::remove(project_remove_arg & arg)
+{
+    http_client::curl_helper(this->config.docker_sock)
+        .unix_socket_build<docker_api::images>()
+        .remove(arg.name + ":" + arg.version);
+
+    return "";
+}
+
 void project::build_callback(std::string & val)
 {
     std::cout << val << std::endl;

@@ -1,12 +1,19 @@
 import React from 'react';
-import { Table, Tag } from 'antd';
+import { Table, Tag, Button } from 'antd';
 import { connect } from 'react-redux';
 import {
+    deleteRepo,
     fetchFuncRepoList,
     FUNC_REPO_LIST_UNSET,
 } from '../actions/repo';
 
 class FuncRepoList extends React.PureComponent {
+
+    state = {
+        waitingFresh: false
+    };
+
+    FRESH_INTERVAL = 1000;
 
     constructor(props) {
         super(props);
@@ -17,6 +24,14 @@ class FuncRepoList extends React.PureComponent {
     }
 
     render() {
+        if (this.state.waitingFresh === false) {
+            this.setState({ waitingFresh: true }); // TODO
+            setTimeout(() => {
+                this.props.dispatch(fetchFuncRepoList());
+                this.setState({ waitingFresh: false });
+            }, this.FRESH_INTERVAL);
+        };
+
         const COLUMNS = [
             {
                 title: '函数名称',
@@ -33,6 +48,18 @@ class FuncRepoList extends React.PureComponent {
                 key: 'operation',
                 render: n => (
                     <div>
+                        <Button
+                            onClick={() => {
+                                if (n.repoVersions.length === 1) {
+                                    this.props.dispatch(deleteRepo(n.repoName, n.repoVersions[0]));
+                                }
+                                else {
+                                    console.log("multi");
+                                }
+                            }}
+                            size="small">
+                            删除
+                        </Button>
                     </div>
                 )
             }

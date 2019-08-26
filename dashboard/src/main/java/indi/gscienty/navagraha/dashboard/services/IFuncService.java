@@ -25,11 +25,13 @@ public interface IFuncService {
 
     public void autoscaling(String namespace, String name, FuncAutoscalingForm form);
 
-    public void repoInit(String type, String path);
+    public void localRepoInit(String type, String path);
 
-    public void repoFillContent(String type, String path, String content);
+    public void localRepoFillContent(String type, String path, String content);
 
-    public void repoBuild(String name, String version, String path, Consumer<String> callback);
+    public void localRepoBuild(String name, String version, String path, Consumer<String> callback);
 
-    public void repoRemove(String path);
+    public void localRepoRemove(String path);
+
+    public void dockerRepoRemove(String name, String version);
 }

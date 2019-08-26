@@ -22,6 +22,11 @@ struct project_build_arg {
     std::function<void (std::string &)> callback;
 };
 
+struct project_remove_arg {
+    std::string name;
+    std::string version;
+};
+
 class project {
 private:
     cli::config & config;
@@ -33,6 +38,8 @@ public:
     std::string init(project_init_arg & arg);
 
     std::string build(project_build_arg & arg);
+
+    std::string remove(project_remove_arg & arg);
 };
 
 }

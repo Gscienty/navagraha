@@ -26,9 +26,6 @@ class FuncList extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.props.namespace !== nextProps.namespace) {
-            if (this.props.namespaceSelected === NAMESPACE_SELECTED_SET) {
-                this.props.dispatch(fetchFuncList(this.props.namespace));
-            }
             this.props.dispatch(intervalFuncListUnsetHandler());
             this.props.dispatch(fetchFuncList(nextProps.namespace));
             this.props.dispatch(intervalFuncListFetch(nextProps.namespace, this.FRESH_INTERVAL));

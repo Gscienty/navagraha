@@ -23,21 +23,18 @@ class NamespaceSelector extends React.PureComponent {
     render() {
         if (this.props.namespace.state === NAMESPACE_LIST_SET) {
             return (
-                <div>
-                    <Select
-                        value={this.props.namespace.selectedNamespace}
-                        showArrow={false}
-                        size="large"
-                        style={{
-                            border: 'none'
-                        }}
-                        onSelect={value => this.props.dispatch(selectDisplayNamespace(value))}>
-                    {(() => {
-                        return this.props.namespace.namespace
-                        .map(n => <Option key={`${n.name}`} value={`${n.name}`}>{n.name}</Option>)
-                    })()}
-                    </Select>
-                </div>
+                <Select
+                    value={this.props.namespace.selectedNamespace}
+                    showArrow={false}
+                    style={{
+                        border: 'none'
+                    }}
+                    onSelect={value => this.props.dispatch(selectDisplayNamespace(value))}>
+                {(() => {
+                    return this.props.namespace.namespace
+                    .map(n => <Option key={`${n.name}`} value={`${n.name}`}>{n.name}</Option>)
+                })()}
+                </Select>
             );
         }
         else {

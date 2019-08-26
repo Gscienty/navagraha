@@ -62,18 +62,24 @@ public class RepoController {
 
         this.threadPool.execute(() -> {
             String path = "/tmp/nava-build-" + UUID.randomUUID().toString();
-            this.funcService.repoInit(form.getType(), path);
-            this.funcService.repoFillContent(form.getType(), path, form.getContent());
-            this.funcService.repoBuild(form.getName(), form.getVersion(), path, val -> {
+            this.funcService.localRepoInit(form.getType(), path);
+            this.funcService.localRepoFillContent(form.getType(), path, form.getContent());
+            this.funcService.localRepoBuild(form.getName(), form.getVersion(), path, val -> {
                 this.actionListener.pushMessage(topic, val);
             });
-            this.funcService.repoRemove(path);
+            this.funcService.localRepoRemove(path);
             this.actionListener.pushMessage(topic, "done");
         });
 
         return "done";
     }
 
+    @RequestMapping(value = "/remove/{name}/{version}", method = RequestMethod.DELETE)
+    public String removeRepoAction(@PathVariable String name, @PathVariable String version) {
+        this.funcService.dockerRepoRemove(name, version);
+
+        return "done";
+    }
 
 }
 

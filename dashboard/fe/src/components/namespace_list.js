@@ -30,7 +30,7 @@ class NamespaceList extends React.PureComponent {
 
     render() {
         if (this.state.waitingFresh === false) {
-            this.setState({ waitingFresh: true })
+            this.setState({ waitingFresh: true }); // TODO
             setTimeout(() => {
                 this.props.dispatch(fetchNamespaces());
                 this.setState({ waitingFresh: false });

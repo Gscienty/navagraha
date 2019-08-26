@@ -49,6 +49,7 @@ class CodeEditor extends React.Component {
                     value={this.state.content}
                     readOnly={this.props.selectedState === CODE_TEMPLATE_SELECTED_UNSET}
                     width='100%'
+                    height='303px'
                     mode="java"
                     theme="github"
                     name="code-editor"

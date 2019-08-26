@@ -59,3 +59,12 @@ export function fetchGatewayRepoList() {
         .then(json => dispatch(receiveGatewayRepoList(json)));
     };
 };
+
+export function deleteRepo(name, version) {
+    return function (dispatch) {
+        return fetch(`${PREFIX_URI}/api/repo/remove/${name}/${version}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+    }
+}

@@ -164,31 +164,15 @@ export function codeBuild(codeInfo) {
                         dispatch(codeBuildingProcess(json.stream));
                     }
                     break;
+
+                default:
+                    break;
                 };
             };
 
             sock.onclose = () => {
                 dispatch(codeBuildingFinished());
             }
-
-            //let eve = new EventSource(`${PREFIX_URI}/api/topic/${json.topic}`);
-
-            //eve.addEventListener('close', e => {
-                //console.log('close');
-                //console.log(e);
-                //eve.close();
-                //dispatch(codeBuildingFinished());
-            //});
-            //eve.addEventListener('data', e => {
-                //let json = JSON.parse(e.data);
-                //if (typeof json.stream !== 'undefined' && json.stream.startsWith('Step')) {
-                    //dispatch(codeBuildingProcess(json.stream));
-                //}
-            //}, false);
-            //eve.addEventListener('complete', e => {
-                //eve.close();
-                //dispatch(codeBuildingFinished());
-            //}, false);
 
             return fetch(`${PREFIX_URI}/api/repo/build/${json.topic}`, {
                 method: 'POST',

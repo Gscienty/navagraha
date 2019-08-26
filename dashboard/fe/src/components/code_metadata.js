@@ -39,6 +39,7 @@ class CodeMetadataForm extends React.Component {
 
 
         return (
+            <div>
             <Form layout="inline" hideRequiredMark={true}>
                 <Form.Item { ...layout } label="函数名">
                     {getFieldDecorator('name', {
@@ -53,6 +54,7 @@ class CodeMetadataForm extends React.Component {
                     )}
                 </Form.Item>
             </Form>
+            </div>
         );
     }
 };

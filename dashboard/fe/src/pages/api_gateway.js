@@ -4,10 +4,6 @@ import { PageHeader } from 'antd';
 
 class Page extends React.PureComponent {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div>

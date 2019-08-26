@@ -6,6 +6,7 @@
 
 static void jproj_init_to_arg(JNIEnv * env, navagraha::process::project_init_arg * arg, jobject j_proj_init);
 static void jproj_build_to_arg(JNIEnv * env, navagraha::process::project_build_arg * arg, jobject & consumer, jobject j_proj_build);
+static void jproj_remove_to_arg(JNIEnv * env, navagraha::process::project_remove_arg * arg, jobject j_proj_remove);
 
 JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Project_init(JNIEnv * env,
@@ -52,6 +53,24 @@ JNIEXPORT jstring JNICALL
     return str2jstring(env, "");
 }
 
+JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Project_remove(JNIEnv * env,
+                                                    jobject self,
+                                                    jobject jconfig,
+                                                    jobject j_proj_remove)
+{
+    (void) self;
+    navagraha::cli::config config;
+    navagraha::process::project_remove_arg arg;
+
+    jconfig_to_config(env, &config, jconfig);
+    jproj_remove_to_arg(env, &arg, j_proj_remove);
+
+    navagraha::process::project(config).remove(arg);
+
+    return str2jstring(env, "");
+}
+
 static void jproj_init_to_arg(JNIEnv * env, navagraha::process::project_init_arg * arg, jobject j_proj_init)
 {
     jclass arg_cls = env->GetObjectClass(j_proj_init);
@@ -80,4 +99,15 @@ static void jproj_build_to_arg(JNIEnv * env, navagraha::process::project_build_a
     arg->path = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(j_proj_build, path_mid)));
 
     consumer = env->CallObjectMethod(j_proj_build, consumer_mid);
+}
+
+static void jproj_remove_to_arg(JNIEnv * env, navagraha::process::project_remove_arg * arg, jobject j_proj_remove)
+{
+    jclass arg_cls = env->GetObjectClass(j_proj_remove);
+
+    jmethodID name_mid = env->GetMethodID(arg_cls, "getName", "()Ljava/lang/String;");
+    jmethodID version_mid = env->GetMethodID(arg_cls, "getVersion", "()Ljava/lang/String;");
+
+    arg->name = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(j_proj_remove, name_mid)));
+    arg->version = jstring2str(env, static_cast<jstring>(env->CallObjectMethod(j_proj_remove, version_mid)));
 }

@@ -28,7 +28,7 @@ class NamespaceAdd extends React.PureComponent {
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
-            <div>
+            <span>
                 <Button
                     type='primary'
                     onClick={() => { this.setState({ drawerVisible: true }); }}>新建命名空间</Button>
@@ -64,7 +64,7 @@ class NamespaceAdd extends React.PureComponent {
                         </div>
                     </Form>
                 </Drawer>
-            </div>
+            </span>
         );
     }
 };
