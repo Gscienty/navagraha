@@ -55,6 +55,12 @@ struct func_repo_remove_arg {
     std::string version;
 };
 
+struct func_detail_arg {
+    std::string name;
+    std::string namespace_;
+    bool stateful;
+};
+
 extern char FUNC_REPO_ITEM_NAME[];
 extern char FUNC_REPO_ITEM_VERSIONS[];
 
@@ -123,6 +129,19 @@ public:
     void bind(extensions::serializer_helper & helper);
 };
 
+extern char FUNC_DETAIL_COMMON[];
+extern char FUNC_DETAIL_AUTOSCALING[];
+extern char FUNC_DETAIL_PODS[];
+
+class func_detail : public extensions::serializable<func_detail> {
+public:
+    extensions::field<func_list_item, FUNC_DETAIL_COMMON> common;
+    extensions::field<func_autoscaling_list_item, FUNC_DETAIL_AUTOSCALING> autoscaling;
+    extensions::field<extensions::special_list<func_pod_list_item>, FUNC_DETAIL_PODS> pod; 
+
+    void bind(extensions::serializer_helper & helper);
+};
+
 class func {
 private:
     cli::config & config;
@@ -153,6 +172,8 @@ public:
     std::string autoscaling(const func_autoscaling_arg & arg);
 
     extensions::special_list<func_autoscaling_list_item> list_autoscaling(const func_autoscaling_list_arg & arg);
+
+    func_detail detail(const func_detail_arg & arg);
 };
 
 }

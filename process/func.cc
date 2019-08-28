@@ -176,18 +176,24 @@ std::string func::down(const func_down_arg & func_down)
         helper.build<kube_api::stateful_set>().delete_(func_down.namespace_,
                                                        func_down.name,
                                                        stateful_del_ops);
+
+        kubeent::delete_options service_del_ops;
+        helper.build<kube_api::service>().delete_(func_down.namespace_,
+                                                  func_down.name,
+                                                  service_del_ops);
     }
     else {
+        kubeent::delete_options service_del_ops;
+        helper.build<kube_api::service>().delete_(func_down.namespace_,
+                                                  func_down.name,
+                                                  service_del_ops);
+
         kubeent::delete_options deploy_del_ops;
         helper.build<kube_api::deployment>().delete_(func_down.namespace_,
                                                      func_down.name,
                                                      deploy_del_ops);
     }
 
-    kubeent::delete_options service_del_ops;
-    helper.build<kube_api::service>().delete_(func_down.namespace_,
-                                              func_down.name,
-                                              service_del_ops);
 
     return std::string();
 }
@@ -409,6 +415,79 @@ extensions::special_list<func_autoscaling_list_item> func::list_autoscaling(cons
     return ret;
 }
 
+func_detail func::detail(const func_detail_arg & arg)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+    func_detail ret;
+
+    if (arg.stateful) {
+
+        return ret;
+    }
+    else {
+        auto deploy_cb = [&ret, &arg] (kubeent::deployment & dep) -> void
+        {
+            ret.common.get().name = std::string(dep.metadata.get().name.get());
+            ret.common.get().namespace_ = std::string(arg.namespace_);
+            ret.common.get().image_tag = std::string(dep.spec.get().template_.get().spec.get().containers.get().values().front().image.get());
+            ret.common.get().replicas.get() = dep.status.get().replicas.omit()
+                ? dep.status.get().replicas.get()
+                : 0;
+            ret.common.get().available.get() = dep.status.get().available_replicas.omit()
+                ? dep.status.get().available_replicas.get()
+                : 0;
+            ret.common.get().stateful.get() = false;
+        };
+        helper.build<kube_api::deployment>()
+            .read(arg.namespace_, arg.name)
+            .response_switch()
+            .response_case<200, kubeent::deployment>(deploy_cb);
+
+        auto autoscaling_cb = [&ret] (kubeent::horizontal_pod_autoscaler & hpa) -> void
+        {
+            ret.autoscaling.get().cpu.get() = hpa.spec.get().cpu_utilization_percentage.get();
+            ret.autoscaling.get().name = std::string(hpa.metadata.get().name.get());
+            ret.autoscaling.get().max.get() = hpa.spec.get().max_replicas.get();
+            ret.autoscaling.get().min.get() = hpa.spec.get().min_replicas.get();
+            ret.autoscaling.get().target.get() = hpa.spec.get().scale_target_ref.get().name.get();
+        };
+        helper.build<kube_api::horizontal_pod_autoscaler>()
+            .read(arg.namespace_, arg.name)
+            .response_switch()
+            .response_case<200, kubeent::horizontal_pod_autoscaler>(autoscaling_cb);
+
+        auto pod_cb = [&ret, &arg] (kubeent::pod_list & list) -> void
+        {
+            for (auto & pod : list.items.get().values()) {
+                if (pod.metadata.get().labels.get().values().find("nava_app") == pod.metadata.get().labels.get().values().end()) {
+                    continue;
+                }
+                if (pod.metadata.get().labels.get().values()["nava_app"].str.compare(arg.name) != 0) {
+                    continue;
+                }
+
+                ret.pod.get().values().push_back(func_pod_list_item());
+
+                ret.pod.get().values().back().name = std::string(pod.metadata.get().name.get());
+                ret.pod.get().values().back().namespace_ = std::string(pod.metadata.get().namespace_.get());
+                ret.pod.get().values().back().image = std::string(pod.status.get().container_statuses.get().values().front().image.get());
+                ret.pod.get().values().back().node = std::string(pod.spec.get().node_name.get());
+                ret.pod.get().values().back().policy = std::string(pod.spec.get().containers.get().values().back().image_pull_policy.get());
+                ret.pod.get().values().back().status = std::string(pod.status.get().phase.get());
+            }
+        };
+        helper.build<kube_api::pod>()
+            .list(arg.namespace_)
+            .response_switch()
+            .response_case<200, kubeent::pod_list>(pod_cb);
+
+        return ret;
+    }
+}
+
 void func::func_repo_image_filter(std::map<std::string, std::list<std::string>> & stored,
                                   navagraha::dockerent::image & image)
 {
@@ -495,6 +574,19 @@ void func_autoscaling_list_item::bind(extensions::serializer_helper & helper)
         .add(this->min)
         .add(this->max)
         .add(this->target);
+}
+
+char FUNC_DETAIL_COMMON[] = "common";
+char FUNC_DETAIL_AUTOSCALING[] = "autoscaling";
+char FUNC_DETAIL_PODS[] = "pods";
+
+
+void func_detail::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->common)
+        .add(this->autoscaling)
+        .add(this->pod);
 }
 
 }
