@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Tag, Button, Popover, Statistic, Row, Col } from 'antd';
 import { connect } from 'react-redux';
 import {
+    downFunc,
     fetchFuncList,
     intervalFuncListFetch,
     intervalFuncListUnsetHandler
@@ -125,7 +126,10 @@ class FuncList extends React.Component {
                 render: n => (
                     <span>
                         <Button size='small' style={{ marginRight: 8 }}>详情</Button>
-                        <Button size='small' style={{ marginRight: 8 }}>删除</Button>
+                        <Button
+                            onClick={() => this.props.dispatch(downFunc(n.funcNamespace, n.funcName))}
+                            size='small'
+                            style={{ marginRight: 8 }}>删除</Button>
                     </span>
                 )
             }

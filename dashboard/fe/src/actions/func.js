@@ -70,7 +70,8 @@ export function downFunc(namespace, name) {
 
         return fetch(`${PREFIX_URI}/api/func/${namespace}/${name}`, {
             method: 'DELETE',
-            credentials: 'include'
+            credentials: 'include',
+
         })
         .then(response => dispatch(fetchFuncList(namespace)));
     };

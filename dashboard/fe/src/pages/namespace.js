@@ -12,7 +12,7 @@ class Page extends React.PureComponent {
             <div>
                 <PageHeader title="命名空间" extra={[
                     <span key="selector"><NamespaceSelecter /></span>,
-                    <NamespaceAddButton />
+                    <NamespaceAddButton key="namespace_add_button" />
                 ]}>
                 </PageHeader>
 

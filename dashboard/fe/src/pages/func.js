@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Drawer, Button } from 'antd';
+import { PageHeader, Drawer } from 'antd';
 import FuncList from '../components/func_list';
-import NamespaceSelecter from '../components/namespace_selector.js';
+import NamespaceSelecter from '../components/namespace_selector';
+import FuncCreateButton from '../components/func_create_button';
 
 class Page extends React.PureComponent {
 
@@ -16,9 +17,8 @@ class Page extends React.PureComponent {
                 <PageHeader
                     title="函数服务"
                     extra={[
-                        <span key="selector"><NamespaceSelecter /></span>,
-
-                        <Button key="new" type="primary" onClick={() => this.setState({drawerVisible: true})}>创建</Button>,
+                        <NamespaceSelecter key="select" />,
+                        <FuncCreateButton key="new" />
                     ]} />
 
                 <FuncList />
@@ -28,7 +28,6 @@ class Page extends React.PureComponent {
                     layout='vertical'
                     onClose={this.onClose}
                     width={720}>
-
 
                 </Drawer>
             </div>

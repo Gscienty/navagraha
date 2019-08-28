@@ -18,6 +18,7 @@ class NamespaceList extends React.PureComponent {
     };
 
     FRESH_INTERVAL = 1000;
+    WAITING_HANDLER = 0;
 
     constructor(props) {
         super(props);
@@ -26,16 +27,16 @@ class NamespaceList extends React.PureComponent {
             || this.props.namespace.namespace.find(n => n.status !== 'Active')) {
             this.props.dispatch(fetchNamespaces());
         }
+        this.WAITING_HANDLER = setInterval(() => {
+            this.props.dispatch(fetchNamespaces());
+        }, this.FRESH_INTERVAL);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.WAITING_HANDLER);
     }
 
     render() {
-        if (this.state.waitingFresh === false) {
-            this.setState({ waitingFresh: true }); // TODO
-            setTimeout(() => {
-                this.props.dispatch(fetchNamespaces());
-                this.setState({ waitingFresh: false });
-            }, this.FRESH_INTERVAL);
-        };
 
         const COLUMNS = [
             {

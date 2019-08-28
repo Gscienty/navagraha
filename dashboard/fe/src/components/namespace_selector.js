@@ -26,6 +26,7 @@ class NamespaceSelector extends React.PureComponent {
                 <Select
                     value={this.props.namespace.selectedNamespace}
                     showArrow={false}
+                    dropdownMatchSelectWidth={false}
                     style={{
                         border: 'none'
                     }}

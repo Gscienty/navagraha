@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Tag, Button } from 'antd';
+import { Table, Tag, Button, Drawer, List, Modal } from 'antd';
 import { connect } from 'react-redux';
 import {
     deleteRepo,
@@ -9,11 +9,14 @@ import {
 
 class FuncRepoList extends React.PureComponent {
 
-    state = {
-        waitingFresh: false
-    };
-
     FRESH_INTERVAL = 1000;
+    WAITING_HANDLER = 0;
+
+    state = {
+        deleteMultiVersionsVisible: false,
+        deleteMultiVersionsTitle: '',
+        deleteMultiVersions: [],
+    };
 
     constructor(props) {
         super(props);
@@ -21,16 +24,25 @@ class FuncRepoList extends React.PureComponent {
         if (this.props.repo.state === FUNC_REPO_LIST_UNSET) {
             this.props.dispatch(fetchFuncRepoList());
         }
+
+        this.WAITING_HANDLER = setInterval(() => {
+            this.props.dispatch(fetchFuncRepoList());
+        }, this.FRESH_INTERVAL);
+    }
+
+    deleteMultiVersionsDrawerOnClose = () => {
+        this.setState({
+            deleteMultiVersions: [],
+            deleteMultiVersionsTitle: '',
+            deleteMultiVersionsVisible: false,
+        });
+    };
+
+    componentWillUnmount() {
+        clearInterval(this.WAITING_HANDLER);
     }
 
     render() {
-        if (this.state.waitingFresh === false) {
-            this.setState({ waitingFresh: true }); // TODO
-            setTimeout(() => {
-                this.props.dispatch(fetchFuncRepoList());
-                this.setState({ waitingFresh: false });
-            }, this.FRESH_INTERVAL);
-        };
 
         const COLUMNS = [
             {
@@ -54,7 +66,11 @@ class FuncRepoList extends React.PureComponent {
                                     this.props.dispatch(deleteRepo(n.repoName, n.repoVersions[0]));
                                 }
                                 else {
-                                    console.log("multi");
+                                    this.setState({
+                                        deleteMultiVersionsVisible: true,
+                                        deleteMultiVersionsTitle: n.repoName,
+                                        deleteMultiVersions: n.repoVersions
+                                    });
                                 }
                             }}
                             size="small">
@@ -72,7 +88,32 @@ class FuncRepoList extends React.PureComponent {
             repoVersions: n.versions
         }))
         
-        return (<Table columns={COLUMNS} dataSource={dataSource} />);
+        return (
+            <div>
+                <Table columns={COLUMNS} dataSource={dataSource} />
+                <Drawer
+                    visible={this.state.deleteMultiVersionsVisible}
+                    title={`删除 ${this.state.deleteMultiVersionsTitle}`}
+                    onClose={this.deleteMultiVersionsDrawerOnClose}>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={this.state.deleteMultiVersions}
+                        renderItem={item => (<List.Item key={item}>
+                                                <Button
+                                                    type="link"
+                                                    onClick={() => Modal.confirm({
+                                                        title: '删除确认',
+                                                        content: `确认是否删除${this.state.deleteMultiVersionsTitle} 版本${item}?`,
+                                                        onOk: () => {
+                                                            this.props.dispatch(deleteRepo(this.state.deleteMultiVersionsTitle, item));
+                                                        }
+                                                    })}>
+                                                        {item}
+                                                    </Button>
+                                             </List.Item>)}/>
+
+                </Drawer>
+            </div>);
     }
 };
 
