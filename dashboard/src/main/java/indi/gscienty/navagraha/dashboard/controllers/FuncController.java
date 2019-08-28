@@ -35,7 +35,7 @@ public class FuncController {
 
     @RequestMapping(value = "/{namespace}/{name}", method = RequestMethod.DELETE)
     public String funcDownAction(@PathVariable String namespace, @PathVariable String name) {
-        this.funcService.down(name, namespace);
+        this.funcService.down(namespace, name);
         return "done";
     }
 
