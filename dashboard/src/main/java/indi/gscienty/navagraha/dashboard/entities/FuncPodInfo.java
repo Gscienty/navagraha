@@ -4,7 +4,7 @@ public class FuncPodInfo {
     private String namespace;
     private String name;
     private String status;
-    private String image;
+    private String imageTag;
     private String policy;
     private String node;
 
@@ -32,14 +32,6 @@ public class FuncPodInfo {
         return status;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
     public void setPolicy(String policy) {
         this.policy = policy;
     }
@@ -54,5 +46,13 @@ public class FuncPodInfo {
 
     public String getNode() {
         return node;
+    }
+
+    public void setImageTag(String imageTag) {
+        this.imageTag = imageTag;
+    }
+
+    public String getImageTag() {
+        return imageTag;
     }
 }

@@ -1,11 +1,24 @@
 import React from 'react';
-import { Table, Tag, Button, Popover, Statistic, Row, Col } from 'antd';
+import {
+    Table,
+    Tag,
+    Button,
+    Popover,
+    Statistic,
+    Row,
+    Col,
+    Drawer,
+    Descriptions
+} from 'antd';
 import { connect } from 'react-redux';
 import {
     downFunc,
     fetchFuncList,
     intervalFuncListFetch,
-    intervalFuncListUnsetHandler
+    intervalFuncListUnsetHandler,
+    funcDetailFetch,
+
+    FUNC_DETAIL_SET
 } from '../actions/func';
 
 import {
@@ -15,6 +28,10 @@ import {
 class FuncList extends React.Component {
 
     FRESH_INTERVAL = 5000;
+
+    state = {
+        funcDetailVisible: false
+    };
 
     constructor(props) {
         super(props);
@@ -32,12 +49,19 @@ class FuncList extends React.Component {
             this.props.dispatch(intervalFuncListFetch(nextProps.namespace, this.FRESH_INTERVAL));
         }
 
+        if (this.props.func.funcDetailState !== FUNC_DETAIL_SET
+           && nextProps.func.funcDetailState === FUNC_DETAIL_SET) {
+           nextState.funcDetailVisible = true;
+       }
+
         return true;
     }
 
     componentWillUnmount() {
         this.props.dispatch(intervalFuncListUnsetHandler());
     }
+
+    funcDetailDrawerOnClose = () => this.setState({ funcDetailVisible: false });
 
     render() {
         const COLUMNS = [
@@ -125,7 +149,10 @@ class FuncList extends React.Component {
                 key: 'operation',
                 render: n => (
                     <span>
-                        <Button size='small' style={{ marginRight: 8 }}>详情</Button>
+                        <Button
+                            onClick={() => this.props.dispatch(funcDetailFetch(n.funcNamespace, n.funcName, n.stateful))}
+                            size='small'
+                            style={{ marginRight: 8 }}>详情</Button>
                         <Button
                             onClick={() => this.props.dispatch(downFunc(n.funcNamespace, n.funcName))}
                             size='small'
@@ -147,7 +174,38 @@ class FuncList extends React.Component {
             funcAutoscalingInfo: n.autoscalingInfo
         }));
 
-        return (<Table columns={COLUMNS} dataSource={dataSource} />);
+        return (
+            <div>
+                <Table columns={COLUMNS} dataSource={dataSource} />
+                <Drawer
+                    title={
+                        this.props.func.funcDetailState === FUNC_DETAIL_SET
+                            ? this.props.func.funcDetail.common.name + " 详细信息"
+                            : '未知函数'
+                    }
+                    visible={this.state.funcDetailVisible}
+                    width={720}
+                    onClose={this.funcDetailDrawerOnClose}>
+
+                    <Descriptions title="函数服务基本信息">
+                        <Descriptions.Item label="函数服务">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.name
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
+                        <Descriptions.Item label="命名空间">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.namespace
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
+                    </Descriptions>
+                </Drawer>
+            </div>
+        );
     }
 };
 

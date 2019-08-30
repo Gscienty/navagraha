@@ -123,3 +123,36 @@ export function intervalFuncListFetch(namespace, interval) {
     };
 };
 
+export const FUNC_DETAIL_SET = 'func_detail_set';
+export const FUNC_DETAIL_UNSET = 'func_detail_unset';
+
+export const FUNC_DETAIL_FETCH_REQUEST = 'func_detail_fetch_request';
+export function funcDetailFetchRequest() {
+    return {
+        type: FUNC_DETAIL_FETCH_REQUEST
+    };
+};
+
+export const FUNC_DETAIL_FETCH_RECEIVE = 'func_detail_fetch_receive';
+export function funcDetailFetchReceive(detail) {
+    return {
+        type: FUNC_DETAIL_FETCH_RECEIVE,
+        detail: detail
+    };
+};
+
+export function funcDetailFetch(namespace, name, stateful) {
+    return function (dispatch) {
+        dispatch(funcDetailFetchRequest());
+
+        return fetch(stateful
+            ? `${PREFIX_URI}/api/func/${namespace}/${name}/stateful`
+            : `${PREFIX_URI}/api/func/${namespace}/${name}/stateless`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(json => dispatch(funcDetailFetchReceive(json)));
+    };
+};
+
