@@ -12,7 +12,7 @@ extern char CLI_FUNC_OFFLINE_NAME[];
 extern char CLI_FUNC_OFFLINE_NAMESPACE[];
 extern char CLI_FUNC_OFFLINE_STATEFUL[];
 
-class func_down: public cli_arg::abstract_process<func_down> {
+class func_down : public cli_arg::abstract_process<func_down> {
 private:
     cli_arg::arg<CLI_FUNC_OFFLINE_NAME, 1> name_arg;
     cli_arg::arg<CLI_FUNC_OFFLINE_NAMESPACE, 1> namespace_arg;
