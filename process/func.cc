@@ -15,6 +15,8 @@
 #include "docker_api/images.hpp"
 #include <algorithm>
 
+#include <sstream>
+
 namespace navagraha {
 namespace process {
 
@@ -438,6 +440,9 @@ func_detail func::detail(const func_detail_arg & arg)
                 : 0;
             ret.common.get().available.get() = dep.status.get().available_replicas.omit()
                 ? dep.status.get().available_replicas.get()
+                : 0;
+            ret.common.get().unavailable.get() = dep.status.get().unavailable_replicas.omit()
+                ? dep.status.get().unavailable_replicas.get()
                 : 0;
             ret.common.get().stateful.get() = false;
         };
