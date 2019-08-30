@@ -144,10 +144,10 @@ void func_up::create_deployment(std::string namespace_, http_client::curl_helper
             req_obj.spec.get().strategy.get().type = std::string("RollingUpdate");
         }
         if (this->update_surge_arg.used()) {
-            req_obj.spec.get().strategy.get().rolling_update.get().max_surge = ::atoi(this->update_surge_arg[0].c_str());
+            req_obj.spec.get().strategy.get().rolling_update.get().max_surge.get().value = ::atoi(this->update_surge_arg[0].c_str());
         }
         if (this->update_unavailable_arg.used()) {
-            req_obj.spec.get().strategy.get().rolling_update.get().max_unavailable = ::atoi(this->update_unavailable_arg[0].c_str());
+            req_obj.spec.get().strategy.get().rolling_update.get().max_unavailable.get().value = ::atoi(this->update_unavailable_arg[0].c_str());
         }
 
         helper.build<kube_api::deployment>().replace(namespace_, this->name_arg[0], req_obj);
@@ -230,7 +230,7 @@ void func_up::create_stateful(std::string namespace_, http_client::curl_helper &
             req_obj.spec.get().update_strategy.get().type = std::string("RollingUpdate");
         }
         if (this->partition_arg.used()) {
-            req_obj.spec.get().update_strategy.get().rolling_update.get().partition = ::atoi(this->partition_arg[0].c_str());
+            req_obj.spec.get().update_strategy.get().rolling_update.get().partition.get().value = ::atoi(this->partition_arg[0].c_str());
         }
         helper.build<kube_api::stateful_set>().replace(namespace_, this->name_arg[0], req_obj);
     }

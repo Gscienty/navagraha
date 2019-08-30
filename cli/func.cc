@@ -4,6 +4,7 @@
 #include "cli/func_repo.hpp"
 #include "cli/func_list.hpp"
 #include "cli/func_autoscaling.hpp"
+#include "cli/func_detail.hpp"
 #include "cli/func_usage.hpp"
 #include "cli_arg/process_collection.hpp"
 
@@ -33,6 +34,7 @@ int func::execute()
         .add(func_repo())
         .add(func_list())
         .add(func_autoscaling())
+        .add(func_detail())
         .add(func_usage())
         .result();
 }
