@@ -1,4 +1,5 @@
 #include "kubeent/rolling_update_deployment.hpp"
+#include <iostream>
 
 namespace navagraha {
 namespace kubeent {

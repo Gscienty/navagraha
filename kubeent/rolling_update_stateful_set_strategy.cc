@@ -1,4 +1,5 @@
 #include "kubeent/rolling_update_stateful_set_strategy.hpp"
+#include <iostream>
 
 namespace navagraha {
 namespace kubeent {
