@@ -7,6 +7,7 @@ import indi.gscienty.navagraha.entities.FuncList;
 import indi.gscienty.navagraha.entities.FuncAutoscaling;
 import indi.gscienty.navagraha.entities.FuncAutoscalingList;
 import indi.gscienty.navagraha.entities.FuncPodList;
+import indi.gscienty.navagraha.entities.FuncDetail;
 import indi.gscienty.navagraha.entities.RepoRemove;
 
 public class Func {
@@ -26,4 +27,6 @@ public class Func {
     public native String autoscalingList(Config cfg, FuncAutoscalingList funcAutoscalingList);
 
     public native String podList(Config cfg, FuncPodList funcPodList);
+
+    public native String detail(Config cfg, FuncDetail funcDetail);
 }

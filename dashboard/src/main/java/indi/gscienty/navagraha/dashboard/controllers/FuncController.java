@@ -6,6 +6,7 @@ import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
 import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncAutoscalingForm;
+import indi.gscienty.navagraha.dashboard.entities.FuncDetailInfo;
 import indi.gscienty.navagraha.dashboard.services.IFuncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,9 +40,14 @@ public class FuncController {
         return "done";
     }
 
-    @RequestMapping(value = "/{namespace}/{name}/pod", method = RequestMethod.GET)
-    public List<FuncPodInfo> getFuncPodListAction(@PathVariable String namespace, @PathVariable String name) {
-        return this.funcService.podList(namespace, name);
+    @RequestMapping(value = "/{namespace}/{name}/stateless", method = RequestMethod.GET)
+    public FuncDetailInfo getStatelessFuncDetailListAction(@PathVariable String namespace, @PathVariable String name) {
+        return this.funcService.detail(namespace, name, false);
+    }
+
+    @RequestMapping(value = "/{namespace}/{name}/stateful", method = RequestMethod.GET)
+    public FuncDetailInfo getStatefulFuncDetailListAction(@PathVariable String namespace, @PathVariable String name) {
+        return this.funcService.detail(namespace, name, true);
     }
 
     @RequestMapping(value = "/{namespace}/{name}/autoscaling", method = RequestMethod.POST)

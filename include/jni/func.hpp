@@ -42,6 +42,12 @@ JNIEXPORT jstring JNICALL
                                                   jobject j_func_pod_list);
 
 JNIEXPORT jstring JNICALL
+    Java_indi_gscienty_navagraha_jni_Func_detail(JNIEnv * env,
+                                                 jobject self,
+                                                 jobject j_cfg,
+                                                 jobject j_func_detail);
+
+JNIEXPORT jstring JNICALL
     Java_indi_gscienty_navagraha_jni_Func_autoscaling(JNIEnv * env,
                                                       jobject self,
                                                       jobject j_cfg,

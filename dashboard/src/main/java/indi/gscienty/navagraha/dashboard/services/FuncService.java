@@ -20,12 +20,14 @@ import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncRepoInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
+import indi.gscienty.navagraha.dashboard.entities.FuncDetailInfo;
 import indi.gscienty.navagraha.entities.FuncAutoscaling;
 import indi.gscienty.navagraha.entities.FuncAutoscalingList;
 import indi.gscienty.navagraha.entities.FuncDown;
 import indi.gscienty.navagraha.entities.FuncList;
 import indi.gscienty.navagraha.entities.FuncPodList;
 import indi.gscienty.navagraha.entities.FuncUp;
+import indi.gscienty.navagraha.entities.FuncDetail;
 import indi.gscienty.navagraha.entities.ProjectBuild;
 import indi.gscienty.navagraha.entities.ProjectInit;
 import indi.gscienty.navagraha.entities.ProjectRemove;
@@ -112,6 +114,17 @@ public class FuncService implements IFuncService {
 
         String result = this.func.podList(ConfigSingleton.getInstance().getConfig(), podListConfig);
         return JSON.parseArray(result, FuncPodInfo.class);
+    }
+
+    public FuncDetailInfo detail(String namespace, String name, boolean stateful) {
+        FuncDetail detail = new FuncDetail();
+
+        detail.setName(name);
+        detail.setStateful(stateful);
+        detail.setNamespace(namespace);
+
+        String result = this.func.detail(ConfigSingleton.getInstance().getConfig(), detail);
+        return JSON.parseObject(result, FuncDetailInfo.class);
     }
 
     public void autoscaling(String namespace, String name, FuncAutoscalingForm form) {

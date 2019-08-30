@@ -9,7 +9,7 @@ import indi.gscienty.navagraha.dashboard.entities.FuncInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncPodInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncRepoInfo;
 import indi.gscienty.navagraha.dashboard.entities.FuncUpForm;
-
+import indi.gscienty.navagraha.dashboard.entities.FuncDetailInfo;
 
 public interface IFuncService {
 
@@ -22,6 +22,8 @@ public interface IFuncService {
     public void down(String namespace, String name);
 
     public List<FuncPodInfo> podList(String namespace, String name);
+
+    public FuncDetailInfo detail(String namespace, String name, boolean stateful);
 
     public void autoscaling(String namespace, String name, FuncAutoscalingForm form);
 
