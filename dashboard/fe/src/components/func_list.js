@@ -8,7 +8,8 @@ import {
     Row,
     Col,
     Drawer,
-    Descriptions
+    Descriptions,
+    Divider
 } from 'antd';
 import { connect } from 'react-redux';
 import {
@@ -162,6 +163,39 @@ class FuncList extends React.Component {
             }
         ];
 
+        const FUNC_DETAIL_COLUMNS = [
+            {
+                title: '名称',
+                key: 'name',
+                dataIndex: 'name'
+            },
+            {
+                title: '命名空间',
+                key: 'namespace',
+                dataIndex: 'namespace'
+            },
+            {
+                title: '状态',
+                key: 'status',
+                dataIndex: 'status'
+            },
+            {
+                title: '应用镜像',
+                key: 'image',
+                dataIndex: 'imageTag'
+            },
+            {
+                title: '所在宿主机',
+                key: 'node',
+                dataIndex: 'node'
+            },
+            {
+                title: '镜像拉取策略',
+                key: 'policy',
+                dataIndex: 'policy'
+            }
+        ];
+
         let dataSource = [];
         this.props.func.func.map(n => dataSource.push({
             key: n.name,
@@ -184,7 +218,7 @@ class FuncList extends React.Component {
                             : '未知函数'
                     }
                     visible={this.state.funcDetailVisible}
-                    width={720}
+                    width={840}
                     onClose={this.funcDetailDrawerOnClose}>
 
                     <Descriptions title="函数服务基本信息">
@@ -202,7 +236,43 @@ class FuncList extends React.Component {
                                     : '未知'
                             }
                         </Descriptions.Item>
+                        <Descriptions.Item label="应用镜像">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.imageTag
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
+                        <Descriptions.Item label="副本数">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.replicas
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
+                        <Descriptions.Item label="可用副本数">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.available
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
+                        <Descriptions.Item label="不可用副本数">
+                            {
+                                this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                    ? this.props.func.funcDetail.common.unavailable
+                                    : '未知'
+                            }
+                        </Descriptions.Item>
                     </Descriptions>
+
+                    <Divider />
+                    <h3>Pod信息</h3>
+                    <Table columns={FUNC_DETAIL_COLUMNS} dataSource={
+                            this.props.func.funcDetailState === FUNC_DETAIL_SET
+                                ? this.props.func.funcDetail.pods
+                                : []
+                    } />
                 </Drawer>
             </div>
         );
