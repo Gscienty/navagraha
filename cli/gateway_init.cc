@@ -35,7 +35,7 @@ void gateway_init::create_deployment(std::string namespace_, http_client::curl_h
     deploy.api_version = std::string("apps/v1");
     deploy.kind = std::string("Deployment");
     deploy.metadata.get().name = std::string("nava-api-gateway");
-    deploy.metadata.get().labels.get().values()["nava_app"] = std::string("nava-api-gateway");
+    deploy.metadata.get().labels.get().values()["nava_app"] = std::string("nava_api_gateway");
     deploy.spec.get().replicas = 1;
     deploy.spec.get().selector.get().match_labels.get()
         .values()["common_domain"] = std::string("navagraha_apigw_pod");
@@ -48,7 +48,7 @@ void gateway_init::create_deployment(std::string namespace_, http_client::curl_h
     deploy.spec.get().template_.get().spec.get().containers.get().values()
         .push_back(kubeent::container());
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()
-        .name = std::string("nava_apigw");
+        .name = std::string("nava-apigw");
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()
         .image = std::string("nava/apigw:v0.1");
     deploy.spec.get().template_.get().spec.get().containers.get().values().front()

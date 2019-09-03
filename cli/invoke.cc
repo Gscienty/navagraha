@@ -46,7 +46,7 @@ int invoke::execute()
                                                                  [&gateway_ip] (kubeent::service & svc) -> void
                                                                  {
                                                                  if (svc.metadata.get().labels.get().values().find("common_domain") != std::end(svc.metadata.get().labels.get().values())
-                                                                     && svc.metadata.get().labels.get().values()["common_domain"].str.compare("navagraha-apigw-svc") == 0) {
+                                                                     && svc.metadata.get().labels.get().values()["common_domain"].str.compare("navagraha_apigw_svc") == 0) {
                                                                     gateway_ip = svc.spec.get().cluster_ip.get();
                                                                  }
                                                                  });

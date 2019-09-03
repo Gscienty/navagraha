@@ -2,6 +2,7 @@
 #include "cli/config.hpp"
 #include "http_client/curl_helper.hpp"
 #include "kube_api/pod.hpp"
+#include "process/gateway.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -28,20 +29,32 @@ bool gateway_list::satisfy() const
 int gateway_list::execute()
 {
 
-    std::string namespace_ = "default";
-    http_client::curl_helper helper(config::get_instance().kube_cert,
-                                    config::get_instance().kube_key,
-                                    config::get_instance().kube_ca,
-                                    config::get_instance().kube_api_server);
+    std::ostringstream oss;
+    process::gateway_get_arg arg;
+
+    arg.namespace_ = "default";
     if (this->namespace_arg.used()) {
-        namespace_ = this->namespace_arg[0];
+        arg.namespace_ = this->namespace_arg[0];
     }
 
-    helper.build<kube_api::pod>().list(namespace_)
-        .response_switch()
-        .response_case<200, kubeent::pod_list>(std::bind(&gateway_list::gateway_pods_foreach,
-                                                         this,
-                                                         std::placeholders::_1));
+    process::gateway(config::get_instance()).get(arg).serialize(oss);
+
+    std::cout << oss.str() << std::endl;
+
+    //std::string namespace_ = "default";
+    //http_client::curl_helper helper(config::get_instance().kube_cert,
+                                    //config::get_instance().kube_key,
+                                    //config::get_instance().kube_ca,
+                                    //config::get_instance().kube_api_server);
+    //if (this->namespace_arg.used()) {
+        //namespace_ = this->namespace_arg[0];
+    //}
+
+    //helper.build<kube_api::pod>().list(namespace_)
+        //.response_switch()
+        //.response_case<200, kubeent::pod_list>(std::bind(&gateway_list::gateway_pods_foreach,
+                                                         //this,
+                                                         //std::placeholders::_1));
 
     return 0;
 }

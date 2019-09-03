@@ -29,11 +29,13 @@ struct gateway_remove_arg {
 
 extern char GATEWAY_LIST_ITEM_NAMESPACE[];
 extern char GATEWAY_LIST_ITEM_CLUSTER_IP[];
+extern char GATEWAY_LIST_ITEM_IMAGE_TAG[];
 
 class gateway_list_item : public extensions::serializable<gateway_list_item> {
 public:
     extensions::field<std::string, GATEWAY_LIST_ITEM_NAMESPACE> namespace_;
     extensions::field<std::string, GATEWAY_LIST_ITEM_CLUSTER_IP> cluster_ip;
+    extensions::field<std::string, GATEWAY_LIST_ITEM_IMAGE_TAG> image_tag;
 
     void bind(extensions::serializer_helper & helper);
 };

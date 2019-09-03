@@ -47,7 +47,7 @@ void gateway::create_deployment(const gateway_set_arg & arg, http_client::curl_h
     req.spec.get().template_.get().spec.get().containers.get().values()
         .push_back(kubeent::container());
     req.spec.get().template_.get().spec.get().containers.get().values().back()
-        .name = std::string("nava_apigw");
+        .name = std::string("nava-apigw");
     req.spec.get().template_.get().spec.get().containers.get().values().back()
         .image = std::string(arg.image);
     req.spec.get().template_.get().spec.get().containers.get().values().back()
@@ -87,12 +87,14 @@ void gateway::create_service(const gateway_set_arg & arg, http_client::curl_help
 
 char GATEWAY_LIST_ITEM_NAMESPACE[] = "namespace";
 char GATEWAY_LIST_ITEM_CLUSTER_IP[] = "clusterIP";
+char GATEWAY_LIST_ITEM_IMAGE_TAG[] = "imageTag";
 
 void gateway_list_item::bind(extensions::serializer_helper & helper)
 {
     helper
         .add(this->namespace_)
-        .add(this->cluster_ip);
+        .add(this->cluster_ip)
+        .add(this->image_tag);
 }
 
 extensions::special_list<gateway_list_item> gateway::get(const gateway_get_arg & arg)
@@ -104,20 +106,29 @@ extensions::special_list<gateway_list_item> gateway::get(const gateway_get_arg &
 
     extensions::special_list<gateway_list_item> ret;
 
-    auto svc_cb = [&ret, &arg] (kubeent::service_list & list) -> void
+    auto svc_cb = [&ret, &arg] (kubeent::service & svc) -> void
     {
-        for (auto svc : list.items.get().values()) {
-            ret.values().push_back(gateway_list_item());
+        ret.values().push_back(gateway_list_item());
 
-            ret.values().back().cluster_ip = std::string(svc.spec.get().cluster_ip.get());
-            ret.values().back().namespace_ = std::string(arg.namespace_);
-        }
+        ret.values().back().cluster_ip = std::string(svc.spec.get().cluster_ip.get());
+        ret.values().back().namespace_ = std::string(arg.namespace_);
     };
-
     helper.build<kube_api::service>()
-        .list(arg.namespace_)
+        .read(arg.namespace_, std::string("nava-api-gateway"))
         .response_switch()
-        .response_case<200, kubeent::service_list>(svc_cb);
+        .response_case<200, kubeent::service>(svc_cb);
+
+    auto deploy_cb = [&ret] (kubeent::deployment & deploy) -> void
+    {
+        if (ret.values().empty()) {
+            return;
+        }
+        ret.values().back().image_tag = std::string(deploy.spec.get().template_.get().spec.get().containers.get().values().back().image.get());
+    };
+    helper.build<kube_api::deployment>()
+        .read(arg.namespace_, std::string("nava-api-gateway"))
+        .response_switch()
+        .response_case<200, kubeent::deployment>(deploy_cb);
 
     return ret;
 }
