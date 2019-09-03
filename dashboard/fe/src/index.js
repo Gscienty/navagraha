@@ -12,7 +12,6 @@ import NavaHeader from './components/nava_header';
 import DashboardPage from './pages/dashboard';
 import NamespacePage from './pages/namespace';
 import FuncPage from './pages/func';
-import APIGatewayPage from './pages/api_gateway';
 import ConfigMapPage from './pages/config_map';
 import MonitorPage from './pages/monitor';
 import NodePage from './pages/node';
@@ -38,7 +37,6 @@ ReactDOM.render((
                                         <Route exact path="/" component={DashboardPage} />
                                         <Route exact path="/namespace" component={NamespacePage} />
                                         <Route exact path="/func" component={FuncPage} />
-                                        <Route exact path="/api-gateway" component={APIGatewayPage} />
                                         <Route exact path="/config-map" component={ConfigMapPage} />
                                         <Route exact path="/monitor" component={MonitorPage} />
                                         <Route exact path="/node" component={NodePage} />

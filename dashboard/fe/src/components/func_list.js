@@ -15,8 +15,6 @@ import { connect } from 'react-redux';
 import {
     downFunc,
     fetchFuncList,
-    intervalFuncListFetch,
-    intervalFuncListUnsetHandler,
     funcDetailFetch,
 
     FUNC_DETAIL_SET
@@ -28,26 +26,32 @@ import {
 
 class FuncList extends React.Component {
 
-    FRESH_INTERVAL = 5000;
-
     state = {
         funcDetailVisible: false
     };
+
+    FRESH_INTERVAL = 5000;
+    WAITING_HANDLER = 0;
 
     constructor(props) {
         super(props);
 
         if (this.props.namespaceSelected === NAMESPACE_SELECTED_SET) {
             this.props.dispatch(fetchFuncList(this.props.namespace));
-            this.props.dispatch(intervalFuncListFetch(this.props.namespace, this.FRESH_INTERVAL));
         }
+
+        this.WAITING_HANDLER = setInterval(() => {
+            this.props.dispatch(fetchFuncList(this.props.namespace));
+        }, this.FRESH_INTERVAL);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.WAITING_HANDLER);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.props.namespace !== nextProps.namespace) {
-            this.props.dispatch(intervalFuncListUnsetHandler());
             this.props.dispatch(fetchFuncList(nextProps.namespace));
-            this.props.dispatch(intervalFuncListFetch(nextProps.namespace, this.FRESH_INTERVAL));
         }
 
         if (this.props.func.funcDetailState !== FUNC_DETAIL_SET
@@ -58,9 +62,6 @@ class FuncList extends React.Component {
         return true;
     }
 
-    componentWillUnmount() {
-        this.props.dispatch(intervalFuncListUnsetHandler());
-    }
 
     funcDetailDrawerOnClose = () => this.setState({ funcDetailVisible: false });
 

@@ -85,3 +85,31 @@ export function selectDisplayNamespace(namespace) {
         namespace: namespace
     };
 };
+
+export function addNamespaceGateway(namespace, gatewayRepo, policy) {
+    return function(dispatch) {
+        return fetch(`/api/gateway/${namespace}`, {
+            method: 'POST',
+            credentials: 'includes',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                namespace: namespace,
+                policy: policy,
+                replicas: 1,
+                image: gatewayRepo
+            })
+        })
+        .then(response => dispatch(fetchNamespaces()));
+    };
+};
+
+export function deleteNamespaceGateway(namespace) {
+    return function (dispatch) {
+        return fetch(`/api/gateway/${namespace}`, {
+            method: 'DELETE',
+            credentials: 'includes',
+        })
+        .then(response => dispatch(fetchNamespaces()));
+    }
+}
+
