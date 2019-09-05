@@ -2,6 +2,7 @@
 #include "cli_arg/process_collection.hpp"
 #include "cli/monitor_start.hpp"
 #include "cli/monitor_stop.hpp"
+#include "cli/monitor_test_start.hpp"
 
 namespace navagraha {
 namespace cli {
@@ -25,6 +26,7 @@ int monitor::execute()
                                                   this->name_flag.argv())
         .add(monitor_start())
         .add(monitor_stop())
+        .add(monitor_test_start())
         .result();
 }
 
