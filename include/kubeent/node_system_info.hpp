@@ -13,6 +13,7 @@ extern char NODE_SYSTEM_INFO_BOOT_ID[];
 extern char NODE_SYSTEM_INFO_CONTAINER_RUNTIME_VERSION[];
 extern char NODE_SYSTEM_INFO_KERNEL_VERSION[];
 extern char NODE_SYSTEM_INFO_KUBE_PROXY_VERSION[];
+extern char NODE_SYSTEM_INFO_KUBELET_VERSION[];
 extern char NODE_SYSTEM_INFO_MACHINE_ID[];
 extern char NODE_SYSTEM_INFO_OPERATING_SYSTEM[];
 extern char NODE_SYSTEM_INFO_OS_IMAGE[];
@@ -25,6 +26,7 @@ public:
     extensions::field<std::string, NODE_SYSTEM_INFO_CONTAINER_RUNTIME_VERSION> container_runtime_version;
     extensions::field<std::string, NODE_SYSTEM_INFO_KERNEL_VERSION> kernel_version;
     extensions::field<std::string, NODE_SYSTEM_INFO_KUBE_PROXY_VERSION> kube_proxy_version;
+    extensions::field<std::string, NODE_SYSTEM_INFO_KUBELET_VERSION> kubelet_version;
     extensions::field<std::string, NODE_SYSTEM_INFO_MACHINE_ID> machine_id;
     extensions::field<std::string, NODE_SYSTEM_INFO_OPERATING_SYSTEM> operating_system;
     extensions::field<std::string, NODE_SYSTEM_INFO_OS_IMAGE> os_image;
