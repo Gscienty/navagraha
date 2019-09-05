@@ -12,7 +12,6 @@ import NavaHeader from './components/nava_header';
 import DashboardPage from './pages/dashboard';
 import NamespacePage from './pages/namespace';
 import FuncPage from './pages/func';
-import ConfigMapPage from './pages/config_map';
 import MonitorPage from './pages/monitor';
 import NodePage from './pages/node';
 import ProjectPage from './pages/project';
@@ -37,7 +36,6 @@ ReactDOM.render((
                                         <Route exact path="/" component={DashboardPage} />
                                         <Route exact path="/namespace" component={NamespacePage} />
                                         <Route exact path="/func" component={FuncPage} />
-                                        <Route exact path="/config-map" component={ConfigMapPage} />
                                         <Route exact path="/monitor" component={MonitorPage} />
                                         <Route exact path="/node" component={NodePage} />
                                         <Route exact path="/project" component={ProjectPage} />

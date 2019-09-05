@@ -4,6 +4,7 @@ import systemInfo from './reducers/system_info';
 import repo from './reducers/repo';
 import func from './reducers/func';
 import code from './reducers/code';
+import node from './reducers/node';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 
 const rootReducer = combineReducers({
@@ -11,7 +12,8 @@ const rootReducer = combineReducers({
     systemInfo,
     repo,
     func,
-    code
+    code,
+    node
 });
 
 export default createStore(rootReducer, applyMiddleware(thunkMiddleware));

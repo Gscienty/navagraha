@@ -3,9 +3,6 @@ import {
     Table,
     Tag,
     Button,
-    Popover,
-    Row,
-    Col,
     Drawer,
     Descriptions,
     Select
