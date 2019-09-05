@@ -404,7 +404,7 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
     if (sum_buf->buf.len <= 0) {
         goto malloc_error;
     }
-    count_buf->buf.len = sprintf(sum_buf->buf.base, "%g", histogram->count_value);
+    count_buf->buf.len = sprintf(count_buf->buf.base, "%g", histogram->count_value);
     if (count_buf->buf.len <= 0) {
         goto malloc_error;
     }
@@ -425,7 +425,7 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
             free(pt);
             goto malloc_error;
         }
-        prome_collect_list_insert_prev(chain, &pt->node);
+        prome_collect_list_insert_prev(&buckets_serialized, &pt->node);
 
         pt = (prome_chain_t *) malloc(sizeof(prome_chain_t));
         if (pt == NULL) {
@@ -433,7 +433,7 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
         }
         prome_buf_init(&pt->buf);
         pt->buf.base = (char *) calloc(16, 1);
-        if (pt->buf.base != NULL) {
+        if (pt->buf.base == NULL) {
             free(pt);
             goto malloc_error;
         }
@@ -444,7 +444,7 @@ int prome_histogram_serialize(prome_histogram_t * histogram, prome_collect_list_
             goto malloc_error;
         }
         memcpy(pt->buf.base, tmp_double_val, pt->buf.len);
-        prome_collect_list_insert_prev(chain, &pt->node);
+        prome_collect_list_insert_prev(&buckets_serialized, &pt->node);
     }
 
     chain->prev->next = buckets_serialized.next;
