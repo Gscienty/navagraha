@@ -10,10 +10,14 @@ node::node(CURL * curl, const std::string host)
 
 }
 
-kubeent::node node::read(const std::string name)
+http_client::http_response node::read(const std::string name)
 {
-    return this->get_request("/api/v1/nodes/" + name)
-        .get<kubeent::node>();
+    return this->get_request("/api/v1/nodes/" + name);
+}
+
+http_client::http_response node::list()
+{
+    return this->get_request("/api/v1/nodes");
 }
 
 }
