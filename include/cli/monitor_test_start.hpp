@@ -9,10 +9,14 @@ namespace navagraha {
 namespace cli {
 
 extern char CLI_MONITOR_TEST_START_FLAG[];
+extern char CLI_MONITOR_TEST_START_EXIST[];
+extern char CLI_MONITOR_TEST_START_REMOVE[];
 
 class monitor_test_start : public cli_arg::abstract_process<monitor_test_start> {
 private:
     cli_arg::arg<CLI_MONITOR_TEST_START_FLAG, 1> init_flag;
+    cli_arg::arg<CLI_MONITOR_TEST_START_EXIST, 0> exist_flag;
+    cli_arg::arg<CLI_MONITOR_TEST_START_REMOVE, 0> remove_flag;
 
 public:
     virtual void bind(cli_arg::process_helper<monitor_test_start> & helper) override;

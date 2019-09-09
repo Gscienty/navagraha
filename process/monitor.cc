@@ -127,8 +127,36 @@ std::string monitor::start(std::string namespace_)
     this->set_prometheus_deployment(helper, namespace_);
 
     this->set_prometheus_cluster_role_bind(helper, namespace_);
+    this->set_prometheus_service(helper, namespace_);
 
     return "";
+}
+
+monitor_get_result monitor::get(std::string namespace_)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+    monitor_get_result result;
+
+    auto cb = [&result] (kubeent::service & svc) -> void
+    {
+        result.service_ip = std::string(svc.spec.get().cluster_ip.get());
+        result.namespace_ = std::string(svc.metadata.get().namespace_.get());
+        result.exist = true;
+    };
+
+    helper.build<kube_api::service>()
+        .read(namespace_, "nava-monitor-prometheus-server")
+        .response_switch()
+        .response_case<200, kubeent::service>(cb);
+
+    if (result.exist.omit() == false) {
+        result.exist = false;
+    }
+
+    return result;
 }
 
 void monitor::set_prometheus_config(http_client::curl_helper & helper, std::string namespace_)
@@ -195,10 +223,10 @@ void monitor::set_prometheus_deployment(http_client::curl_helper & helper, std::
     dep.kind = std::string("Deployment");
     dep.metadata.get().name = std::string("nava-monitor-prometheus");
     dep.spec.get().selector.get().match_labels.get()
-        .values()["app"] = std::string("nava-monitor-prometheus-server");
+        .values()["nava_app"] = std::string("nava-monitor-prometheus-server");
     dep.spec.get().replicas = 1;
     dep.spec.get().template_.get().metadata.get().labels.get()
-        .values()["app"] = std::string("nava-monitor-prometheus-server");
+        .values()["nava_app"] = std::string("nava-monitor-prometheus-server");
     dep.spec.get().template_.get().spec.get().containers.get()
         .values().push_back(kubeent::container());
     dep.spec.get().template_.get().spec.get().containers.get()
@@ -293,6 +321,53 @@ void monitor::set_prometheus_cluster_role_bind(http_client::curl_helper & helper
     binding.subjects.get().values().back().namespace_ = std::string(namespace_);
 
     helper.build<kube_api::cluster_role_binding>().create(binding);
+}
+
+void monitor::set_prometheus_service(http_client::curl_helper & helper, std::string namespace_)
+{
+    kubeent::service req;
+    req.api_version = std::string("v1");
+    req.kind = std::string("Service");
+    req.metadata.get().name = std::string("nava-monitor-prometheus-server");
+    req.metadata.get().labels.get().values()["common_domain"] = std::string("navagraha_monitor_svc");
+    req.metadata.get().labels.get().values()["nava_app"] = std::string("navagraha_monitor");
+    req.spec.get().selector.get().values()["nava_app"] = std::string("nava-monitor-prometheus-server");
+    req.spec.get().ports.get().values().push_back(kubeent::service_port());
+    req.spec.get().ports.get().values().front().port = 9090;
+    req.spec.get().ports.get().values().front().target_port = 9090;
+
+
+    helper.build<kube_api::service>().create(namespace_, req);
+}
+
+std::string monitor::remove(std::string namespace_)
+{
+    http_client::curl_helper helper(this->config.kube_cert,
+                                    this->config.kube_key,
+                                    this->config.kube_ca,
+                                    this->config.kube_api_server);
+
+    kubeent::delete_options dep_opt;
+    helper.build<kube_api::deployment>()
+        .delete_(namespace_, "nava-monitor-prometheus", dep_opt);
+
+    kubeent::delete_options svc_opt;
+    helper.build<kube_api::service>()
+        .delete_(namespace_, "nava-monitor-prometheus-server", svc_opt);
+
+    return "";
+}
+
+char MONITOR_GET_RESULT_NAMESPACE[] = "namespace";
+char MONITOR_GET_RESULT_EXIST[] = "exist";
+char MONITOR_GET_RESULT_SERVICE_IP[] = "serviceIP";
+
+void monitor_get_result::bind(extensions::serializer_helper & helper)
+{
+    helper
+        .add(this->namespace_)
+        .add(this->exist)
+        .add(this->service_ip);
 }
 
 }
