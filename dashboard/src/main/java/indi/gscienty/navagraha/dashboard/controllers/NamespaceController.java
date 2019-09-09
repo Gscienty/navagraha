@@ -36,5 +36,17 @@ public class NamespaceController {
         this.namespaceService.remove(namespace);
         return "done";
     }
+
+    @RequestMapping(value = "/{namespace}/monitor", method = RequestMethod.POST)
+    public String namespaceSetMonitor(@PathVariable String namespace) {
+        this.namespaceService.setMonitor(namespace);
+        return "done";
+    }
+
+    @RequestMapping(value = "/{namespace}/monitor", method = RequestMethod.DELETE)
+    public String namespaceDeleteMonitor(@PathVariable String namespace) {
+        this.namespaceService.deleteMonitor(namespace);
+        return "done";
+    }
 }
 

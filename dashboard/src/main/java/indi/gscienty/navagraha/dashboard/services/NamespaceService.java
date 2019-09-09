@@ -6,10 +6,12 @@ import com.alibaba.fastjson.JSON;
 
 import indi.gscienty.navagraha.dashboard.entities.NamespaceInfo;
 import indi.gscienty.navagraha.dashboard.entities.GatewayInfo;
+import indi.gscienty.navagraha.dashboard.entities.MonitorInfo;
 import indi.gscienty.navagraha.dashboard.ConfigSingleton;
 import indi.gscienty.navagraha.entities.GatewayGet;
 import indi.gscienty.navagraha.jni.Namespace;
 import indi.gscienty.navagraha.jni.Gateway;
+import indi.gscienty.navagraha.jni.Monitor;
 
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,12 @@ public class NamespaceService implements INamespaceService {
     
     private Namespace namespace;
     private Gateway gateway;
+    private Monitor monitor;
 
     public NamespaceService() {
         this.namespace = new Namespace();
         this.gateway = new Gateway();
+        this.monitor = new Monitor();
     }
 
     public List<NamespaceInfo> list() {
@@ -39,6 +43,9 @@ public class NamespaceService implements INamespaceService {
             else {
                 ns.setGatewayInfo(null);
             }
+            String monitorInfoStr = this.monitor.get(ConfigSingleton.getInstance().getConfig(), ns.getName());
+            MonitorInfo monitorInfo = JSON.parseObject(monitorInfoStr, MonitorInfo.class);
+            ns.setMonitorInfo(monitorInfo);
         }
 
         return resultList;
@@ -50,6 +57,14 @@ public class NamespaceService implements INamespaceService {
 
     public void remove(String namespace) {
         this.namespace.remove(ConfigSingleton.getInstance().getConfig(), namespace);
+    }
+
+    public void setMonitor(String namespace) {
+        this.monitor.add(ConfigSingleton.getInstance().getConfig(), namespace);
+    }
+
+    public void deleteMonitor(String namespace) {
+        this.monitor.remove(ConfigSingleton.getInstance().getConfig(), namespace);
     }
 
 }

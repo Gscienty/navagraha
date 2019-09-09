@@ -11,5 +11,9 @@ public interface INamespaceService {
     public void add(String namespace);
 
     public void remove(String namespace);
+
+    public void setMonitor(String namespace);
+
+    public void deleteMonitor(String namespace);
 }
 

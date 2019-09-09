@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader } from 'antd';
+import {
+    PageHeader,
+} from 'antd';
 
 class Page extends React.PureComponent {
 
